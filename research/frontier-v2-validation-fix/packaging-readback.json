@@ -1,0 +1,15 @@
+{
+  "schema": "jev-nethack-frontier-v2-validation-fix-packaging-readback/v3",
+  "archive": "frontier-v2-validation-fix.tar.gz",
+  "archiveSha256": "47c358d2310d037dbe6c5d6ee5c2d005e42c520af8e75edb21f2779fa01c9b4c",
+  "archiveBytes": 8455819,
+  "manifestMemberCount": 75,
+  "extractedMemberCount": 75,
+  "missingMembers": [],
+  "extraMembers": [],
+  "hashMismatches": [],
+  "secretOrPrivatePathScanHits": [],
+  "finalVerificationReceiptSha256": "e679a09150255eff146d2d4f65368e52db36dc43da74311993c4b03351ae9fd5",
+  "gzipReadback": "tarfile r:gz extraction succeeded",
+  "verified": true
+}

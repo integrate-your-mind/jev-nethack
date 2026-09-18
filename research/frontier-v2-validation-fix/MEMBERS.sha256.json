@@ -1,0 +1,381 @@
+{
+  "schema": "jev-nethack-frontier-v2-validation-fix-members/v3",
+  "memberCount": 75,
+  "members": [
+    {
+      "path": "README.md",
+      "bytes": 931,
+      "sha256": "acb772b25eda9c8f46d98b25dbe06e8ffb75ec9ed8d74a8661ad1759f347bb13"
+    },
+    {
+      "path": "RELEASE-NOTES.md",
+      "bytes": 730,
+      "sha256": "05fea0c72f50a92ca576449e361bb6bfdf68991593d2fe6fe38fed3eb615edd0"
+    },
+    {
+      "path": "manifest/path-redactions.json",
+      "bytes": 278,
+      "sha256": "647676c154c707e48ff08b868a483a0800af62c5d58fccbcb930d4ea01c2ca6a"
+    },
+    {
+      "path": "predecessor-link.json",
+      "bytes": 448,
+      "sha256": "481c1fef0f0d679312fa1a442fa80479afa28f8f5febd4bf4b49e5e39516c50e"
+    },
+    {
+      "path": "successor-source/README.md",
+      "bytes": 1239,
+      "sha256": "684282bb0b1e650c3b2de81efc34c758af855c6b4cf41aaabddf331c49eefff2"
+    },
+    {
+      "path": "successor-source/branch_experiment.py",
+      "bytes": 46006,
+      "sha256": "640869f633c01f9b181223f49e6fa801ea8deaeb7fa712d87faea65ddc65a8e0"
+    },
+    {
+      "path": "successor-source/candidate.py",
+      "bytes": 16174,
+      "sha256": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb"
+    },
+    {
+      "path": "successor-source/execution-release.json",
+      "bytes": 1188,
+      "sha256": "059505bfc286bd32e79982c5bb8c8b8c299866a55cd93b52d779643c0c7c6e22"
+    },
+    {
+      "path": "successor-source/fixtures.json",
+      "bytes": 7432,
+      "sha256": "7d542fb9e81d14e788181d2ce58d9ff7bc5abdf431d864e1bf294244e364d5de"
+    },
+    {
+      "path": "successor-source/freeze-receipt.json",
+      "bytes": 1729,
+      "sha256": "f815585a22f8b4c5953bd093fe104ee75a129f031c86506016efb03ef01d69d0"
+    },
+    {
+      "path": "successor-source/frozen-trial-plan.json",
+      "bytes": 3222,
+      "sha256": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48"
+    },
+    {
+      "path": "successor-source/harness-freeze.json",
+      "bytes": 16532,
+      "sha256": "6d488e23b47ded5e94389509ab686ff8f9a3272aab3df22d18b4ae21e8b159e6"
+    },
+    {
+      "path": "successor-source/harness-runs/replay-freeze-20260918T155504Z/contract.json",
+      "bytes": 1421,
+      "sha256": "2d574c8f7e74e6cccc403f232e068e114d13fcfa4e8854a4eac322d437234b00"
+    },
+    {
+      "path": "successor-source/harness-runs/replay-freeze-20260918T155504Z/point-3359/nle-ttyrec/nle.56768.0.ttyrec3.bz2",
+      "bytes": 46434,
+      "sha256": "d8b2cf7090d5dd3346a00ea49c7cb7636afa4797eb3ab4d382097cb7b52182bd"
+    },
+    {
+      "path": "successor-source/harness-runs/replay-freeze-20260918T155504Z/point-3359/nle-ttyrec/nle.56768.xlogfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "successor-source/harness-runs/replay-freeze-20260918T155504Z/point-3999/nle-ttyrec/nle.56768.0.ttyrec3.bz2",
+      "bytes": 55198,
+      "sha256": "054bab07f88e9af6f24d3a134b451e1828aea5a1159804b7c39722ae00c9f7d7"
+    },
+    {
+      "path": "successor-source/harness-runs/replay-freeze-20260918T155504Z/point-3999/nle-ttyrec/nle.56768.xlogfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "successor-source/harness-runs/replay-freeze-20260918T155504Z/replay-only-receipt.json",
+      "bytes": 14589,
+      "sha256": "24be775d95e0e5ae0a6c3bd12025a26adc84a4a54a56c00773b319a74a03ec48"
+    },
+    {
+      "path": "successor-source/operational-analysis-addendum.json",
+      "bytes": 4886,
+      "sha256": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049"
+    },
+    {
+      "path": "successor-source/original-failure-manifest.json",
+      "bytes": 3051,
+      "sha256": "f6ef6a8817a100331aebabdba05f39d553a420d937a4fb8efd0e2013c214a438"
+    },
+    {
+      "path": "successor-source/preflight-verification.json",
+      "bytes": 336,
+      "sha256": "a2a29a4893b69b710b8a5c5be802eb5f68421b9c4353e030cbbf729912d8a1e2"
+    },
+    {
+      "path": "successor-source/publication/README.md",
+      "bytes": 871,
+      "sha256": "df27d6fedc4d35931a54b6bf5c5e4cd9e0938bf1a70b3a71a149f15e3d1d3f7c"
+    },
+    {
+      "path": "successor-source/publication/original-trial-failure.json",
+      "bytes": 2232,
+      "sha256": "96f4b31aa42bcdf94355fd493cf3c9c9ab5b607e0c7e3e7b786f974ee5e766d2"
+    },
+    {
+      "path": "successor-source/review-independent-validation-fix.json",
+      "bytes": 9780,
+      "sha256": "c61012d6e94452ee805e995ffc5ee90ba39a0e946f4be987368eae947f2fbfe5"
+    },
+    {
+      "path": "successor-source/review-independent.json",
+      "bytes": 13533,
+      "sha256": "29955adaec1741eb0462c4cea22f7c23401a7ec2155013001bbcecb422b0a599"
+    },
+    {
+      "path": "successor-source/test-verification.txt",
+      "bytes": 5545,
+      "sha256": "c49f9a1b9bc0cbc7c9a47424bf4df8971ffc4c52902fb44df2f2e4d7bbfbe88b"
+    },
+    {
+      "path": "successor-source/test_branch_experiment.py",
+      "bytes": 15674,
+      "sha256": "cc61fb6c837fe1bdd4521281b2f7abd7b6ac0cf62a8ab499e66ef80b158c3335"
+    },
+    {
+      "path": "successor-source/test_candidate.py",
+      "bytes": 7450,
+      "sha256": "d427fec10e3521a06e9d6d87ca642df15813ccdbb7529a5968d5f3e473085215"
+    },
+    {
+      "path": "successor-source/trial-attempt-ledger.jsonl",
+      "bytes": 5992751,
+      "sha256": "a0fef7655ff0580e2a98b38c472a288be4e71316ee0d0912f32aa192d28e9cd8"
+    },
+    {
+      "path": "successor-source/trial-execution-claim.json",
+      "bytes": 17090,
+      "sha256": "857c35f7ade3ebf9eda3c7a1dc60eff1d42d0e1271b153a4f1a088cbd4c6c21f"
+    },
+    {
+      "path": "successor-source/trial-execution.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/PUBLICATION.md",
+      "bytes": 946,
+      "sha256": "d0337c0898fb2b5fb0faf465eeb184580c8266720e32fc0d2877f3cf297a2405"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/analysis.json",
+      "bytes": 585,
+      "sha256": "f2b4fd15dff1f5893e8918be6a7aaa245e27a367dd94ed78b78c3b488b0ddddc"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/archive-publication-manifest.json",
+      "bytes": 10737,
+      "sha256": "f5253a076dcf34910586e289cd3569c4c7dadf5dbdfc07e4d50258b448456b73"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/contract.json",
+      "bytes": 1421,
+      "sha256": "75e9d9719cc255acb95d82938f5df53bfd0598938a23eb33139a6ad242d5c633"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/replay/nle-ttyrec/nle.33060.0.ttyrec3.bz2",
+      "bytes": 47045,
+      "sha256": "a7d9aa4e70267081d22fab07910807350f2a0b1b199f0a537ba338cb68f7afbf"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/replay/nle-ttyrec/nle.33060.xlogfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/replay-verification.json",
+      "bytes": 1107,
+      "sha256": "45ba1a2f1d324090ffa448b53be2570cf712002ca43ace43248cb880d33c0f54"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/summary.json",
+      "bytes": 8374,
+      "sha256": "c5e332b745dd874abcfcbf81458c91572922e3d4a00304eb97242875aaf7bcc1"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/training/training-manifest.json",
+      "bytes": 628,
+      "sha256": "0b929c7969cbc4a903762e470623fa64719b2edb00a4e760c0c191ac8263081a"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/training/transitions-000001.complete.json",
+      "bytes": 726,
+      "sha256": "3344eed523501cc16d9306f57dac06290f281cafe4df082db884a056fe3d164a"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/training/transitions-000001.index.jsonl",
+      "bytes": 18671,
+      "sha256": "de81dc2a39529aa9a430ab4b45f5ddd003046c42d09e31f145509651e66efc71"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/training/transitions-000001.npzpack",
+      "bytes": 753155,
+      "sha256": "d0e8a395e1cce74c12d914c2bc9f19c16d94ffaf14063d5e1b98617fc5092d52"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/transitions.jsonl",
+      "bytes": 5743271,
+      "sha256": "b744e9b37a016712e3fec7e48db21e1b92eb7bd1d0b9ad9a33a634d572afffbf"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/replay/nle-ttyrec/nle.33060.0.ttyrec3.bz2",
+      "bytes": 47805,
+      "sha256": "d1445593311df0f03c036bd77e7ab21421b8a11864c0a29240a5e9ed3db91711"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/replay/nle-ttyrec/nle.33060.xlogfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/replay-verification.json",
+      "bytes": 1113,
+      "sha256": "5caed106b056157245b5d29d56c7ae55aa8dd845c9c1ee66a692dc0de41a5428"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/summary.json",
+      "bytes": 9666,
+      "sha256": "d750e7179a06de91dd6703ed8a8761653ec788232c47efff71145af9968d44e2"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/training/training-manifest.json",
+      "bytes": 629,
+      "sha256": "5520f0d94591ce54110394b3f473ea8a9f4e0b60e49c99c260422007c4ea49c0"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/training/transitions-000001.complete.json",
+      "bytes": 727,
+      "sha256": "d8519e5985fedff028226d15184f8c551a659f09696f5ca746ab236255aed9b3"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/training/transitions-000001.index.jsonl",
+      "bytes": 18771,
+      "sha256": "ac7211ca9c575bbd3f0ef76ff297a9193e616f233dc0a3974a5b8b8a1d2d146b"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/training/transitions-000001.npzpack",
+      "bytes": 1084802,
+      "sha256": "d76139604049af6bc6c4284953bd9453c6f512006b3703270efbfd3e207840b3"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/transitions.jsonl",
+      "bytes": 9060783,
+      "sha256": "a83c32865c20e6e2bc61a896a519f546d5c54518b4599d2bd089f77b57429534"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/replay/nle-ttyrec/nle.33060.0.ttyrec3.bz2",
+      "bytes": 55763,
+      "sha256": "774978b9820e80ba149375ba5532a0f4849e312226b4bc69a6787c8b1620885a"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/replay/nle-ttyrec/nle.33060.xlogfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/replay-verification.json",
+      "bytes": 1107,
+      "sha256": "89d7cf23262c630ace125226fcb77265a6f7c48d817bbf91d36f241d8a17229b"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/summary.json",
+      "bytes": 8512,
+      "sha256": "d6cb4ffdac0f0a5f6d79c1bd1ae7ab4a25362189815c58db403220d27d38469f"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/training/training-manifest.json",
+      "bytes": 628,
+      "sha256": "6164e1d182c5f23d7436639ff4b4b2c8f5c35e8d1f4d609c928538945386aa7b"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/training/transitions-000001.complete.json",
+      "bytes": 726,
+      "sha256": "120dd0284625d480957e089cead4e5c4df8f2b41e3618dac1c5c1dc830dac304"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/training/transitions-000001.index.jsonl",
+      "bytes": 18671,
+      "sha256": "ab34c91eb4871d605d23b749fb0a9c39c51f46b58ace6ddf1fd448bb423723a0"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/training/transitions-000001.npzpack",
+      "bytes": 752089,
+      "sha256": "4c42668c75cee0b02f2b87bcda44cf0baddbc9c7f6a257d4cf508d3ba9ec1e14"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/transitions.jsonl",
+      "bytes": 5748901,
+      "sha256": "1de1cb939005603efb3f8408c35e2957a91e224733f21ef353779f4190f26267"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/replay/nle-ttyrec/nle.33060.0.ttyrec3.bz2",
+      "bytes": 56099,
+      "sha256": "6bab0d96ed1bcbb384fc93460c0a1948f6ccd0b6eb2fae3944d40292b9d1fd77"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/replay/nle-ttyrec/nle.33060.xlogfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/replay-verification.json",
+      "bytes": 1113,
+      "sha256": "fb5cf0f1aba23529d3f5f5f4940ce3d1d6d2fb411151257fa9b8dc2c99cd8b9e"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/summary.json",
+      "bytes": 9843,
+      "sha256": "8ea9cc24346d98b2704b4f50d21846e5924b5c7e5b6e74611c8ea991bae5a998"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/training/training-manifest.json",
+      "bytes": 629,
+      "sha256": "82abe2857493762092ca94efffedf1b431e967fffd0e7df95258db9f2397063d"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/training/transitions-000001.complete.json",
+      "bytes": 727,
+      "sha256": "2061ccb0e0514b0da382e561467ef1a3e61d60e64bb09e5f1928700698bf0fe7"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/training/transitions-000001.index.jsonl",
+      "bytes": 18771,
+      "sha256": "e199214e6e81af5a5420a61c56787ba7ef1df0a583d78fddb976f9c7e58070fb"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/training/transitions-000001.npzpack",
+      "bytes": 1060761,
+      "sha256": "8a089f0d4680985cd46a130a6ee2cb572a5c83667ef5c8963cdd8dfcd6cd7f36"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/transitions.jsonl",
+      "bytes": 9025704,
+      "sha256": "fe4fb070551c1bb59410e55cf3582aea96df4abf430532143125e975b1bd4ac5"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/publication-report.json",
+      "bytes": 13022,
+      "sha256": "b4fd2bbae5d0abf34ac5e3c0fb769918e49d5b5c57d2317c8ce5bc5124ace682"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/result.json",
+      "bytes": 45356,
+      "sha256": "ce08d7854fda0de63befb7bdb9dbce15037595735374047d47e1312e0201d88a"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/successor-preflight.json",
+      "bytes": 336,
+      "sha256": "a2a29a4893b69b710b8a5c5be802eb5f68421b9c4353e030cbbf729912d8a1e2"
+    },
+    {
+      "path": "successor-source/trial-runs/frontier-v2-validation-fix-20260918T160446Z/verification-receipt.json",
+      "bytes": 13175,
+      "sha256": "e679a09150255eff146d2d4f65368e52db36dc43da74311993c4b03351ae9fd5"
+    }
+  ]
+}

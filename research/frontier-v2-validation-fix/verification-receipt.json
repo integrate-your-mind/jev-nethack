@@ -1,0 +1,364 @@
+{
+  "analysis": {
+    "aggregateDelta": 14,
+    "classification": "negative",
+    "developmentOnly": true,
+    "doesNotAuthorizeLiveMigration": true,
+    "pairs": [
+      {
+        "baselineNewPositions": 0,
+        "branchAfterStep": 3359,
+        "delta": 8,
+        "frontierNewPositions": 8
+      },
+      {
+        "baselineNewPositions": 0,
+        "branchAfterStep": 3999,
+        "delta": 6,
+        "frontierNewPositions": 6
+      }
+    ],
+    "primaryMetric": "new_positions_vs_exact_prefix",
+    "safetyFailures": [
+      "priority:3359",
+      "menu:3999"
+    ],
+    "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1"
+  },
+  "arms": [
+    {
+      "actionsExecuted": 32,
+      "arm": "baseline",
+      "blankOrWallAttemptSteps": [],
+      "branchAfterStep": 3359,
+      "depthDelta": 0,
+      "distinctPositions": 4,
+      "eventRecords": 64,
+      "eventsPath": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/transitions.jsonl",
+      "eventsSha256": "b744e9b37a016712e3fec7e48db21e1b92eb7bd1d0b9ad9a33a634d572afffbf",
+      "exactRawNoOps": 0,
+      "futureDistinctPositions": 4,
+      "goalCalls": 0,
+      "hpDelta": 0,
+      "hungerEnd": 1,
+      "hungerStart": 1,
+      "minimumHp": 17,
+      "newCellsVsPrefix": 0,
+      "packs": [
+        {
+          "completed": true,
+          "marker": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/training/transitions-000001.complete.json",
+          "partialTail": false,
+          "path": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/training/transitions-000001.npzpack",
+          "records": 32,
+          "sha256": "d0e8a395e1cce74c12d914c2bc9f19c16d94ffaf14063d5e1b98617fc5092d52"
+        }
+      ],
+      "priorityGoalMismatchSteps": [],
+      "promptMismatchSteps": [],
+      "providerCalls": 32,
+      "replayVerificationSha256": "9a6e055607dda6d3041172b07a4d2e31d11155be6ee1a13b6c927f930bbda35e",
+      "scoreDelta": 0,
+      "terminal": null,
+      "turnDelta": 27,
+      "twoStepReversals": 16,
+      "unchangedPositionActions": 0
+    },
+    {
+      "actionsExecuted": 32,
+      "arm": "frontier-v2",
+      "blankOrWallAttemptSteps": [],
+      "branchAfterStep": 3359,
+      "depthDelta": 0,
+      "distinctPositions": 18,
+      "eventRecords": 64,
+      "eventsPath": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/transitions.jsonl",
+      "eventsSha256": "a83c32865c20e6e2bc61a896a519f546d5c54518b4599d2bd089f77b57429534",
+      "exactRawNoOps": 4,
+      "futureDistinctPositions": 17,
+      "goalCalls": 8,
+      "hpDelta": -5,
+      "hungerEnd": 1,
+      "hungerStart": 1,
+      "minimumHp": 12,
+      "newCellsVsPrefix": 8,
+      "packs": [
+        {
+          "completed": true,
+          "marker": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/training/transitions-000001.complete.json",
+          "partialTail": false,
+          "path": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/training/transitions-000001.npzpack",
+          "records": 32,
+          "sha256": "d76139604049af6bc6c4284953bd9453c6f512006b3703270efbfd3e207840b3"
+        }
+      ],
+      "priorityGoalMismatchSteps": [
+        3382
+      ],
+      "promptMismatchSteps": [],
+      "providerCalls": 40,
+      "replayVerificationSha256": "356338116de6f8a9f0b69c0fdc997344387f2048375ceb8d27abc14d1f670b8c",
+      "scoreDelta": 8,
+      "terminal": null,
+      "turnDelta": 19,
+      "twoStepReversals": 0,
+      "unchangedPositionActions": 15
+    },
+    {
+      "actionsExecuted": 32,
+      "arm": "baseline",
+      "blankOrWallAttemptSteps": [],
+      "branchAfterStep": 3999,
+      "depthDelta": 0,
+      "distinctPositions": 2,
+      "eventRecords": 64,
+      "eventsPath": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/transitions.jsonl",
+      "eventsSha256": "1de1cb939005603efb3f8408c35e2957a91e224733f21ef353779f4190f26267",
+      "exactRawNoOps": 0,
+      "futureDistinctPositions": 2,
+      "goalCalls": 0,
+      "hpDelta": 0,
+      "hungerEnd": 1,
+      "hungerStart": 1,
+      "minimumHp": 17,
+      "newCellsVsPrefix": 0,
+      "packs": [
+        {
+          "completed": true,
+          "marker": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/training/transitions-000001.complete.json",
+          "partialTail": false,
+          "path": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/training/transitions-000001.npzpack",
+          "records": 32,
+          "sha256": "4c42668c75cee0b02f2b87bcda44cf0baddbc9c7f6a257d4cf508d3ba9ec1e14"
+        }
+      ],
+      "priorityGoalMismatchSteps": [],
+      "promptMismatchSteps": [],
+      "providerCalls": 32,
+      "replayVerificationSha256": "ec4a2cc0491d8dc0341da69dd142d5d11f0aef628d8e75e958a26c2b1a03a34f",
+      "scoreDelta": 0,
+      "terminal": null,
+      "turnDelta": 24,
+      "twoStepReversals": 31,
+      "unchangedPositionActions": 0
+    },
+    {
+      "actionsExecuted": 32,
+      "arm": "frontier-v2",
+      "blankOrWallAttemptSteps": [
+        4029,
+        4031
+      ],
+      "branchAfterStep": 3999,
+      "depthDelta": 0,
+      "distinctPositions": 16,
+      "eventRecords": 64,
+      "eventsPath": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/transitions.jsonl",
+      "eventsSha256": "fe4fb070551c1bb59410e55cf3582aea96df4abf430532143125e975b1bd4ac5",
+      "exactRawNoOps": 2,
+      "futureDistinctPositions": 15,
+      "goalCalls": 7,
+      "hpDelta": -3,
+      "hungerEnd": 1,
+      "hungerStart": 1,
+      "minimumHp": 14,
+      "newCellsVsPrefix": 6,
+      "packs": [
+        {
+          "completed": true,
+          "marker": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/training/transitions-000001.complete.json",
+          "partialTail": false,
+          "path": "trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/training/transitions-000001.npzpack",
+          "records": 32,
+          "sha256": "8a089f0d4680985cd46a130a6ee2cb572a5c83667ef5c8963cdd8dfcd6cd7f36"
+        }
+      ],
+      "priorityGoalMismatchSteps": [],
+      "promptMismatchSteps": [
+        4017
+      ],
+      "providerCalls": 39,
+      "replayVerificationSha256": "2fa354964da11fd46f7bce3bfc6a087afac45f0bd8676202b2b065d65fb7c8b7",
+      "scoreDelta": 4,
+      "terminal": null,
+      "turnDelta": 18,
+      "twoStepReversals": 2,
+      "unchangedPositionActions": 12
+    }
+  ],
+  "artifacts": {
+    "analysisSha256": "f2b4fd15dff1f5893e8918be6a7aaa245e27a367dd94ed78b78c3b488b0ddddc",
+    "claimSha256": "5f24352fed0eee95bdffbd50a081efa328d1cdf4ea3f80e35706a7c441f00939",
+    "contractSha256": "75e9d9719cc255acb95d82938f5df53bfd0598938a23eb33139a6ad242d5c633",
+    "harnessFreezeSha256": "820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d",
+    "harnessSha256": "70e6397f4b386f7739a785438aa0fb338ec53bba5d810ac694551fda12cddc25",
+    "ledgerSha256": "a0fef7655ff0580e2a98b38c472a288be4e71316ee0d0912f32aa192d28e9cd8",
+    "originalFailureManifestSha256": "f6ef6a8817a100331aebabdba05f39d553a420d937a4fb8efd0e2013c214a438",
+    "publicAnchorCommit": "099db5583c3285580089a2561e2096e460dc84e0",
+    "publicAnchorSha256": "25d3c13b3203b082c8d97a55e1f971c39ee5b6bfd2bc06d3ec8615d3ab0a682f",
+    "releaseSha256": "059505bfc286bd32e79982c5bb8c8b8c299866a55cd93b52d779643c0c7c6e22",
+    "resultSha256": "29b17571a66f58bba4dddbd34d82c8ad42623a64a7581558f857263e55230d2f",
+    "reviewSha256": "3eb2860cf56c7dfdbbee854cc8ec56102030883f6c31507bb8c12520ad27c754",
+    "successorPreflightSha256": "a2a29a4893b69b710b8a5c5be802eb5f68421b9c4353e030cbbf729912d8a1e2"
+  },
+  "budget": {
+    "aggregateAttemptedProviderCalls": 143,
+    "maximumAggregateProviderAttempts": 192,
+    "originalAttemptedProviderCalls": 0,
+    "providerCallsDuringReplay": 0,
+    "remainingUnusableAttempts": 49,
+    "successorAttemptedProviderCalls": 143
+  },
+  "developmentOnly": true,
+  "doesNotAuthorizeLiveMigration": true,
+  "ledgerVerification": {
+    "actionDistributionsWith121Probabilities": 128,
+    "credentialHeadersAbsentFromRetainedRequests": true,
+    "failedOutcomes": 0,
+    "goalDistributions": 15,
+    "requestAndResponseDigestsVerified": true,
+    "reserved": 143,
+    "responsesRetained": 143,
+    "rows": 431,
+    "validatedOutcomes": 143
+  },
+  "preflight": {
+    "actionContractSha256": "92e41e74c51bbd1e916074ac2e2fdc70d482cbcd55f228762945d0e4bf539362",
+    "actionCount": 121,
+    "harnessFreezeSha256": "820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d",
+    "originalAttemptedProviderCalls": 0,
+    "providerCalls": 0,
+    "successorMaximumProviderAttempts": 192,
+    "verified": true
+  },
+  "preregisteredClassification": "negative",
+  "rawTransitionsVerified": 128,
+  "recordedAt": "2026-09-18T16:09:59.685428+00:00",
+  "rerunPermitted": false,
+  "schema": "jev-nethack-frontier-v2-validation-fix-outcome/v1",
+  "status": "completed",
+  "violations": [
+    {
+      "actionChoice": "a2",
+      "actionChoiceProbability": 0.72,
+      "actionConfidence": 0.71,
+      "actionIndex": 2,
+      "actionLabel": "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+      "branchActionIndex": 22,
+      "branchAfterStep": 3359,
+      "eventId": "frontier-v2-3359-frontier-v2-3382",
+      "gate": "priority",
+      "globalActionAttempt": 61,
+      "goalChoice": "follow_observed_frontier_route",
+      "goalChoiceProbability": 0.36,
+      "goalConfidence": 0.25,
+      "goalRefreshReasons": [
+        "goal_horizon_exhausted"
+      ],
+      "keycode": 106,
+      "messageAfter": "The jackal bites!",
+      "messageBefore": "You kill the jackal!  The jackal misses!",
+      "nextObservationDigest": "88c26dfc6a2dcf3d47ebda861881c595048eba88062eb4d7eebfe5d02d23c58c",
+      "observationDigest": "7dbf6d1983fca83265971a619448e0fbb9887d34691f0669f7bb9dd9429f7c70",
+      "observedConsequence": "The following observation reported a jackal bite and HP decreased from 13 to 12; this sequence does not by itself prove counterfactual causation.",
+      "playerAfter": {
+        "condition_bits": 0,
+        "depth": 1,
+        "experience_level": 2,
+        "hp": 12,
+        "hunger_code": 1,
+        "max_hp": 17,
+        "score": 106,
+        "turn": 2468,
+        "x": 48,
+        "y": 9
+      },
+      "playerBefore": {
+        "condition_bits": 0,
+        "depth": 1,
+        "experience_level": 2,
+        "hp": 13,
+        "hunger_code": 1,
+        "max_hp": 17,
+        "score": 106,
+        "turn": 2467,
+        "x": 48,
+        "y": 8
+      },
+      "requiredPriorityGoal": "handle_immediate_combat",
+      "requiredPriorityGoalProbability": 0.04,
+      "reward": 0.0,
+      "signals": {
+        "conditionImpairment": false,
+        "lowHp": false,
+        "recentCombat": true,
+        "urgentHunger": false,
+        "visiblePrompt": false
+      },
+      "step": 3382,
+      "terminated": false,
+      "truncated": false
+    },
+    {
+      "actionChoice": "a5",
+      "actionChoiceProbability": 0.81,
+      "actionConfidence": 0.8,
+      "actionIndex": 5,
+      "actionLabel": "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+      "branchActionIndex": 17,
+      "branchAfterStep": 3999,
+      "eventId": "frontier-v2-3999-frontier-v2-4017",
+      "gate": "menu",
+      "globalActionAttempt": 127,
+      "goalChoice": "resolve_visible_prompt",
+      "goalChoiceProbability": 0.98,
+      "goalConfidence": 0.98,
+      "goalRefreshReasons": [
+        "visible_prompt_changed_priority"
+      ],
+      "keycode": 110,
+      "messageAfter": "The door opens.",
+      "messageBefore": "In what direction?",
+      "nextObservationDigest": "8a90085abfacace15a473b4ec55ca60f4fe101802668b15a50943738df549421",
+      "observationDigest": "6af5e092509cee8bc97c0a0b44c1f9a794f3c9fd19d6e6e6ca8fd9edbbd7cc4e",
+      "observedConsequence": "The SE direction action successfully answered the visible direction prompt and opened the door with no turn, HP, score, or position change. The preregistered menu gate still fails because the contextual action label was not classified as a prompt handler.",
+      "playerAfter": {
+        "condition_bits": 0,
+        "depth": 1,
+        "experience_level": 2,
+        "hp": 17,
+        "hunger_code": 1,
+        "max_hp": 17,
+        "score": 110,
+        "turn": 2940,
+        "x": 47,
+        "y": 7
+      },
+      "playerBefore": {
+        "condition_bits": 0,
+        "depth": 1,
+        "experience_level": 2,
+        "hp": 17,
+        "hunger_code": 1,
+        "max_hp": 17,
+        "score": 110,
+        "turn": 2940,
+        "x": 47,
+        "y": 7
+      },
+      "requiredPriorityGoal": "resolve_visible_prompt",
+      "requiredPriorityGoalProbability": 0.98,
+      "reward": 0.0,
+      "signals": {
+        "conditionImpairment": false,
+        "lowHp": false,
+        "recentCombat": false,
+        "urgentHunger": false,
+        "visiblePrompt": true
+      },
+      "step": 4017,
+      "terminated": false,
+      "truncated": false
+    }
+  ]
+}

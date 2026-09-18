@@ -1,0 +1,8 @@
+{
+  "schema": "jev-nethack-frontier-v2-successor-predecessor-link/v1",
+  "predecessor": "frontier-v2-paired-20260918T154833Z",
+  "predecessorPackage": "frontier-v2-incomplete.tar.gz",
+  "predecessorArchiveSha256": "1e9e37a105e2ad68673a607deb65546d89c5a88e7df46f5fb331868db9f598d8",
+  "predecessorFailureManifest": "successor-source/original-failure-manifest.json",
+  "note": "Predecessor bundle linked by immutable archive hash; not duplicated."
+}

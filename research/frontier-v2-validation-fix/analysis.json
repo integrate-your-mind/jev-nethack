@@ -1,0 +1,26 @@
+{
+  "aggregateDelta": 14,
+  "classification": "negative",
+  "developmentOnly": true,
+  "doesNotAuthorizeLiveMigration": true,
+  "pairs": [
+    {
+      "baselineNewPositions": 0,
+      "branchAfterStep": 3359,
+      "delta": 8,
+      "frontierNewPositions": 8
+    },
+    {
+      "baselineNewPositions": 0,
+      "branchAfterStep": 3999,
+      "delta": 6,
+      "frontierNewPositions": 6
+    }
+  ],
+  "primaryMetric": "new_positions_vs_exact_prefix",
+  "safetyFailures": [
+    "priority:3359",
+    "menu:3999"
+  ],
+  "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1"
+}

@@ -12,6 +12,8 @@ The included pilots are development experiments. They are negative or inconclusi
 
 The [cycle-aware-v1 experiment](research/cycle-aware-v1/README.md) reduced backtracking in a paired 64-action comparison but produced no new cells, score gain, or depth gain. It was rejected for the persistent live player. Both saved-state iterations and the complete raw paired branch data are preserved in the [negative-result release](https://github.com/integrate-your-mind/jev-nethack/releases/tag/v0.3.0-cycle-aware-v1-negative).
 
+The [frontier-v2 validation-fix comparison](research/frontier-v2-validation-fix/README.md) found 14 more new cells across two saved positions, but its preregistered result is **negative** because safety gates failed. Detailed evidence shows a combat-priority lapse and a menu-evaluator false positive: the menu action actually opened the door correctly. All 143 provider responses and 128 raw transitions are preserved, with no live policy migration. The original zero-call infrastructure failure is preserved separately.
+
 ## Layout
 
 - `until-win/`: persistent direct Jev policy with verified same-game recovery and raw transition capture

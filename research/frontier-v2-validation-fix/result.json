@@ -1,0 +1,1946 @@
+{
+  "aggregateAttemptedProviderCalls": 143,
+  "analysis": {
+    "aggregateDelta": 14,
+    "classification": "negative",
+    "developmentOnly": true,
+    "doesNotAuthorizeLiveMigration": true,
+    "pairs": [
+      {
+        "baselineNewPositions": 0,
+        "branchAfterStep": 3359,
+        "delta": 8,
+        "frontierNewPositions": 8
+      },
+      {
+        "baselineNewPositions": 0,
+        "branchAfterStep": 3999,
+        "delta": 6,
+        "frontierNewPositions": 6
+      }
+    ],
+    "primaryMetric": "new_positions_vs_exact_prefix",
+    "safetyFailures": [
+      "priority:3359",
+      "menu:3999"
+    ],
+    "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1"
+  },
+  "completed": true,
+  "developmentOnly": true,
+  "maximumAggregateProviderAttempts": 192,
+  "originalAttemptedProviderCalls": 0,
+  "preflight": {
+    "actionContractSha256": "92e41e74c51bbd1e916074ac2e2fdc70d482cbcd55f228762945d0e4bf539362",
+    "actionCount": 121,
+    "harnessFreezeSha256": "820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d",
+    "originalAttemptedProviderCalls": 0,
+    "providerCalls": 0,
+    "successorMaximumProviderAttempts": 192,
+    "verified": true
+  },
+  "providerCallsDuringReplay": 0,
+  "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+  "successorAttemptedProviderCalls": 143,
+  "summaries": [
+    {
+      "actionCalls": 32,
+      "actionLabels": [
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)"
+      ],
+      "actionsExecuted": 32,
+      "arm": "baseline",
+      "blankOrWallAttemptSteps": [],
+      "branchAfterStep": 3359,
+      "depthDelta": 0,
+      "developmentOnly": true,
+      "distinctPositions": 4,
+      "distinctRawObservations": 33,
+      "endPlayer": {
+        "armor_class": 4,
+        "condition_bits": 0,
+        "depth": 1,
+        "dungeon": 0,
+        "experience_level": 2,
+        "gold": 2,
+        "hp": 17,
+        "hunger_code": 1,
+        "level": 1,
+        "max_hp": 17,
+        "score": 102,
+        "turn": 2479,
+        "x": 37,
+        "y": 4
+      },
+      "exactRawNoOps": 0,
+      "failure": null,
+      "frontierTargetsReached": [],
+      "futureDistinctPositions": 4,
+      "goalCalls": 0,
+      "hpDelta": 0,
+      "hungerEnd": 1,
+      "hungerStart": 1,
+      "knownRouteLengthSequence": [
+        9,
+        10,
+        11,
+        10,
+        9,
+        8,
+        9,
+        8,
+        9,
+        10,
+        11,
+        10,
+        9,
+        8,
+        9,
+        8,
+        9,
+        10,
+        11,
+        10,
+        9,
+        8,
+        9,
+        8,
+        9,
+        10,
+        11,
+        10,
+        9,
+        8,
+        9,
+        8
+      ],
+      "minimumHp": 17,
+      "newCellsVsPrefix": [],
+      "positions": [
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          36,
+          4
+        ],
+        [
+          0,
+          1,
+          35,
+          4
+        ],
+        [
+          0,
+          1,
+          36,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          36,
+          4
+        ],
+        [
+          0,
+          1,
+          35,
+          4
+        ],
+        [
+          0,
+          1,
+          36,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          36,
+          4
+        ],
+        [
+          0,
+          1,
+          35,
+          4
+        ],
+        [
+          0,
+          1,
+          36,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          36,
+          4
+        ],
+        [
+          0,
+          1,
+          35,
+          4
+        ],
+        [
+          0,
+          1,
+          36,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ]
+      ],
+      "priorityGoalMismatchSteps": [],
+      "promptMismatchSteps": [],
+      "providerCalls": 32,
+      "providerCallsDuringReplay": 0,
+      "replay": {
+        "actionsReplayed": 3360,
+        "branchAfterStep": 3359,
+        "branchMemorySha256": "1fdbb7b6fc8a6c4503838e85f4011d9ec5588de7c6f23e97197bc3c1f669b5d9",
+        "branchObservationDigest": "9aef8961f3ea879d078929c7467954a0225bd0d07440cc835a3b3ea9c1c67572",
+        "branchStateSha256": "fa00da9c976cc63f2eb9d66b7254102915bbccf1dbb1430f3ef759b5161cd8e0",
+        "environmentRoot": "JEV_NETHACK_DATA_ROOT/policy-candidates/frontier-v2-validation-fix/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/replay",
+        "initialObservationDigest": "d3933a412f2faee035706fe1172bb898d80f2e7e91bba71d008bae8d73e52c0d",
+        "isolatedFromLiveData": true,
+        "nleSavedir": "JEV_NETHACK_DATA_ROOT/policy-candidates/frontier-v2-validation-fix/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/baseline/replay/nle-ttyrec",
+        "observedNodes": 38,
+        "providerCallsDuringReplay": 0,
+        "providerClientConstructedDuringReplay": false,
+        "replaySeconds": 4.651451707999513,
+        "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+        "verified": true,
+        "verifiedAt": "2026-09-18T16:05:00.031219+00:00"
+      },
+      "reversalSteps": [
+        3362,
+        3365,
+        3366,
+        3367,
+        3370,
+        3373,
+        3374,
+        3375,
+        3378,
+        3381,
+        3382,
+        3383,
+        3386,
+        3389,
+        3390,
+        3391
+      ],
+      "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+      "scoreDelta": 0,
+      "startPlayer": {
+        "armor_class": 4,
+        "condition_bits": 0,
+        "depth": 1,
+        "dungeon": 0,
+        "experience_level": 2,
+        "gold": 2,
+        "hp": 17,
+        "hunger_code": 1,
+        "level": 1,
+        "max_hp": 17,
+        "score": 102,
+        "turn": 2452,
+        "x": 37,
+        "y": 4
+      },
+      "status": "action_limit",
+      "terminal": null,
+      "totalReward": 0.0,
+      "trainingManifest": {
+        "artifacts": [
+          {
+            "bytes": 753155,
+            "contentType": "application/vnd.jev-nethack.transitions+npz",
+            "filename": "transitions-000001.npzpack",
+            "records": 32,
+            "sha256": "d0e8a395e1cce74c12d914c2bc9f19c16d94ffaf14063d5e1b98617fc5092d52"
+          },
+          {
+            "bytes": 18671,
+            "contentType": "application/x-ndjson",
+            "filename": "transitions-000001.index.jsonl",
+            "records": 32,
+            "sha256": "de81dc2a39529aa9a430ab4b45f5ddd003046c42d09e31f145509651e66efc71"
+          }
+        ],
+        "completed": true,
+        "reason": "action_limit",
+        "records": 32,
+        "schema": "jev-nethack-transition-pack/v1"
+      },
+      "turnDelta": 27,
+      "twoStepReversals": 16,
+      "unchangedPositionActions": 0
+    },
+    {
+      "actionCalls": 32,
+      "actionLabels": [
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press Space to continue past --More--",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'F': Command.FIGHT",
+        "Press 'F': Command.FIGHT",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'F': Command.FIGHT",
+        "Press 'F': Command.FIGHT",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'F': Command.FIGHT",
+        "Press 'F': Command.FIGHT",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press ',': Command.PICKUP",
+        "Press '.': MiscDirection.WAIT",
+        "Press '.': MiscDirection.WAIT",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press ':': Command.LOOK",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)"
+      ],
+      "actionsExecuted": 32,
+      "arm": "frontier-v2",
+      "blankOrWallAttemptSteps": [],
+      "branchAfterStep": 3359,
+      "depthDelta": 0,
+      "developmentOnly": true,
+      "distinctPositions": 18,
+      "distinctRawObservations": 29,
+      "endPlayer": {
+        "armor_class": 4,
+        "condition_bits": 0,
+        "depth": 1,
+        "dungeon": 0,
+        "experience_level": 2,
+        "gold": 2,
+        "hp": 12,
+        "hunger_code": 1,
+        "level": 1,
+        "max_hp": 17,
+        "score": 110,
+        "turn": 2471,
+        "x": 46,
+        "y": 9
+      },
+      "exactRawNoOps": 4,
+      "failure": null,
+      "frontierTargetsReached": [
+        {
+          "step": 3370,
+          "targets": [
+            [
+              0,
+              1,
+              45,
+              7
+            ],
+            [
+              0,
+              1,
+              45,
+              7
+            ]
+          ]
+        },
+        {
+          "step": 3371,
+          "targets": [
+            [
+              0,
+              1,
+              46,
+              7
+            ],
+            [
+              0,
+              1,
+              46,
+              7
+            ],
+            [
+              0,
+              1,
+              46,
+              7
+            ],
+            [
+              0,
+              1,
+              46,
+              7
+            ]
+          ]
+        },
+        {
+          "step": 3372,
+          "targets": [
+            [
+              0,
+              1,
+              47,
+              7
+            ],
+            [
+              0,
+              1,
+              47,
+              7
+            ],
+            [
+              0,
+              1,
+              47,
+              7
+            ]
+          ]
+        },
+        {
+          "step": 3373,
+          "targets": [
+            [
+              0,
+              1,
+              48,
+              7
+            ],
+            [
+              0,
+              1,
+              48,
+              7
+            ]
+          ]
+        },
+        {
+          "step": 3375,
+          "targets": [
+            [
+              0,
+              1,
+              48,
+              8
+            ],
+            [
+              0,
+              1,
+              48,
+              8
+            ]
+          ]
+        },
+        {
+          "step": 3382,
+          "targets": [
+            [
+              0,
+              1,
+              48,
+              9
+            ]
+          ]
+        },
+        {
+          "step": 3389,
+          "targets": [
+            [
+              0,
+              1,
+              47,
+              9
+            ],
+            [
+              0,
+              1,
+              47,
+              9
+            ]
+          ]
+        },
+        {
+          "step": 3391,
+          "targets": [
+            [
+              0,
+              1,
+              46,
+              9
+            ]
+          ]
+        }
+      ],
+      "futureDistinctPositions": 17,
+      "goalCalls": 8,
+      "hpDelta": -5,
+      "hungerEnd": 1,
+      "hungerStart": 1,
+      "knownRouteLengthSequence": [
+        9,
+        8,
+        7,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "minimumHp": 12,
+      "newCellsVsPrefix": [
+        [
+          0,
+          1,
+          45,
+          7
+        ],
+        [
+          0,
+          1,
+          46,
+          7
+        ],
+        [
+          0,
+          1,
+          46,
+          9
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          39,
+          4
+        ],
+        [
+          0,
+          1,
+          39,
+          4
+        ],
+        [
+          0,
+          1,
+          40,
+          4
+        ],
+        [
+          0,
+          1,
+          41,
+          4
+        ],
+        [
+          0,
+          1,
+          42,
+          4
+        ],
+        [
+          0,
+          1,
+          43,
+          4
+        ],
+        [
+          0,
+          1,
+          44,
+          4
+        ],
+        [
+          0,
+          1,
+          45,
+          5
+        ],
+        [
+          0,
+          1,
+          45,
+          6
+        ],
+        [
+          0,
+          1,
+          45,
+          7
+        ],
+        [
+          0,
+          1,
+          46,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          47,
+          9
+        ],
+        [
+          0,
+          1,
+          47,
+          9
+        ],
+        [
+          0,
+          1,
+          46,
+          9
+        ]
+      ],
+      "priorityGoalMismatchSteps": [
+        3382
+      ],
+      "promptMismatchSteps": [],
+      "providerCalls": 40,
+      "providerCallsDuringReplay": 0,
+      "replay": {
+        "actionsReplayed": 3360,
+        "branchAfterStep": 3359,
+        "branchMemorySha256": "1fdbb7b6fc8a6c4503838e85f4011d9ec5588de7c6f23e97197bc3c1f669b5d9",
+        "branchObservationDigest": "9aef8961f3ea879d078929c7467954a0225bd0d07440cc835a3b3ea9c1c67572",
+        "branchStateSha256": "fa00da9c976cc63f2eb9d66b7254102915bbccf1dbb1430f3ef759b5161cd8e0",
+        "environmentRoot": "JEV_NETHACK_DATA_ROOT/policy-candidates/frontier-v2-validation-fix/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/replay",
+        "initialObservationDigest": "d3933a412f2faee035706fe1172bb898d80f2e7e91bba71d008bae8d73e52c0d",
+        "isolatedFromLiveData": true,
+        "nleSavedir": "JEV_NETHACK_DATA_ROOT/policy-candidates/frontier-v2-validation-fix/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3359/frontier-v2/replay/nle-ttyrec",
+        "observedNodes": 38,
+        "providerCallsDuringReplay": 0,
+        "providerClientConstructedDuringReplay": false,
+        "replaySeconds": 4.619088915998873,
+        "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+        "verified": true,
+        "verifiedAt": "2026-09-18T16:05:21.415997+00:00"
+      },
+      "reversalSteps": [],
+      "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+      "scoreDelta": 8,
+      "startPlayer": {
+        "armor_class": 4,
+        "condition_bits": 0,
+        "depth": 1,
+        "dungeon": 0,
+        "experience_level": 2,
+        "gold": 2,
+        "hp": 17,
+        "hunger_code": 1,
+        "level": 1,
+        "max_hp": 17,
+        "score": 102,
+        "turn": 2452,
+        "x": 37,
+        "y": 4
+      },
+      "status": "action_limit",
+      "terminal": null,
+      "totalReward": 8.0,
+      "trainingManifest": {
+        "artifacts": [
+          {
+            "bytes": 1084802,
+            "contentType": "application/vnd.jev-nethack.transitions+npz",
+            "filename": "transitions-000001.npzpack",
+            "records": 32,
+            "sha256": "d76139604049af6bc6c4284953bd9453c6f512006b3703270efbfd3e207840b3"
+          },
+          {
+            "bytes": 18771,
+            "contentType": "application/x-ndjson",
+            "filename": "transitions-000001.index.jsonl",
+            "records": 32,
+            "sha256": "ac7211ca9c575bbd3f0ef76ff297a9193e616f233dc0a3974a5b8b8a1d2d146b"
+          }
+        ],
+        "completed": true,
+        "reason": "action_limit",
+        "records": 32,
+        "schema": "jev-nethack-transition-pack/v1"
+      },
+      "turnDelta": 19,
+      "twoStepReversals": 0,
+      "unchangedPositionActions": 15
+    },
+    {
+      "actionCalls": 32,
+      "actionLabels": [
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)"
+      ],
+      "actionsExecuted": 32,
+      "arm": "baseline",
+      "blankOrWallAttemptSteps": [],
+      "branchAfterStep": 3999,
+      "depthDelta": 0,
+      "developmentOnly": true,
+      "distinctPositions": 2,
+      "distinctRawObservations": 33,
+      "endPlayer": {
+        "armor_class": 4,
+        "condition_bits": 0,
+        "depth": 1,
+        "dungeon": 0,
+        "experience_level": 2,
+        "gold": 2,
+        "hp": 17,
+        "hunger_code": 1,
+        "level": 1,
+        "max_hp": 17,
+        "score": 110,
+        "turn": 2952,
+        "x": 37,
+        "y": 4
+      },
+      "exactRawNoOps": 0,
+      "failure": null,
+      "frontierTargetsReached": [],
+      "futureDistinctPositions": 2,
+      "goalCalls": 0,
+      "hpDelta": 0,
+      "hungerEnd": 1,
+      "hungerStart": 1,
+      "knownRouteLengthSequence": [
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8,
+        9,
+        8
+      ],
+      "minimumHp": 17,
+      "newCellsVsPrefix": [],
+      "positions": [
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          37,
+          4
+        ]
+      ],
+      "priorityGoalMismatchSteps": [],
+      "promptMismatchSteps": [],
+      "providerCalls": 32,
+      "providerCallsDuringReplay": 0,
+      "replay": {
+        "actionsReplayed": 4000,
+        "branchAfterStep": 3999,
+        "branchMemorySha256": "adc725aa8ca653d32a8cbfcbd7b17a065896b548eb188f466326fa99d3751844",
+        "branchObservationDigest": "f0233c5d7970de255171f029c4ff2bbdb1c36368b8fd01400c95e31cc020803f",
+        "branchStateSha256": "f79a750eb078be3ee274a8963f155b49486d8f2251151903de3fcb7055c55de9",
+        "environmentRoot": "JEV_NETHACK_DATA_ROOT/policy-candidates/frontier-v2-validation-fix/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/replay",
+        "initialObservationDigest": "d3933a412f2faee035706fe1172bb898d80f2e7e91bba71d008bae8d73e52c0d",
+        "isolatedFromLiveData": true,
+        "nleSavedir": "JEV_NETHACK_DATA_ROOT/policy-candidates/frontier-v2-validation-fix/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/baseline/replay/nle-ttyrec",
+        "observedNodes": 38,
+        "providerCallsDuringReplay": 0,
+        "providerClientConstructedDuringReplay": false,
+        "replaySeconds": 5.582899291999638,
+        "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+        "verified": true,
+        "verifiedAt": "2026-09-18T16:05:50.472090+00:00"
+      },
+      "reversalSteps": [
+        4001,
+        4002,
+        4003,
+        4004,
+        4005,
+        4006,
+        4007,
+        4008,
+        4009,
+        4010,
+        4011,
+        4012,
+        4013,
+        4014,
+        4015,
+        4016,
+        4017,
+        4018,
+        4019,
+        4020,
+        4021,
+        4022,
+        4023,
+        4024,
+        4025,
+        4026,
+        4027,
+        4028,
+        4029,
+        4030,
+        4031
+      ],
+      "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+      "scoreDelta": 0,
+      "startPlayer": {
+        "armor_class": 4,
+        "condition_bits": 0,
+        "depth": 1,
+        "dungeon": 0,
+        "experience_level": 2,
+        "gold": 2,
+        "hp": 17,
+        "hunger_code": 1,
+        "level": 1,
+        "max_hp": 17,
+        "score": 110,
+        "turn": 2928,
+        "x": 37,
+        "y": 4
+      },
+      "status": "action_limit",
+      "terminal": null,
+      "totalReward": 0.0,
+      "trainingManifest": {
+        "artifacts": [
+          {
+            "bytes": 752089,
+            "contentType": "application/vnd.jev-nethack.transitions+npz",
+            "filename": "transitions-000001.npzpack",
+            "records": 32,
+            "sha256": "4c42668c75cee0b02f2b87bcda44cf0baddbc9c7f6a257d4cf508d3ba9ec1e14"
+          },
+          {
+            "bytes": 18671,
+            "contentType": "application/x-ndjson",
+            "filename": "transitions-000001.index.jsonl",
+            "records": 32,
+            "sha256": "ab34c91eb4871d605d23b749fb0a9c39c51f46b58ace6ddf1fd448bb423723a0"
+          }
+        ],
+        "completed": true,
+        "reason": "action_limit",
+        "records": 32,
+        "schema": "jev-nethack-transition-pack/v1"
+      },
+      "turnDelta": 24,
+      "twoStepReversals": 31,
+      "unchangedPositionActions": 0
+    },
+    {
+      "actionCalls": 32,
+      "actionLabels": [
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press Space to continue past --More--",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+        "Press 'o': Command.OPEN",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+        "Press 'k': CompassDirection.N; move/attack one step N (or choose this letter in a menu)",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)"
+      ],
+      "actionsExecuted": 32,
+      "arm": "frontier-v2",
+      "blankOrWallAttemptSteps": [
+        4029,
+        4031
+      ],
+      "branchAfterStep": 3999,
+      "depthDelta": 0,
+      "developmentOnly": true,
+      "distinctPositions": 16,
+      "distinctRawObservations": 31,
+      "endPlayer": {
+        "armor_class": 4,
+        "condition_bits": 0,
+        "depth": 1,
+        "dungeon": 0,
+        "experience_level": 2,
+        "gold": 2,
+        "hp": 14,
+        "hunger_code": 1,
+        "level": 1,
+        "max_hp": 17,
+        "score": 114,
+        "turn": 2946,
+        "x": 48,
+        "y": 8
+      },
+      "exactRawNoOps": 2,
+      "failure": null,
+      "frontierTargetsReached": [
+        {
+          "step": 4010,
+          "targets": [
+            [
+              0,
+              1,
+              45,
+              7
+            ],
+            [
+              0,
+              1,
+              45,
+              7
+            ]
+          ]
+        },
+        {
+          "step": 4011,
+          "targets": [
+            [
+              0,
+              1,
+              46,
+              7
+            ],
+            [
+              0,
+              1,
+              46,
+              7
+            ],
+            [
+              0,
+              1,
+              46,
+              7
+            ],
+            [
+              0,
+              1,
+              46,
+              7
+            ]
+          ]
+        },
+        {
+          "step": 4012,
+          "targets": [
+            [
+              0,
+              1,
+              47,
+              7
+            ],
+            [
+              0,
+              1,
+              47,
+              7
+            ],
+            [
+              0,
+              1,
+              47,
+              7
+            ]
+          ]
+        },
+        {
+          "step": 4013,
+          "targets": [
+            [
+              0,
+              1,
+              48,
+              7
+            ],
+            [
+              0,
+              1,
+              48,
+              7
+            ]
+          ]
+        },
+        {
+          "step": 4025,
+          "targets": [
+            [
+              0,
+              1,
+              48,
+              8
+            ],
+            [
+              0,
+              1,
+              48,
+              8
+            ]
+          ]
+        },
+        {
+          "step": 4026,
+          "targets": [
+            [
+              0,
+              1,
+              48,
+              9
+            ]
+          ]
+        }
+      ],
+      "futureDistinctPositions": 15,
+      "goalCalls": 7,
+      "hpDelta": -3,
+      "hungerEnd": 1,
+      "hungerStart": 1,
+      "knownRouteLengthSequence": [
+        9,
+        8,
+        7,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "minimumHp": 14,
+      "newCellsVsPrefix": [
+        [
+          0,
+          1,
+          45,
+          7
+        ],
+        [
+          0,
+          1,
+          46,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          1,
+          37,
+          4
+        ],
+        [
+          0,
+          1,
+          38,
+          4
+        ],
+        [
+          0,
+          1,
+          39,
+          4
+        ],
+        [
+          0,
+          1,
+          39,
+          4
+        ],
+        [
+          0,
+          1,
+          40,
+          4
+        ],
+        [
+          0,
+          1,
+          41,
+          4
+        ],
+        [
+          0,
+          1,
+          42,
+          4
+        ],
+        [
+          0,
+          1,
+          43,
+          4
+        ],
+        [
+          0,
+          1,
+          44,
+          4
+        ],
+        [
+          0,
+          1,
+          45,
+          5
+        ],
+        [
+          0,
+          1,
+          45,
+          6
+        ],
+        [
+          0,
+          1,
+          45,
+          7
+        ],
+        [
+          0,
+          1,
+          46,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          47,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          7
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          9
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ],
+        [
+          0,
+          1,
+          48,
+          8
+        ]
+      ],
+      "priorityGoalMismatchSteps": [],
+      "promptMismatchSteps": [
+        4017
+      ],
+      "providerCalls": 39,
+      "providerCallsDuringReplay": 0,
+      "replay": {
+        "actionsReplayed": 4000,
+        "branchAfterStep": 3999,
+        "branchMemorySha256": "adc725aa8ca653d32a8cbfcbd7b17a065896b548eb188f466326fa99d3751844",
+        "branchObservationDigest": "f0233c5d7970de255171f029c4ff2bbdb1c36368b8fd01400c95e31cc020803f",
+        "branchStateSha256": "f79a750eb078be3ee274a8963f155b49486d8f2251151903de3fcb7055c55de9",
+        "environmentRoot": "JEV_NETHACK_DATA_ROOT/policy-candidates/frontier-v2-validation-fix/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/replay",
+        "initialObservationDigest": "d3933a412f2faee035706fe1172bb898d80f2e7e91bba71d008bae8d73e52c0d",
+        "isolatedFromLiveData": true,
+        "nleSavedir": "JEV_NETHACK_DATA_ROOT/policy-candidates/frontier-v2-validation-fix/trial-runs/frontier-v2-validation-fix-20260918T160446Z/point-3999/frontier-v2/replay/nle-ttyrec",
+        "observedNodes": 38,
+        "providerCallsDuringReplay": 0,
+        "providerClientConstructedDuringReplay": false,
+        "replaySeconds": 5.630328291998012,
+        "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+        "verified": true,
+        "verifiedAt": "2026-09-18T16:06:10.701417+00:00"
+      },
+      "reversalSteps": [
+        4014,
+        4022
+      ],
+      "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+      "scoreDelta": 4,
+      "startPlayer": {
+        "armor_class": 4,
+        "condition_bits": 0,
+        "depth": 1,
+        "dungeon": 0,
+        "experience_level": 2,
+        "gold": 2,
+        "hp": 17,
+        "hunger_code": 1,
+        "level": 1,
+        "max_hp": 17,
+        "score": 110,
+        "turn": 2928,
+        "x": 37,
+        "y": 4
+      },
+      "status": "action_limit",
+      "terminal": null,
+      "totalReward": 4.0,
+      "trainingManifest": {
+        "artifacts": [
+          {
+            "bytes": 1060761,
+            "contentType": "application/vnd.jev-nethack.transitions+npz",
+            "filename": "transitions-000001.npzpack",
+            "records": 32,
+            "sha256": "8a089f0d4680985cd46a130a6ee2cb572a5c83667ef5c8963cdd8dfcd6cd7f36"
+          },
+          {
+            "bytes": 18771,
+            "contentType": "application/x-ndjson",
+            "filename": "transitions-000001.index.jsonl",
+            "records": 32,
+            "sha256": "e199214e6e81af5a5420a61c56787ba7ef1df0a583d78fddb976f9c7e58070fb"
+          }
+        ],
+        "completed": true,
+        "reason": "action_limit",
+        "records": 32,
+        "schema": "jev-nethack-transition-pack/v1"
+      },
+      "turnDelta": 18,
+      "twoStepReversals": 2,
+      "unchangedPositionActions": 12
+    }
+  ]
+}
