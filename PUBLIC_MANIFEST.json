@@ -9,7 +9,8 @@
     "site": "Exact deployed Site v4 commit 6d6af33eefaeac8a0ff8fe9132705c86f6fdc3df, portable hosting example replaces private project binding.",
     "research": "JevNetHack research/train.py",
     "notes": "selected research notes from the i-want-x20 outputs tree",
-    "until-win": "Frozen runtime after production-copy two-restart test and actual process-crash recovery on September18,2026; portable deployment template and minimal verified direct-play dependency lock."
+    "until-win": "Frozen runtime after production-copy two-restart test and actual process-crash recovery on September18,2026; portable deployment template and minimal verified direct-play dependency lock.",
+    "typesafe-skill": "Official typesafe-ai/skills project install for Codex using npx skills add; installed skill and upstream source lock copied without modification."
   },
   "excluded": [
     "API and ingest credentials",
@@ -19,6 +20,7 @@
     "model checkpoints and large generated datasets"
   ],
   "sha256": {
+    ".agents/skills/typesafe-ai/SKILL.md": "71ea90d7906c6554c4f4c460ef7361b2d26f59116ccdae986dc6d997b9389f52",
     ".gitignore": "325b3fedb4c1753a8a3c7f3d6821af924ed32e96212669b5129c04d1aca43a6c",
     "README.md": "b4f4bd34bf4a30d37149c562772d22848cb987fd27a63fa3b3712c18106df2db",
     "RELEASE_NOTES.md": "4d40a2ba06db90ccc69e547823ee888e504f33cbe2ee995a0334245bf138254e",
@@ -29,7 +31,7 @@
     "docs/next-experiment.md": "1273ed492c9cb7eb7e7c9b02c3ca1bf1f2960b17cbf2fa5d952401c9d9b1a67e",
     "docs/pilot-comparison.md": "b48bbf91428374980e22a570533ca9b2544114b5d6ca2d44b4bca14ba4dcab3b",
     "docs/rl-notes.md": "40372704fc13b19c04769e2712d4b83add40eaf9db88329c0fbf509f3d7433f8",
-    "docs/typesafe-skill.md": "efe76d5bc924b5b925c4608366291addfbc410af09cb968b88bcc51be6acf284",
+    "docs/typesafe-skill.md": "b953008bc7f1ef4c59afda1707c40b5e02a6a9c4178cce00f02aa49cdbd051de",
     "release-assets/ASSET_SHA256SUMS.json": "478ed534eec9eecb7a72929a8b25fcff0bb491221bfba48fd19477fbe7527fe8",
     "release-bundles/README.md": "09462ca7b47d74fef65ce15e2300cbc67c7073f6728167b43575ed97dfa6ec96",
     "release-bundles/SHA256SUMS.json": "fe79eb1ab5016d3a8cb1fd0f1a91441013423243f78759225898a64548501a91",
@@ -150,6 +152,7 @@
     "site/viewer.test.mjs": "3d4fbfe407501b9cb2298db44bce822df7181b11cdae09c2a65bb1b34de9d189",
     "site/worker.mjs": "30d7f282c1fd11a9c08df276a398da5c49655932570ffabe8275345534c62cf6",
     "site/worker.test.mjs": "6c1805fc496bd8cb82feaa8ed1f0df4139317766d03cfa5b067cbf7ec0cbddee",
+    "skills-lock.json": "73020e856455f67c4755b174779bc95f23be6c9264a1082141b37bf12a5a3196",
     "until-win/DECISIONS.md": "9185cac96eded3d09fca2c26e24a1b6456d8f6ac7dd1468479545948bdd79e1a",
     "until-win/README.md": "5e1e53b48cb73e113eed575034a8f2e3180920009eb0e6fd02d1aa6c20f6770b",
     "until-win/broadcast.py": "50f2c86c63864b98526691e5ac0c60ca05734330f2c61ce2e63b49db44bc854f",

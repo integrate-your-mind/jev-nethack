@@ -2,7 +2,9 @@
 
 This project uses the official [TypeSafe skill](https://github.com/typesafe-ai/skills/tree/main/skills/typesafe-ai) and the Jev Workflows plugin for project classifications.
 
-Install it for Codex with one method:
+The installed skill is checked in at [`.agents/skills/typesafe-ai/SKILL.md`](../.agents/skills/typesafe-ai/SKILL.md), with its upstream source tracked in `skills-lock.json`. Codex can discover it from this repository.
+
+To install or refresh it for Codex, use one method:
 
 ```sh
 npx skills add typesafe-ai/skills --skill typesafe-ai --agent codex
