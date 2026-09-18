@@ -21,7 +21,7 @@ This pilot is not the historical challenge protocol: its NLE/game version, fixed
 
 ## Baselines to reproduce
 
-See [the source ledger](../nethack-sota-sources.md) for exact scenarios, citations and missing evidence.
+See [the source ledger](nethack-sota-sources.md) for exact scenarios, citations and missing evidence.
 
 | Track | Reference to reproduce | Comparison boundary |
 |---|---|---|

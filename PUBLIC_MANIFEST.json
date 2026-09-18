@@ -10,7 +10,8 @@
     "research": "JevNetHack research/train.py",
     "notes": "selected research notes from the i-want-x20 outputs tree",
     "until-win": "Frozen runtime after production-copy two-restart test and actual process-crash recovery on September18,2026; portable deployment template and minimal verified direct-play dependency lock.",
-    "typesafe-skill": "Official typesafe-ai/skills project install for Codex using npx skills add; installed skill and upstream source lock copied without modification."
+    "typesafe-skill": "Official typesafe-ai/skills project install for Codex using npx skills add; installed skill and upstream source lock copied without modification.",
+    "source-ledger": "Preserved September17 literature ledger with bounded September18 primary-source Puffer refresh; no protocol-backed Puffer win receipt located."
   },
   "excluded": [
     "API and ingest credentials",
@@ -26,10 +27,11 @@
     "RELEASE_NOTES.md": "4d40a2ba06db90ccc69e547823ee888e504f33cbe2ee995a0334245bf138254e",
     "data/training/README.md": "74361749d1ad7e501cf46267e8e689adace65abedf3cfb5f8bc340067a8c77fd",
     "data/training/sample.jsonl": "a3e9009f3c58a6b10be46e0d4067eb796c9a035dd3926f2bf90e1785dcb7cc8f",
-    "docs/benchmark-plan.md": "da6a7baa7f9b47c52a4004330f425f919803dc8905cb6e2b4869a72ee84fc217",
+    "docs/benchmark-plan.md": "146b7928d89a87a6975792a2d848646f59fc94b9fae8424aaf84e0445eb1b2b1",
     "docs/broadcast-notes.md": "0c3f0ad4b9f4c2ca5fb1e87193bd25eed0acb8d75e3d472675b5f43d0bfdea5f",
+    "docs/nethack-sota-sources.md": "181f0b5d96a9ade5c2e7527b6df4a648ab58d69e604e600ccdd04a90c8b31f3f",
     "docs/next-experiment.md": "1273ed492c9cb7eb7e7c9b02c3ca1bf1f2960b17cbf2fa5d952401c9d9b1a67e",
-    "docs/pilot-comparison.md": "b48bbf91428374980e22a570533ca9b2544114b5d6ca2d44b4bca14ba4dcab3b",
+    "docs/pilot-comparison.md": "ef8c755e15e3213ccf7d1e6564b97e5c5629b142ce5e7b311ca22e5fa35f47e8",
     "docs/rl-notes.md": "40372704fc13b19c04769e2712d4b83add40eaf9db88329c0fbf509f3d7433f8",
     "docs/typesafe-skill.md": "b953008bc7f1ef4c59afda1707c40b5e02a6a9c4178cce00f02aa49cdbd051de",
     "release-assets/ASSET_SHA256SUMS.json": "478ed534eec9eecb7a72929a8b25fcff0bb491221bfba48fd19477fbe7527fe8",

@@ -2,6 +2,9 @@
 
 Checked 2026-09-18 from the completed receipts. This is a capped feasibility comparison, not a SOTA evaluation. The five evaluation arms are direct Jev, random control, BC-only, PPO-only, and BC→PPO. Development `jev-pilot-v2` is reported separately because its episodes supplied teacher data.
 
+
+**Evidence availability after recovery:** This is a historical report preserved from earlier receipt inspection. The original pilot JSON, decision receipts and weights referenced below are not included in this repository and remain unreadable cloud placeholders in the current recovery. Their reported numbers have not been reverified from those originals. File names below identify the historical sources, not public downloads. Current live gameplay and its verified recordings are separate.
+
 ## Common evaluation contract
 
 All five arms used NetHack 3.6.7 through NLE 1.3.0, Gymnasium 1.2.0, the Human Monk role `mon-hum-neu-mal`, NLE’s 121 keyboard/menu actions, seeds **10001, 10002, 10003**, and a **128-action cap**. The direct and random runs stopped with `stop_reason=action_cap`; the RL runs stopped with `stop_reason=evaluation_cap`. None completed an episode. Every arm stayed at dungeon depth 1 and produced zero ascensions.
@@ -16,7 +19,7 @@ The score below is the native NetHackScore observed at the artificial cap. It is
 | PPO-only | 0 | 0 | 0 | 0.0 | 0 | 128 | 1, 1, 1 | 0 |
 | BC→PPO | 0 | 0 | 0 | 0.0 | 0 | 128 | 1, 1, 1 | 0 |
 
-Receipts: [direct Jev summary](outputs/results/jev-heldout/summary.json), [random summary](outputs/results/random-heldout/summary.json), [BC eval](outputs/results/bc-pilot/eval.json), [PPO eval](outputs/results/ppo-pilot/eval.json), and [BC→PPO eval](outputs/results/bc-ppo-pilot/eval.json). The machine-readable comparison is [pilot-comparison.json](outputs/pilot-comparison.json).
+Receipts: direct Jev summary (`outputs/results/jev-heldout/summary.json`; unavailable original), random summary (`outputs/results/random-heldout/summary.json`; unavailable original), BC eval (`outputs/results/bc-pilot/eval.json`; unavailable original), PPO eval (`outputs/results/ppo-pilot/eval.json`; unavailable original), and BC→PPO eval (`outputs/results/bc-ppo-pilot/eval.json`; unavailable original). The machine-readable comparison is pilot-comparison.json (`outputs/pilot-comparison.json`; unavailable original).
 
 ## Training receipts
 
@@ -26,7 +29,7 @@ PPO-only and BC→PPO each ran **64 PPO updates × 128 rollout steps = 8,192 env
 
 The initial and final policy hashes differ for all three trained arms, so weights changed. The zero-reward receipts do not show that the changed weights learned NetHack strategy.
 
-Training artifacts: [BC config/learning](outputs/results/bc-pilot), [PPO config/learning](outputs/results/ppo-pilot), and [BC→PPO config/learning](outputs/results/bc-ppo-pilot).
+Training artifacts: BC config/learning (`outputs/results/bc-pilot`; unavailable original), PPO config/learning (`outputs/results/ppo-pilot`; unavailable original), and BC→PPO config/learning (`outputs/results/bc-ppo-pilot`; unavailable original).
 
 ## Initial-state digest verification
 
@@ -49,7 +52,7 @@ This verifies the matched initial states and serialization contract. It does not
 
 ## Development teacher run
 
-`jev-pilot-v2` used seeds 101–103 and the same 128-action cap. Its observed scores were **[4, 4, 18]**, with native rewards **[4.0, 4.0, 18.0]**, depth 1 throughout, and zero ascensions. These are development teacher traces used by BC and BC→PPO; they are not held-out evaluation results or completed-game scores. See the [development summary](outputs/results/jev-pilot-v2/summary.json) and [teacher steps](outputs/results/jev-pilot-v2/steps.jsonl).
+`jev-pilot-v2` used seeds 101–103 and the same 128-action cap. Its observed scores were **[4, 4, 18]**, with native rewards **[4.0, 4.0, 18.0]**, depth 1 throughout, and zero ascensions. These are development teacher traces used by BC and BC→PPO; they are not held-out evaluation results or completed-game scores. See the development summary (`outputs/results/jev-pilot-v2/summary.json`; unavailable original) and teacher steps (`outputs/results/jev-pilot-v2/steps.jsonl`; unavailable original).
 
 ## Limitations and interpretation
 
@@ -61,6 +64,6 @@ This verifies the matched initial states and serialization contract. It does not
 
 ## Next Jev decisions and architecture broadcast
 
-The completed [menu-label decision](outputs/menu-decision.json) selected `relabel_full_actions` with confidence 1.0. The trigger was a prompt asking for `read(r)` while the full action labels described `r` as normal movement, causing repeated ineffective actions. This is a next-variant decision only; no new variant result is included here.
+The completed menu-label decision (`outputs/menu-decision.json`; unavailable original) selected `relabel_full_actions` with confidence 1.0. The trigger was a prompt asking for `read(r)` while the full action labels described `r` as normal movement, causing repeated ineffective actions. This is a next-variant decision only; no new variant result is included here.
 
-The separate [architecture decision](outputs/live-architecture-decision.json) addressed the new request to publish a public live Jev/NetHack site with complete recordings. It selected `hosted_ingest` at confidence 0.99. That is an architecture choice, not evidence of a public deployment, live stream, or verified permanent backup.
+The separate architecture decision (`outputs/live-architecture-decision.json`; unavailable original) addressed the new request to publish a public live Jev/NetHack site with complete recordings. It selected `hosted_ingest` at confidence 0.99. That is an architecture choice, not evidence of a public deployment, live stream, or verified permanent backup.
