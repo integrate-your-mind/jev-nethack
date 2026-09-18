@@ -1,0 +1,53 @@
+
+> test
+> node --test worker.test.mjs training-api.test.mjs viewer.test.mjs comments-api.test.mjs
+
+▶ public comments API
+  ✔ persists and lists plain comment data without turning markup into HTML (30.70175ms)
+  ✔ enforces origin, JSON, honeypot, schema, character, byte, and caller checks (1.617ms)
+  ✔ atomically admits only three concurrent comments per caller and anonymizes rate keys (1.943042ms)
+  ✔ never lets a stale-window request overwrite newer rate slots (1.445666ms)
+  ✔ fails closed for rate slots with malformed legacy epochs (1.520917ms)
+  ✔ lists newest first with bounded cursor pagination (69.900375ms)
+  ✔ requires moderator authentication for deletion and leaves existing routes intact (1.008375ms)
+✔ public comments API (109.140041ms)
+✔ auth, required size, checksum, and framed payload validation (26.0595ms)
+✔ same-body retries are idempotent and changed bodies conflict (2.1105ms)
+✔ manifest requires present matching objects and count/index agreement (2.308833ms)
+✔ published manifest retry, anonymous download, HEAD, and pagination (2.037375ms)
+✔ listing suppresses unverified or missing artifact manifests (1.687708ms)
+✔ accepts the exact NPZ pack and index produced by the Python writer (1.209875ms)
+✔ viewer keeps the existing live and archive bridges and parses as JavaScript (49.041042ms)
+✔ viewer exposes bounded, session-scoped history and honest accuracy semantics (0.452917ms)
+✔ provider credit backoff is a bounded pause and clears when the runner resumes (1.447292ms)
+✔ comments normalize pages and keep user content on the text-only path (1.360458ms)
+✔ pure viewer helpers validate probabilities, criteria labels, and episode identity (0.695584ms)
+✔ outcome summary keeps authoritative counters and never invents deaths (0.56475ms)
+✔ episode result summaries use strict terminal ascension evidence and a bounded score window (0.600542ms)
+✔ continuous counters take precedence over the bounded result window (0.499875ms)
+✔ movement counts actual contiguous action history and does not confuse turns with progress (0.731875ms)
+✔ waits, missing data and non-contiguous windows never create apparent backtracking (0.677416ms)
+✔ locations include dungeon level and the reported window is bounded (0.858125ms)
+✔ archive pagination reaches beyond the old cap, deduplicates refreshes and preserves existing recordings (59.454959ms)
+✔ native final scores, observed score, reward and reported deaths stay distinct (0.695791ms)
+▶ live API
+  ✔ returns offline before the first real frame and accepts an authenticated frame (30.157292ms)
+  ✔ requires bearer auth and does not echo secrets (0.685166ms)
+  ✔ rejects oversized JSON and stale sequence numbers (1.256167ms)
+  ✔ marks ended, delayed, and far-future frames offline (0.941333ms)
+✔ live API (33.756583ms)
+▶ recording API
+  ✔ streams immutable checksum-validated uploads and MP4 ranges (1.545167ms)
+  ✔ rejects bad checksums, missing lengths, oversized declarations, and all deletes (1.012459ms)
+  ✔ publishes only completed manifests whose JSONL and MP4 metadata match (2.015917ms)
+  ✔ rejects a zero-track MP4 manifest and filters a preserved invalid manifest from archive (1.975084ms)
+  ✔ rejects a completed manifest before referenced artifacts exist (0.39025ms)
+✔ recording API (7.217541ms)
+ℹ tests 35
+ℹ suites 3
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 194.688834

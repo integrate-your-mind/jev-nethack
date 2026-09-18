@@ -1,12 +1,12 @@
 {
   "repository_proposal": "integrate-your-mind/jev-nethack",
   "prepared_at": "2026-09-18",
-  "status": "Native score, shutdown, and provider-wait repairs deployed and independently reviewed. Same-game replay verified through 5,280 actions; public native score 138 and death outcome visible. The restored game is waiting on provider HTTP 402. No ascension.",
+  "status": "Public Site v8 comments, code links, and accurate provider pause display deployed. All 35 Site tests passed. Jev resumed the same game after credits were replenished; live action 5656 verified at 2026-09-18T19:03Z. No ascension.",
   "research_disclosure": "Included pilots are negative or inconclusive. No ascension, SOTA, or general learned-skill claim is made.",
   "data_disclosure": "The initial 12-row sample is illustrative. Full completed recording and raw-transition artifacts are published through the public Site and daily GitHub release archives; the isolated cycle-aware-v1 bundle preserves both selected-state iterations and full paired branch observations.",
   "source_provenance": {
     "runner": "JevNetHack application-support runner source",
-    "site": "Exact deployed Site v7 commit e3d59aacabfb59d52fe47a21b0c8b0145a1782ac; native final scores and explicit deaths separate from observedscore/reward; portablehostingexample replacesprivatebinding.",
+    "site": "Exact deployed Site v8 source d3f5b3b491b9bdfac1a6d9aebde599f4d7ff370f; public comments and credit-pause display; private hosting binding excluded.",
     "research": "JevNetHack research/train.py",
     "notes": "selected research notes from the i-want-x20 outputs tree",
     "until-win": "Metric and shutdown recovery repairs plus first-observation/backoff telemetry; exact source hashes and sequential independent reviews are in research/runtime-metrics-v1. Copied public-source suite: 95 passed, one opt-in skip.",
@@ -29,7 +29,7 @@
   "sha256": {
     ".agents/skills/typesafe-ai/SKILL.md": "71ea90d7906c6554c4f4c460ef7361b2d26f59116ccdae986dc6d997b9389f52",
     ".gitignore": "325b3fedb4c1753a8a3c7f3d6821af924ed32e96212669b5129c04d1aca43a6c",
-    "README.md": "cacfd2cfd1c4a3b673764b3918f8e00923a005590d31879daadc23465ce4f794",
+    "README.md": "e346a4499810614897248a71df5a6e7410f804e9125005d211c754f42c7cabde",
     "RELEASE_NOTES.md": "4d40a2ba06db90ccc69e547823ee888e504f33cbe2ee995a0334245bf138254e",
     "data/training/README.md": "74361749d1ad7e501cf46267e8e689adace65abedf3cfb5f8bc340067a8c77fd",
     "data/training/sample.jsonl": "a3e9009f3c58a6b10be46e0d4067eb796c9a035dd3926f2bf90e1785dcb7cc8f",
@@ -154,11 +154,11 @@
     "site/.openai/hosting.example.json": "1244aab8669ce9cab11af476f9cc87912be32af70a0f2cc879964a62eb03a016",
     "site/build.mjs": "54dbd5a82507f4a910076870f3baa4d56624cb63507feb3f5ecf53bf91e86d71",
     "site/fixtures/transition-pack-v1.json": "462aaa9767b1a024eec5650a7982d4e038012175e9eaf75645efe527b0647c8f",
-    "site/package.json": "c65a9e7f11f338d4105577d7e924541688355cf8903cb0195d751614bb21bd87",
-    "site/public/index.html": "4d52ba90b67cefa882c18ebc9a844753a35099b7aea35b1a483addeeb592b9f5",
+    "site/package.json": "36d5a6ce70773564d2d2d3a9b0b2828c71e06bf5e3c52dc3ec7999d7900fd7ad",
+    "site/public/index.html": "c9e30f8da82c0e1b2a36aad21327274570242032dffb32655afa075a52ab9622",
     "site/training-api.test.mjs": "50525a1468e2f1a91e24b07e4cf5b3616860bc37d416638bd3c15855339a8de9",
-    "site/viewer.test.mjs": "66bc8ed0c582dd8d34b4090fb54e10f4a8632e5740493e20cb3f02c16f4a3a52",
-    "site/worker.mjs": "30d7f282c1fd11a9c08df276a398da5c49655932570ffabe8275345534c62cf6",
+    "site/viewer.test.mjs": "93edf05c5794dcd71d5dc71571e8dd781244746d14e6915eb1ba3c5a9e343b95",
+    "site/worker.mjs": "d715f2c694921d79fb29fba00a6dc5b1ce76e2a4c681ecc39ad23a5092095238",
     "site/worker.test.mjs": "6c1805fc496bd8cb82feaa8ed1f0df4139317766d03cfa5b067cbf7ec0cbddee",
     "skills-lock.json": "73020e856455f67c4755b174779bc95f23be6c9264a1082141b37bf12a5a3196",
     "until-win/DECISIONS.md": "9185cac96eded3d09fca2c26e24a1b6456d8f6ac7dd1468479545948bdd79e1a",
@@ -273,7 +273,12 @@
     "until-win/historical_metrics_correction.py": "0aaa44d2c8970b3ff76325e973aedbcd87e19b1fad70b29c84f7a584777adf3a",
     "until-win/metrics.py": "7430fb511f07c2a3f0750acdf05401ac7fb051f663a7121594e86faea41b4e08",
     "until-win/test_historical_metrics_correction.py": "5983f2674b91c91c5d5e90152913a099e09e4634873e15c39c74d502b82ffe65",
-    "until-win/test_metrics.py": "9065d045234434b062a180d2920a41db0c64710dc011042f9822c0db373483f3"
+    "until-win/test_metrics.py": "9065d045234434b062a180d2920a41db0c64710dc011042f9822c0db373483f3",
+    "site/comments-api.test.mjs": "7728a408c2c8898a67027c604dae4e492d40469a1cd299bb8da1794e1ed860fe",
+    "site/COMMENTS.md": "ca0c58adf48cc4512516367116928cf2c957c304c7393859732ffa22ac134718",
+    "research/site-v8/live-verification.json": "914f2a8f5f72278fb9960dd5c753b57e6e90984d1abf20449738bd8df7c13511",
+    "research/site-v8/test-results.txt": "6bd673aab6a94be44dc24ed979925a86eede93220a7036ca42c6f425a4fcdbb6",
+    "research/site-v8/validation.md": "bcfebcea92644f2b1e85544b8c99277c5835c06fa128fa8dfd27ced4066daa50"
   },
   "repository_url": "https://github.com/integrate-your-mind/jev-nethack",
   "recording_disclosure": "Completed game event logs and segment manifests are tracked; MP4 binaries and full recording bundles are GitHub Release assets with checksums."

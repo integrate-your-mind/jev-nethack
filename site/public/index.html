@@ -81,6 +81,7 @@
     .status.offline::before { background: var(--red); }
     .status.waiting { color: var(--amber); border-color: rgba(240, 198, 117, .45); }
     .status.waiting::before { background: var(--amber); }
+    .code-link { color: var(--green); border-color: rgba(140, 224, 161, .55); }
     .hero { padding: 1.6rem 0 1.25rem; max-width: 860px; }
     .eyebrow { margin: 0 0 .7rem; color: var(--green); font-size: .73rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
     h1 { max-width: 760px; margin: 0; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.02; letter-spacing: -.055em; }
@@ -143,6 +144,9 @@
     .archive-links a { font-size: .8rem; }
     .empty { grid-column: 1 / -1; padding: 1.2rem; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); }
     .notice { margin: 1.2rem 0 0; padding: 1rem 1.1rem; border-left: 3px solid var(--amber); color: var(--muted); background: rgba(63, 52, 29, .18); }
+    .runtime-notice { margin: 1rem 0 0; padding: 1rem 1.1rem; border: 1px solid rgba(240, 198, 117, .4); border-left: 3px solid var(--amber); border-radius: 9px; color: var(--text); background: rgba(63, 52, 29, .22); }
+    .runtime-notice strong { color: var(--amber); }
+    .runtime-notice.error { border-color: rgba(238, 140, 140, .45); border-left-color: var(--red); background: rgba(63, 29, 29, .2); }
     .analytics-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 1rem; }
     .analytics-panel { padding: 1rem; }
     .analytics-panel h3 { margin: 0; font-size: .95rem; }
@@ -175,6 +179,23 @@
     .outcome-stats dt { color: var(--muted); font-size: .68rem; }
     .outcome-stats dd { margin: .15rem 0 0; font-weight: 700; }
     .analytics-foot { display: flex; justify-content: space-between; gap: .7rem; margin-top: .7rem; color: var(--muted); font-size: .72rem; }
+    .comments-panel { padding: 1rem; }
+    .comments-form { display: grid; gap: .75rem; max-width: 720px; }
+    .comments-form label { display: grid; gap: .3rem; color: var(--muted); font-size: .78rem; }
+    .comments-form input, .comments-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: .65rem .75rem; color: var(--text); background: #0c1511; font: inherit; }
+    .comments-form textarea { min-height: 7rem; resize: vertical; }
+    .comments-form input:focus-visible, .comments-form textarea:focus-visible { border-color: var(--green); outline: 2px solid rgba(140, 224, 161, .18); outline-offset: 2px; }
+    .comments-form .honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+    .comments-form small, .comments-status { color: var(--muted); font-size: .78rem; }
+    .comments-actions { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+    .comments-list { display: grid; gap: .75rem; margin-top: 1.2rem; }
+    .comment-card { padding: .85rem; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-hi); }
+    .comment-meta { display: flex; justify-content: space-between; gap: .8rem; color: var(--muted); font-size: .76rem; }
+    .comment-meta strong { color: var(--text); font-weight: 650; overflow-wrap: anywhere; }
+    .comment-body { margin: .5rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+    footer { margin: 4.5rem 0 2.5rem; padding: 1.2rem 0 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: .55rem .9rem; margin-top: .6rem; }
+    .footer-links a { color: var(--green); }
     code { color: var(--green); font: .9em ui-monospace, SFMono-Regular, Menlo, monospace; }
     @media (max-width: 820px) {
       .watch-grid { grid-template-columns: 1fr; }
@@ -205,6 +226,7 @@
     </div>
     <div class="top-actions">
       <span id="live-status" class="status waiting" role="status" aria-live="polite">Connecting</span>
+      <a class="button code-link" href="https://github.com/integrate-your-mind/jev-nethack" target="_blank" rel="noopener">View code on GitHub</a>
       <button id="share" type="button">Copy public link</button>
       <button id="refresh-archive" type="button">Refresh archive</button>
     </div>
@@ -245,6 +267,8 @@
         </div>
       </aside>
     </div>
+
+    <div id="runtime-notice" class="runtime-notice" role="status" aria-live="polite" hidden></div>
 
     <section aria-labelledby="analytics-title">
       <div class="section-head"><div><p class="eyebrow">Decision telemetry</p><h2 id="analytics-title">What Jev is doing</h2></div><p>Probabilities and progress come from the server frame. Browser history is bounded to this session and is never presented as lifetime accuracy.</p></div>
@@ -292,7 +316,27 @@
       <div id="archive-list" class="archive-list" aria-live="polite"><div class="empty">Loading the public archive…</div></div>
       <div class="analytics-foot"><span id="archive-page-status">Loading the first page.</span><button id="load-more-archive" hidden>Load more recordings</button></div>
     </section>
+
+    <section aria-labelledby="comments-title">
+      <div class="section-head"><div><p class="eyebrow">Community notes</p><h2 id="comments-title">Comments</h2></div><p>Share a short note about the run. Comments are public; names are unverified.</p></div>
+      <article class="panel comments-panel">
+        <form id="comments-form" class="comments-form">
+          <label for="comment-name">Name <span>(40 characters max)</span><input id="comment-name" name="displayName" type="text" maxlength="40" autocomplete="nickname" required></label>
+          <label for="comment-body">Comment <span>(2,000 characters max)</span><textarea id="comment-body" name="body" maxlength="2000" required></textarea></label>
+          <label class="honeypot" aria-hidden="true">Website<input id="comment-website" name="website" type="text" tabindex="-1" autocomplete="off"></label>
+          <small>Comments are public and treated as plain text. Do not include private information.</small>
+          <div class="comments-actions"><button id="comment-submit" type="submit">Post comment</button><button id="refresh-comments" type="button">Refresh comments</button><span id="comments-status" class="comments-status" role="status" aria-live="polite">Loading comments…</span></div>
+        </form>
+        <div id="comments-list" class="comments-list" aria-live="polite"><div class="empty">Loading comments…</div></div>
+        <div class="analytics-foot"><span id="comments-page-status"> </span><button id="load-more-comments" hidden>Load more comments</button></div>
+      </article>
+    </section>
   </main>
+
+  <footer class="wrap">
+    <div>Jev / NetHack public research run</div>
+    <div class="footer-links"><a href="https://github.com/integrate-your-mind/jev-nethack" target="_blank" rel="noopener">Source code on GitHub</a><a href="#archive-title">Complete recordings</a><a href="#comments-title">Leave a comment</a></div>
+  </footer>
 
   <script>
     /*
@@ -321,6 +365,9 @@
       let lastTelemetryKey = null;
       let lastOutcomeKey = null;
       let serverOutcomeStats = null;
+      let commentsBusy = false;
+      let commentSubmitBusy = false;
+      let commentsPageState = {comments: [], cursor: null};
 
       const $ = (id) => document.getElementById(id);
       const text = (id, value) => { $(id).textContent = value == null || value === "" ? "—" : String(value); };
@@ -353,6 +400,10 @@
       const formatTime = (value) => {
         const ms = timestampMs(value);
         return Number.isFinite(ms) ? new Date(ms).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit"}) : "—";
+      };
+      const formatDateTime = (value) => {
+        const ms = timestampMs(value);
+        return Number.isFinite(ms) ? new Date(ms).toLocaleString([], {dateStyle: "medium", timeStyle: "short"}) : "Date unavailable";
       };
       const ageText = (ms) => {
         if (!Number.isFinite(ms)) return "timestamp unavailable";
@@ -485,6 +536,29 @@
         if (value && typeof value === "object") return first(value, ["label", "key", "choice", "action"]) ?? "No action reported";
         return value == null || value === "" ? "No action reported" : String(value);
       };
+      const runtimeObject = (payload) => {
+        const value = first(payload, ["runtime", "run.runtime", "status.runtime"]) ?? first(frameObject(payload), ["runtime", "run.runtime", "status.runtime"]);
+        return value && typeof value === "object" ? value : {};
+      };
+      const runtimePauseState = (payload, now = Date.now(), elapsedMs = 0) => {
+        const runtime = runtimeObject(payload);
+        const phase = String(first(runtime, ["phase", "state", "status"]) || first(payload, ["runtimePhase", "runtime_phase", "phase"]) || "").toLowerCase();
+        const error = String(first(runtime, ["errorType", "error_type", "error", "message", "reason"]) || "");
+        const retryAt = timestampMs(first(runtime, ["retryAt", "retry_at", "nextRetryAt", "next_retry_at"]));
+        const reportedAge = finiteNumber(first(runtime, ["receivedAgeMs", "received_age_ms", "heartbeatAgeMs", "heartbeat_age_ms", "ageMs"]) ?? first(payload, ["receivedAgeMs", "received_age_ms"]));
+        const heartbeatAt = first(runtime, ["receivedAt", "received_at", "heartbeatAt", "heartbeat_at", "updatedAt", "updated_at"]) ?? first(payload, ["receivedAt", "received_at"]);
+        const heartbeatMs = Number.isFinite(reportedAge) ? reportedAge + elapsedMs : timestampMs(heartbeatAt);
+        const heartbeatAgeMs = Number.isFinite(reportedAge) ? reportedAge + elapsedMs : Number.isFinite(heartbeatMs) ? now - heartbeatMs : NaN;
+        const heartbeatRecent = Number.isFinite(heartbeatAgeMs) && heartbeatAgeMs >= -30000 && heartbeatAgeMs <= 360000;
+        const retryBounded = Number.isFinite(retryAt) && now <= retryAt + 60000;
+        const providerBackoff = phase === "provider_backoff" || phase === "provider-backoff";
+        const credits = providerBackoff && /(?:^|[^0-9])402(?:[^0-9]|$)|(?:no|insufficient|exhausted)\s+credits?/i.test(error);
+        const waiting = providerBackoff && heartbeatRecent && retryBounded;
+        return {phase, error, retryAt, heartbeatAgeMs, heartbeatRecent, retryBounded, providerBackoff, credits, waiting, kind: waiting ? credits ? "credits" : "provider" : "offline"};
+      };
+      const commentItems = (payload) => payload && Array.isArray(payload.comments) ? payload.comments.filter((item) => item && typeof item === "object") : [];
+      const commentPage = (payload) => ({comments: commentItems(payload), cursor: payload && typeof payload.cursor === "string" && payload.cursor ? payload.cursor : null});
+      const commentRequest = (displayName, body, website = "") => ({displayName: String(displayName).trim(), body: String(body).trim(), website: String(website)});
       const status = (kind, label) => {
         const element = $("live-status");
         element.className = `status ${kind}`;
@@ -531,14 +605,50 @@
 
       const renderFreshness = (payload, elapsedMs = 0) => {
         const {frame, timestamp, serverAge, captureAge, fresh, hasFrame} = freshnessFor(payload, elapsedMs);
+        const pause = runtimePauseState(payload, Date.now(), elapsedMs);
         if (liveTransportFailed) status("offline", "Offline · endpoint unavailable");
         else if (!hasFrame) status("waiting", "Offline · waiting for frame");
+        else if (frame.ended === true) status("offline", "Offline · ended");
+        else if (pause.phase === "endpoint_error" || pause.phase === "endpoint-error") status("offline", "Offline · endpoint error");
+        else if (pause.kind === "credits") status("waiting", "Paused · credits needed");
+        else if (pause.kind === "provider") status("waiting", "Paused · provider retry");
         else if (fresh) status("live", "Live");
         else if (Number.isFinite(serverAge) || Number.isFinite(captureAge)) status("offline", frame.ended === true ? "Offline · ended" : "Offline · stale");
         else status("offline", "Offline · no timestamp");
         text("updated", Number.isFinite(serverAge) ? `Updated ${ageText(serverAge)}` : hasFrame ? "Waiting for server timestamp" : "Waiting for server frame");
         text("freshness", Number.isFinite(captureAge) ? `Capture ${ageText(captureAge)}` : hasFrame ? "No timestamp" : "No frame");
         return fresh;
+      };
+
+      const renderRuntimeNotice = (payload, elapsedMs = 0) => {
+        const notice = $("runtime-notice");
+        const {frame} = freshnessFor(payload, elapsedMs);
+        const pause = runtimePauseState(payload, Date.now(), elapsedMs);
+        notice.hidden = true;
+        notice.className = "runtime-notice";
+        notice.replaceChildren();
+        const setNotice = (heading, detail, error = false) => {
+          const strong = document.createElement("strong"); strong.textContent = heading;
+          const span = document.createElement("span"); span.textContent = ` ${detail}`;
+          notice.append(strong, span); notice.hidden = false; if (error) notice.classList.add("error");
+        };
+        if (liveTransportFailed) {
+          setNotice("Offline.", "The live endpoint is unavailable. The last observation remains visible while the page retries.", true);
+        } else if (frame.ended === true || pause.phase === "ended") {
+          setNotice("Run ended.", "The runner reported an ended run. Complete recordings remain available in the archive.");
+        } else if (pause.phase === "endpoint_error" || pause.phase === "endpoint-error") {
+          setNotice("Offline.", "The runner reported a live endpoint error. The page will retry without advancing the game.", true);
+        } else if (pause.kind === "credits") {
+          const retry = Number.isFinite(pause.retryAt) ? ` Automatic retry is scheduled for ${formatTime(pause.retryAt)} local time.` : " Automatic retries will continue.";
+          setNotice("Paused · credits needed.", `TypeSafe credits are exhausted. The game is preserved; no new moves are being made.${retry}`);
+        } else if (pause.kind === "provider") {
+          const retry = Number.isFinite(pause.retryAt) ? ` Automatic retry is scheduled for ${formatTime(pause.retryAt)} local time.` : " Automatic retries will continue.";
+          setNotice("Paused · provider retry.", `The last runner heartbeat is recent, but the provider is backing off. The game is preserved and no new moves are being made.${retry}`);
+        } else if (pause.providerBackoff && pause.credits) {
+          setNotice("Offline.", "The last reported reason was TypeSafe credits exhausted. The runner heartbeat is stale; the page will not claim it is connected.", true);
+        } else if (!pause.waiting && pause.providerBackoff && pause.error) {
+          setNotice("Offline.", "The last reported reason was provider backoff. The runner heartbeat is stale; the page will not claim it is connected.", true);
+        }
       };
 
       const renderDistribution = (payload) => {
@@ -622,6 +732,8 @@
         liveTransportFailed = false;
         const {frame, timestamp, hasFrame} = freshnessFor(payload);
         const fresh = renderFreshness(payload);
+        renderRuntimeNotice(payload);
+        const pause = runtimePauseState(payload);
         const capturedAt = first(frame, ["capturedAt", "captured_at"]);
         const receivedAt = first(frame, ["receivedAt", "received_at"]);
         text("server-time", formatTime(capturedAt || receivedAt || timestamp));
@@ -645,7 +757,7 @@
           empty.textContent = "Server returned no terminal observation.";
           terminalElement.append(empty);
         } else terminalElement.textContent = String(terminal);
-        $("source-state").textContent = !hasFrame ? "Waiting for server frame" : fresh ? "Current server observation" : "Last received observation (offline)";
+        $("source-state").textContent = !hasFrame ? "Waiting for server frame" : fresh ? "Current server observation" : pause.waiting ? "Last captured game observation · paused" : "Last received observation (offline)";
         $("recorder").textContent = !hasFrame ? "Waiting for a frame" : fresh ? "Publishing frames" : "No current frame confirmed";
         $("source").textContent = !hasFrame ? "No frame timestamp" : receivedAt == null ? "No receipt timestamp" : String(receivedAt);
         renderDistribution(payload);
@@ -676,8 +788,10 @@
         if (!latestPayload || lastLiveReceivedAt === null) return;
         const elapsed = Math.max(0, performance.now() - lastLiveReceivedAt);
         const fresh = renderFreshness(latestPayload, elapsed);
+        renderRuntimeNotice(latestPayload, elapsed);
         if (!liveTransportFailed) {
-          $("source-state").textContent = fresh ? "Current server observation" : "Last received observation (offline)";
+          const pause = runtimePauseState(latestPayload, Date.now(), elapsed);
+          $("source-state").textContent = fresh ? "Current server observation" : pause.waiting ? "Last captured game observation · paused" : "Last received observation (offline)";
           $("recorder").textContent = fresh ? "Publishing frames" : "No current frame confirmed";
         }
       }
@@ -813,6 +927,86 @@
         } finally { archiveBusy = false; $("refresh-archive").disabled = false; $("load-more-archive").disabled = false; }
       }
 
+      const setCommentsStatus = (message) => { $("comments-status").textContent = message; };
+      const renderComments = () => {
+        const list = $("comments-list");
+        list.replaceChildren();
+        if (!commentsPageState.comments.length) {
+          const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = "No comments yet. Be the first to post one."; list.append(empty);
+        } else {
+          for (const item of commentsPageState.comments) {
+            const card = document.createElement("article"); card.className = "comment-card";
+            const meta = document.createElement("div"); meta.className = "comment-meta";
+            const name = document.createElement("strong"); name.textContent = String(item.displayName || "Anonymous");
+            const date = document.createElement("time"); date.dateTime = typeof item.createdAt === "string" ? item.createdAt : ""; date.textContent = formatDateTime(item.createdAt);
+            meta.append(name, date);
+            const body = document.createElement("p"); body.className = "comment-body"; body.textContent = String(item.body || "");
+            card.append(meta, body); list.append(card);
+          }
+        }
+        $("load-more-comments").hidden = !commentsPageState.cursor;
+        $("comments-page-status").textContent = commentsPageState.comments.length ? `${commentsPageState.comments.length} comment${commentsPageState.comments.length === 1 ? "" : "s"} loaded.` : "";
+      };
+      async function loadComments(append = false) {
+        if (commentsBusy || (append && !commentsPageState.cursor)) return;
+        commentsBusy = true;
+        $("load-more-comments").disabled = true;
+        $("refresh-comments").disabled = true;
+        $("comment-name").disabled = true; $("comment-body").disabled = true;
+        if (!commentSubmitBusy) $("comment-submit").disabled = true;
+        if (!append) setCommentsStatus("Loading comments…"); else setCommentsStatus("Loading more comments…");
+        try {
+          const query = new URLSearchParams();
+          if (append) query.set("cursor", commentsPageState.cursor);
+          const response = await fetch(`/api/comments?${query.toString()}`, {cache: "no-store", headers: {Accept: "application/json"}});
+          if (!response.ok) throw new Error("comments endpoint unavailable");
+          const page = commentPage(await response.json());
+          const existing = append ? commentsPageState.comments : [];
+          const seen = new Set(existing.map((item) => String(item.id || `${item.createdAt || ""}:${item.displayName || ""}:${item.body || ""}`)));
+          const fresh = page.comments.filter((item) => { const key = String(item.id || `${item.createdAt || ""}:${item.displayName || ""}:${item.body || ""}`); if (seen.has(key)) return false; seen.add(key); return true; });
+          commentsPageState = {comments: existing.concat(fresh), cursor: page.cursor};
+          renderComments();
+          setCommentsStatus(commentsPageState.comments.length ? "Comments loaded." : "No comments yet. Be the first to post one.");
+        } catch (_) {
+          setCommentsStatus("Comments could not be loaded. Try again.");
+          if (!commentsPageState.comments.length) { const list = $("comments-list"); list.replaceChildren(); const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = "Comments are temporarily unavailable."; list.append(empty); }
+        } finally { commentsBusy = false; $("load-more-comments").disabled = false; $("refresh-comments").disabled = false; $("comment-name").disabled = false; $("comment-body").disabled = false; if (!commentSubmitBusy) $("comment-submit").disabled = false; }
+      }
+      $("comments-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (commentSubmitBusy) return;
+        const nameInput = $("comment-name"), bodyInput = $("comment-body"), websiteInput = $("comment-website");
+        const displayName = nameInput.value.trim(), body = bodyInput.value.trim(), website = websiteInput.value;
+        if (!displayName || displayName.length > 40 || !body || body.length > 2000) { setCommentsStatus("Enter a name and comment within the stated limits."); return; }
+        if (website.trim()) { setCommentsStatus("Your comment could not be posted."); return; }
+        commentSubmitBusy = true;
+        const button = $("comment-submit"); button.disabled = true; button.textContent = "Sending…"; setCommentsStatus("Sending comment…");
+        try {
+          const response = await fetch("/api/comments", {method: "POST", headers: {Accept: "application/json", "Content-Type": "application/json"}, body: JSON.stringify(commentRequest(displayName, body, website))});
+          if (!response.ok) {
+            const rejected = new Error("comment rejected");
+            if (response.status === 429) {
+              const retryAfter = response.headers.get("Retry-After");
+              if (retryAfter) {
+                const seconds = Number(retryAfter);
+                rejected.retryAfter = Number.isFinite(seconds) ? `${Math.max(1, Math.ceil(seconds))} seconds` : "later";
+              } else rejected.retryAfter = "later";
+            }
+            throw rejected;
+          }
+          const result = await response.json();
+          if (!result || !result.comment || typeof result.comment !== "object") throw new Error("invalid comment response");
+          commentsPageState = {comments: [result.comment, ...commentsPageState.comments], cursor: commentsPageState.cursor};
+          renderComments(); nameInput.value = ""; bodyInput.value = ""; websiteInput.value = ""; setCommentsStatus("Comment posted.");
+        } catch (error) {
+          const retryAfter = error && error.retryAfter;
+          setCommentsStatus(retryAfter ? `Comments are rate limited. Try again in ${retryAfter}. Your text is still in the form.` : "Comment could not be posted. Your text is still in the form; please try again.");
+        }
+        finally { commentSubmitBusy = false; button.disabled = false; button.textContent = "Post comment"; }
+      });
+      $("load-more-comments").addEventListener("click", () => loadComments(true));
+      $("refresh-comments").addEventListener("click", () => loadComments(false));
+
       $("share").addEventListener("click", async () => {
         const button = $("share");
         try {
@@ -827,6 +1021,7 @@
       $("load-more-archive").addEventListener("click", () => loadArchive(true));
       pollLive();
       loadArchive();
+      loadComments();
       setInterval(refreshFreshness, 250);
       setInterval(pollLive, POLL_MS);
     })();

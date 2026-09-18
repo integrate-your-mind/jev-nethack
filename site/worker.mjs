@@ -18,6 +18,15 @@ const TRAINING_MAGIC = new TextEncoder().encode("JEVNHNPZ1\n");
 const TRAINING_SHARD_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/;
 const TRAINING_FILE_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 
+const COMMENT_BODY_LIMIT = 16 * 1024;
+const COMMENT_PAGE_LIMIT = 25;
+const COMMENT_NAME_CHAR_LIMIT = 40;
+const COMMENT_BODY_CHAR_LIMIT = 2_000;
+const COMMENT_RATE_LIMIT = 3;
+const COMMENT_RATE_WINDOW_MS = 10 * 60 * 1_000;
+const COMMENT_ID_RE = /^\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const UNSAFE_PLAIN_TEXT_RE = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/;
+
 class HttpError extends Error {
   constructor(status, code, message, headers = undefined) {
     super(message);
@@ -127,6 +136,178 @@ async function readJson(request, limit) {
   } catch {
     throw new HttpError(400, "invalid_json", "The request body must be valid JSON.");
   }
+}
+
+function assertJsonContentType(request) {
+  const mediaType = (request.headers.get("Content-Type") ?? "").split(";", 1)[0].trim().toLowerCase();
+  if (mediaType !== "application/json") {
+    throw new HttpError(415, "unsupported_media_type", "Content-Type must be application/json.");
+  }
+}
+
+function requireSameOrigin(request) {
+  const requestOrigin = new URL(request.url).origin;
+  const suppliedOrigin = request.headers.get("Origin");
+  let normalizedOrigin;
+  try {
+    normalizedOrigin = suppliedOrigin ? new URL(suppliedOrigin).origin : "";
+  } catch {
+    normalizedOrigin = "";
+  }
+  if (!suppliedOrigin || normalizedOrigin !== suppliedOrigin || normalizedOrigin !== requestOrigin) {
+    throw new HttpError(403, "invalid_origin", "Comment submissions require a same-origin request.");
+  }
+}
+
+function commentCharacterCount(value) {
+  return [...value].length;
+}
+
+function validateCommentInput(input) {
+  if (!isObject(input)) {
+    throw new HttpError(400, "invalid_comment", "The comment body must be a JSON object.");
+  }
+  const allowedFields = new Set(["displayName", "body", "website"]);
+  if (Object.keys(input).some((field) => !allowedFields.has(field))) {
+    throw new HttpError(400, "invalid_comment", "The comment contains an unsupported field.");
+  }
+  if (input.website !== undefined && typeof input.website !== "string") {
+    throw new HttpError(400, "invalid_honeypot", "website must be a string when supplied.");
+  }
+  if ((input.website ?? "").trim()) {
+    throw new HttpError(400, "honeypot_triggered", "Comment rejected.");
+  }
+  if (typeof input.displayName !== "string" || typeof input.body !== "string") {
+    throw new HttpError(400, "invalid_comment", "displayName and body must be strings.");
+  }
+  const displayName = input.displayName.trim();
+  const body = input.body.trim();
+  if (!displayName || commentCharacterCount(displayName) > COMMENT_NAME_CHAR_LIMIT || UNSAFE_PLAIN_TEXT_RE.test(displayName)) {
+    throw new HttpError(400, "invalid_display_name", `displayName must be 1 to ${COMMENT_NAME_CHAR_LIMIT} plain-text characters.`);
+  }
+  if (!body || commentCharacterCount(body) > COMMENT_BODY_CHAR_LIMIT || UNSAFE_PLAIN_TEXT_RE.test(body)) {
+    throw new HttpError(400, "invalid_comment_body", `body must be 1 to ${COMMENT_BODY_CHAR_LIMIT} plain-text characters.`);
+  }
+  return { displayName, body };
+}
+
+function parseCommentPath(pathname) {
+  const match = /^\/api\/comments\/([^/]+)$/.exec(pathname);
+  if (!match) return null;
+  let id;
+  try {
+    id = decodeURIComponent(match[1]);
+  } catch {
+    throw new HttpError(400, "invalid_comment_id", "Comment id is invalid.");
+  }
+  if (!COMMENT_ID_RE.test(id)) {
+    throw new HttpError(400, "invalid_comment_id", "Comment id is invalid.");
+  }
+  return { id, key: `comments/${id}.json` };
+}
+
+function commentId(now) {
+  const reverseTime = String(9_999_999_999_999 - now).padStart(13, "0");
+  return `${reverseTime}-${crypto.randomUUID()}`;
+}
+
+function parseStoredComment(value) {
+  if (!isObject(value) || !COMMENT_ID_RE.test(value.id ?? "") || typeof value.displayName !== "string" || typeof value.body !== "string" || !validDate(value.createdAt)) {
+    throw new Error("invalid stored comment");
+  }
+  return { id: value.id, displayName: value.displayName, body: value.body, createdAt: value.createdAt };
+}
+
+async function commentCallerHash(request, env) {
+  const caller = request.headers.get("CF-Connecting-IP") ?? "";
+  if (!caller || caller.length > 64 || !/^[0-9a-f:.]+$/i.test(caller)) {
+    throw new HttpError(403, "caller_identity_required", "Comment submission requires a verified caller address.");
+  }
+  const salt = typeof env.COMMENTS_RATE_SALT === "string" && env.COMMENTS_RATE_SALT
+    ? env.COMMENTS_RATE_SALT
+    : typeof env.INGEST_TOKEN === "string" ? env.INGEST_TOKEN : "";
+  if (!salt) {
+    throw new HttpError(500, "missing_rate_limit_salt", "Comment rate limiting is unavailable.");
+  }
+  return sha256Hex(new TextEncoder().encode(`${salt}\0${caller}`));
+}
+
+async function consumeCommentRateLimit(request, env) {
+  const callerHash = await commentCallerHash(request, env);
+  const now = Date.now();
+  const windowStart = Math.floor(now / COMMENT_RATE_WINDOW_MS) * COMMENT_RATE_WINDOW_MS;
+  const firstSlot = crypto.getRandomValues(new Uint32Array(1))[0] % COMMENT_RATE_LIMIT;
+  for (let offset = 0; offset < COMMENT_RATE_LIMIT; offset += 1) {
+    const slot = (firstSlot + offset) % COMMENT_RATE_LIMIT;
+    const key = `comments-rate/${callerHash}/${slot}.json`;
+    try {
+      const existing = await env.BUCKET.head(key);
+      const storedWindow = Number(existing?.customMetadata?.windowStart);
+      const validStoredWindow = Number.isSafeInteger(storedWindow)
+        && storedWindow >= 0
+        && storedWindow % COMMENT_RATE_WINDOW_MS === 0;
+      if (existing && (!validStoredWindow || storedWindow >= windowStart)) continue;
+      const stored = await env.BUCKET.put(key, JSON.stringify({ acceptedAt: new Date(now).toISOString() }), {
+        onlyIf: existing ? { etagMatches: existing.etag } : new Headers({ "If-None-Match": "*" }),
+        httpMetadata: { contentType: "application/json", cacheControl: "no-store" },
+        customMetadata: { kind: "comment-rate-limit", windowStart: String(windowStart) },
+      });
+      if (stored) return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!/(?:10031|10058|precondition|too\s*many\s*requests|rate.?limit|\b429\b)/i.test(message)) throw error;
+    }
+  }
+  const retryAfter = Math.max(1, Math.ceil((windowStart + COMMENT_RATE_WINDOW_MS - now) / 1_000));
+  throw new HttpError(429, "rate_limited", "Too many comments. Please try again later.", { "Retry-After": String(retryAfter) });
+}
+
+async function postComment(request, env) {
+  requireSameOrigin(request);
+  assertJsonContentType(request);
+  const input = validateCommentInput(await readJson(request, COMMENT_BODY_LIMIT));
+  await consumeCommentRateLimit(request, env);
+  const createdAt = new Date().toISOString();
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const id = commentId(Date.parse(createdAt));
+    const comment = { id, ...input, createdAt };
+    const stored = await env.BUCKET.put(`comments/${id}.json`, JSON.stringify(comment), {
+      onlyIf: new Headers({ "If-None-Match": "*" }),
+      httpMetadata: { contentType: "application/json; charset=utf-8", cacheControl: "no-store" },
+      customMetadata: { kind: "public-comment" },
+    });
+    if (stored) return json({ comment }, 201, { "Cache-Control": "no-store", Location: `/api/comments/${encodeURIComponent(id)}` });
+  }
+  throw new HttpError(503, "comment_id_collision", "Could not allocate a comment id. Please retry.", { "Retry-After": "1" });
+}
+
+async function getComments(request, env) {
+  const url = new URL(request.url);
+  const cursor = url.searchParams.get("cursor") ?? undefined;
+  if (cursor && cursor.length > 2_048) {
+    throw new HttpError(400, "invalid_cursor", "Comment cursor is invalid.");
+  }
+  const listed = await env.BUCKET.list({ prefix: "comments/", limit: COMMENT_PAGE_LIMIT, cursor });
+  const comments = [];
+  for (const summary of listed.objects) {
+    if (!/^comments\/\d{13}-[0-9a-f-]+\.json$/.test(summary.key)) continue;
+    try {
+      const object = await env.BUCKET.get(summary.key);
+      if (!object || object.size > COMMENT_BODY_LIMIT) continue;
+      comments.push(parseStoredComment(JSON.parse(await object.text())));
+    } catch {
+      // Invalid objects are not exposed through the public listing.
+    }
+  }
+  return json({ comments, cursor: listed.truncated ? listed.cursor : null }, 200, { "Cache-Control": "no-store" });
+}
+
+async function deleteComment(request, env, path) {
+  await requireAuth(request, env);
+  const existing = await env.BUCKET.head(path.key);
+  if (!existing) throw new HttpError(404, "not_found", "Comment not found.");
+  await env.BUCKET.delete(path.key);
+  return json({ deleted: true, id: path.id }, 200, { "Cache-Control": "no-store" });
 }
 
 function validateLiveFrame(frame) {
@@ -781,6 +962,16 @@ function indexResponse() {
 async function route(request, env) {
   if (!env?.BUCKET) throw new HttpError(500, "missing_bucket", "Storage binding is unavailable.");
   const url = new URL(request.url);
+  const commentPath = parseCommentPath(url.pathname);
+  if (url.pathname === "/api/comments") {
+    if (request.method === "GET") return getComments(request, env);
+    if (request.method === "POST") return postComment(request, env);
+    throw new HttpError(405, "method_not_allowed", "Method not allowed.", { Allow: "GET, POST" });
+  }
+  if (commentPath) {
+    if (request.method === "DELETE") return deleteComment(request, env, commentPath);
+    throw new HttpError(405, "method_not_allowed", "Method not allowed.", { Allow: "DELETE" });
+  }
   const trainingPath = parseTrainingPath(url.pathname);
   if (url.pathname === "/api/training") {
     if (request.method === "GET") return getTrainingArchive(request, env);

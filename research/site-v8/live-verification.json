@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-09-18T19:03:33.053816+00:00",
+  "siteSourceCommit": "d3f5b3b491b9bdfac1a6d9aebde599f4d7ff370f",
+  "inlineScriptByteIdentical": true,
+  "inlineScriptSha256": "ab5247f985e7f0225c1e8dc424b1bd7d118fee4fe81fd0567a29ce29c9f6c54c",
+  "initialVisibleCommentCount": 0,
+  "postStatus": 201,
+  "temporaryCommentId": "8210241786462-250e6f06-f0ab-4611-a940-723ee09a7649",
+  "readbackVerified": true,
+  "deleteStatus": 200,
+  "deleteConfirmed": true,
+  "absenceVerified": true,
+  "live": {
+    "live": true,
+    "step": 5656,
+    "capturedAt": "2026-09-18T19:03:33.000676+00:00",
+    "captureAgeMs": 2222,
+    "runtime": {
+      "phase": "awaiting_decision"
+    }
+  }
+}

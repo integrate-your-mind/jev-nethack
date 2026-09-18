@@ -21,7 +21,7 @@ Native terminal metrics now preserve NetHack’s recorded final score separately
 - `until-win/`: persistent direct Jev policy with verified same-game recovery and raw transition capture
 - `runtime-support/`: automatic verified archive publishing and recovery of interrupted video/training tails
 - `runner/`: bounded experiment runner and broadcast client
-- `site/`: public read-only viewer and authenticated ingest Worker
+- `site/`: public viewer, plain-text visitor comments, and authenticated ingest Worker
 - `research/`: bounded recurrent BC/PPO pilot and frozen direct-policy experiments
 - `data/training/`: sanitized sample and schema/provenance
 - `docs/`: research and operations notes
@@ -37,7 +37,7 @@ The sample removes wall-clock fields, local paths, stream identifiers, hosted UR
 
 The viewer displays Jev’s returned probabilities for candidate choices and labels the selected action. These probabilities and model confidence are not empirical action accuracy or a calibrated chance of winning. A recent-movement panel measures distinct squares, immediate returns, game turns, score change, and depth change from the last recorded action window. It makes repeated movement visible without calling it success. Current-episode score, depth, health, and game turns have separate charts. The completed-episode score chart accepts only explicit native final-score fields; zeroed terminal observations cannot masquerade as a final score. Last observed score and accumulated reward remain separate. Ascension totals and explicitly reported deaths have visible denominators, and interrupted games are kept separate.
 
-Site v7 source commit: `e3d59aacabfb59d52fe47a21b0c8b0145a1782ac`. Deployed and verified through anonymous HTTP and a live browser on September 18, 2026. Site tests cover old-frame freshness, archive integrity, multi-frame NPZ/JSONL training upload validation, probabilities, and episode counters.
+Site v8 source commit: `d3f5b3b491b9bdfac1a6d9aebde599f4d7ff370f`. Published September 18, 2026. Public source links and visitor comments are available on the viewer. Credit exhaustion is shown as a paused state with the last reported retry time; only fresh gameplay qualifies as Live. After credits were replenished, the same runner resumed past action 5,280 without restarting. At 19:03 UTC, the public feed was live at action 5,656. This is a timestamped observation, not an uptime guarantee. All 35 Site tests passed; a temporary deployed comment was posted, independently read back, owner-deleted, and confirmed absent. See [verification](research/site-v8/validation.md) and [comment API documentation](site/COMMENTS.md).
 
 The archive loads nine recordings per page, with an explicit Load more control and no fixed history cap. Refresh and pagination preserve playback of existing video cards. Pages follow archive order rather than a global newest-first ranking.
 

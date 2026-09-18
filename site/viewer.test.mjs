@@ -33,8 +33,36 @@ function viewerHelpers() {
   const script = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/)?.[1];
   const start = script.indexOf("const first =");
   const end = script.indexOf("const status =");
-  return vm.runInNewContext(`(function(){${script.slice(start, end)}; return {asProbability, probabilityEntries, actionLabel, telemetrySample, outcomeSummary, movementSummary, mergeArchivePage};})()`);
+  return vm.runInNewContext(`(function(){${script.slice(start, end)}; return {asProbability, probabilityEntries, actionLabel, telemetrySample, outcomeSummary, movementSummary, mergeArchivePage, runtimePauseState, commentPage, commentRequest};})()`);
 }
+
+test("provider credit backoff is a bounded pause and clears when the runner resumes", () => {
+  const {runtimePauseState} = viewerHelpers();
+  const now = Date.parse("2026-09-18T18:46:00Z");
+  const paused = {runtime: {phase: "provider_backoff", errorType: "JevHTTPError:402", receivedAgeMs: 255865, retryAt: "2026-09-18T18:47:29Z"}};
+  assert.equal(runtimePauseState(paused, now).kind, "credits");
+  assert.equal(runtimePauseState({...paused, runtime: {...paused.runtime, errorType: "JevHTTPError:429 quota"}}, now).kind, "provider");
+  assert.equal(runtimePauseState(paused, Date.parse("2026-09-18T18:54:00Z")).kind, "offline");
+  const resumed = {live: true, runtime: {phase: "playing", receivedAgeMs: 200, retryAt: null}};
+  assert.equal(runtimePauseState(resumed, now).kind, "offline");
+  assert.match(html, /pause\.kind === "credits"/);
+  assert.match(html, /else if \(fresh\) status\("live", "Live"\)/);
+});
+
+test("comments normalize pages and keep user content on the text-only path", () => {
+  const {commentPage, commentRequest} = viewerHelpers();
+  const page = commentPage({comments: [{id: "1", displayName: "<name>", body: "<script>alert(1)</script>"}, null, "ignored"], cursor: "next"});
+  assert.equal(page.comments.length, 1);
+  assert.equal(page.cursor, "next");
+  assert.deepEqual(JSON.parse(JSON.stringify(commentRequest("  Romy  ", "  hello  ", ""))), {displayName: "Romy", body: "hello", website: ""});
+  assert.match(html, /name\.textContent = String\(item\.displayName/);
+  assert.match(html, /body\.textContent = String\(item\.body/);
+  assert.doesNotMatch(html, /comments-list[\s\S]{0,2500}innerHTML/);
+  assert.match(html, /maxlength="40"/);
+  assert.match(html, /maxlength="2000"/);
+  assert.match(html, /still in the form/);
+  assert.match(html, /Retry-After/);
+});
 
 test("pure viewer helpers validate probabilities, criteria labels, and episode identity", () => {
   const helpers = viewerHelpers();
