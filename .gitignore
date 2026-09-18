@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+dist/
+.env*
+*.token
+*.zip
+*.mp4
+.DS_Store

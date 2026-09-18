@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c1110">
+  <title>Jev / NetHack — public run</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0c1110;
+      --panel: #111a17;
+      --panel-hi: #16231d;
+      --line: #294338;
+      --text: #e8f1e8;
+      --muted: #9caea2;
+      --green: #8ce0a1;
+      --amber: #f0c675;
+      --red: #ee8c8c;
+      --shadow: 0 18px 60px rgba(0, 0, 0, .28);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% -8%, rgba(86, 139, 104, .19), transparent 32rem),
+        var(--bg);
+      font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button, .button {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: .65rem .85rem;
+      color: var(--text);
+      background: #17241e;
+      font: inherit;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    button:hover, button:focus-visible, .button:hover, .button:focus-visible {
+      border-color: var(--green);
+      outline: 2px solid rgba(140, 224, 161, .18);
+      outline-offset: 2px;
+    }
+    .wrap { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.15rem 0;
+      border-bottom: 1px solid rgba(41, 67, 56, .75);
+    }
+    .brand { display: flex; align-items: center; gap: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+    .mark { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--green); border-radius: 7px; color: var(--green); font-weight: 800; }
+    .brand strong { font-size: .86rem; }
+    .brand small { display: block; color: var(--muted); font-size: .67rem; letter-spacing: .13em; }
+    .top-actions { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; justify-content: flex-end; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: .42rem .72rem;
+      color: var(--muted);
+      font-size: .76rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .status::before { width: .45rem; height: .45rem; border-radius: 50%; background: var(--muted); content: ""; }
+    .status.live { border-color: rgba(140, 224, 161, .55); color: var(--green); }
+    .status.live::before { background: var(--green); box-shadow: 0 0 0 .2rem rgba(140, 224, 161, .12); }
+    .status.offline { border-color: rgba(238, 140, 140, .45); color: var(--red); }
+    .status.offline::before { background: var(--red); }
+    .status.waiting { color: var(--amber); border-color: rgba(240, 198, 117, .45); }
+    .status.waiting::before { background: var(--amber); }
+    .hero { padding: 1.6rem 0 1.25rem; max-width: 860px; }
+    .eyebrow { margin: 0 0 .7rem; color: var(--green); font-size: .73rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { max-width: 760px; margin: 0; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.02; letter-spacing: -.055em; }
+    .lede { max-width: 700px; margin: .7rem 0 0; color: var(--muted); font-size: 1rem; }
+    .pinned {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem .8rem;
+      align-items: center;
+      margin-top: .9rem;
+      color: var(--amber);
+      font-size: .82rem;
+    }
+    .pinned span { border: 1px solid rgba(240, 198, 117, .35); border-radius: 5px; padding: .25rem .45rem; }
+    .pinned em { color: var(--muted); font-style: normal; }
+    .watch-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(270px, .85fr); gap: 1rem; align-items: start; }
+    .panel { border: 1px solid var(--line); border-radius: 14px; background: rgba(17, 26, 23, .92); box-shadow: var(--shadow); }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.1rem; border-bottom: 1px solid var(--line); }
+    .panel-head h2 { margin: 0; font-size: .86rem; letter-spacing: .1em; text-transform: uppercase; }
+    .panel-head small { color: var(--muted); }
+    .terminal-wrap { padding: .8rem; }
+    pre {
+      min-height: 31rem;
+      max-height: 65vh;
+      margin: 0;
+      overflow: auto;
+      padding: 1.1rem;
+      border: 1px solid #254634;
+      border-radius: 9px;
+      color: #a7e8aa;
+      background: #071009;
+      font: 14px/1.3 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space: pre;
+      tab-size: 8;
+    }
+    .terminal-empty { color: var(--muted); }
+    .terminal-foot { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem .25rem .1rem; color: var(--muted); font-size: .78rem; }
+    .metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; padding: 1rem; }
+    .metric { min-height: 5.2rem; padding: .8rem; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-hi); }
+    .metric dt { color: var(--muted); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+    .metric dd { margin: .28rem 0 0; color: var(--text); font-size: 1.35rem; font-weight: 700; overflow-wrap: anywhere; }
+    .action-box { margin: 0 1rem 1rem; padding: 1rem; border: 1px solid rgba(240, 198, 117, .35); border-radius: 9px; background: rgba(63, 52, 29, .22); }
+    .action-box .label { color: var(--amber); font-size: .69rem; letter-spacing: .1em; text-transform: uppercase; }
+    .action-box p { margin: .35rem 0 0; color: var(--text); font: 1rem ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .details { padding: 0 1rem 1rem; color: var(--muted); font-size: .82rem; }
+    .details p { margin: .45rem 0; }
+    .details strong { color: var(--text); font-weight: 600; }
+    section { margin-top: 4.5rem; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1rem; }
+    .section-head h2 { margin: 0; font-size: 1.5rem; letter-spacing: -.02em; }
+    .section-head p { max-width: 580px; margin: 0; color: var(--muted); }
+    .archive-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(275px, 1fr)); gap: 1rem; }
+    .archive-card { padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .archive-card h3 { margin: 0; font-size: 1rem; }
+    .archive-card dl { display: grid; grid-template-columns: auto 1fr; gap: .35rem .8rem; margin: 1rem 0; color: var(--muted); font-size: .82rem; }
+    .archive-card dt { color: var(--muted); }
+    .archive-card dd { margin: 0; color: var(--text); text-align: right; overflow-wrap: anywhere; }
+    .archive-card video { width: 100%; max-height: 190px; margin-top: .8rem; border-radius: 7px; background: #050806; }
+    .archive-links { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .9rem; }
+    .archive-links a { font-size: .8rem; }
+    .empty { grid-column: 1 / -1; padding: 1.2rem; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); }
+    .notice { margin: 1.2rem 0 0; padding: 1rem 1.1rem; border-left: 3px solid var(--amber); color: var(--muted); background: rgba(63, 52, 29, .18); }
+    code { color: var(--green); font: .9em ui-monospace, SFMono-Regular, Menlo, monospace; }
+    @media (max-width: 820px) {
+      .watch-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 1.4rem; }
+      pre { min-height: 22rem; }
+    }
+    @media (max-width: 520px) {
+      .wrap { width: min(100% - 1rem, 1180px); }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .top-actions { width: 100%; justify-content: flex-start; }
+      h1 { font-size: 2.45rem; }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); padding: .7rem; gap: .5rem; }
+      .metric { padding: .65rem; }
+      .metric dd { font-size: 1.1rem; }
+      .action-box, .details { margin-left: .7rem; margin-right: .7rem; }
+      pre { min-height: 18rem; padding: .8rem; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap topbar">
+    <div class="brand" aria-label="Jev public NetHack stream">
+      <span class="mark" aria-hidden="true">J</span>
+      <div><strong>Jev / NetHack</strong><small>public research run</small></div>
+    </div>
+    <div class="top-actions">
+      <span id="live-status" class="status waiting" role="status" aria-live="polite">Connecting</span>
+      <button id="share" type="button">Copy public link</button>
+      <button id="refresh-archive" type="button">Refresh archive</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="eyebrow">Live research run</p>
+      <h1>Watch Jev play NetHack.</h1>
+      <p class="lede">Watch Jev choose each move. Live play and complete recordings.</p>
+      <div class="pinned"><span>Jev 1.13.0</span><span>NetHack 3.6.7</span><em>Research pilot · no SOTA claim</em></div>
+    </div>
+
+    <div class="watch-grid">
+      <article class="panel" aria-labelledby="terminal-title">
+        <div class="panel-head"><h2 id="terminal-title">Live terminal</h2><small id="updated">Waiting for server timestamp</small></div>
+        <div class="terminal-wrap">
+          <pre id="terminal" tabindex="0" role="log" aria-live="polite" aria-label="Latest NetHack terminal observation"><span class="terminal-empty">Waiting for the first server observation…</span></pre>
+          <div class="terminal-foot"><span id="source-state">No observation loaded</span><span>Server observation</span></div>
+        </div>
+      </article>
+
+      <aside class="panel" aria-labelledby="metrics-title">
+        <div class="panel-head"><h2 id="metrics-title">Run telemetry</h2><small id="freshness">No frame</small></div>
+        <dl class="metric-grid">
+          <div class="metric"><dt>Score</dt><dd id="score">—</dd></div>
+          <div class="metric"><dt>HP</dt><dd id="hp">—</dd></div>
+          <div class="metric"><dt>Depth</dt><dd id="depth">—</dd></div>
+          <div class="metric"><dt>Episode</dt><dd id="episode">—</dd></div>
+          <div class="metric"><dt>Step</dt><dd id="step">—</dd></div>
+          <div class="metric"><dt>Captured</dt><dd id="server-time">—</dd></div>
+        </dl>
+        <div class="action-box"><div class="label">Selected actual action</div><p id="action">No action reported</p></div>
+        <div class="details">
+          <p><strong>Model:</strong> <span id="model">Jev 1.13.0</span></p>
+          <p><strong>Recorder:</strong> <span id="recorder">Waiting for live frame</span></p>
+          <p><strong>Received:</strong> <span id="source">No server frame yet</span></p>
+        </div>
+      </aside>
+    </div>
+
+    <p class="notice">LIVE means the latest server frame is fresh. OFFLINE means no current frame is confirmed. Archive files are complete recorded segments.</p>
+
+    <section aria-labelledby="archive-title">
+      <div class="section-head"><div><p class="eyebrow">Complete recordings</p><h2 id="archive-title">Archive</h2></div><p>Completed segments retain the full terminal recording and event history.</p></div>
+      <div id="archive-list" class="archive-list" aria-live="polite"><div class="empty">Loading the public archive…</div></div>
+    </section>
+  </main>
+
+  <script>
+    /*
+     * Worker/recorder contract: /api/live returns {frame, serverTime, live,
+     * ageMs, captureAgeMs, freshnessWindowMs}; frame carries capturedAt,
+     * state, action, and ended. /api/archive returns completed segment
+     * manifests; recording files are served under /api/recordings/<segment>/<file>.
+     * The browser never creates telemetry, advances frames, or handles secrets.
+     */
+    (() => {
+      "use strict";
+      const FRESHNESS_MS = 10000;
+      const POLL_MS = 1000;
+      let latestPayload = null;
+      let liveBusy = false;
+      let lastLiveReceivedAt = null;
+      let liveTransportFailed = false;
+      let lastAction = "No action reported";
+      let archiveBusy = false;
+      let archiveSignature = null;
+
+      const $ = (id) => document.getElementById(id);
+      const text = (id, value) => { $(id).textContent = value == null || value === "" ? "—" : String(value); };
+      const first = (object, paths) => {
+        for (const path of paths) {
+          let value = object;
+          for (const part of path.split(".")) {
+            if (value == null || typeof value !== "object" || !(part in value)) { value = undefined; break; }
+            value = value[part];
+          }
+          if (value !== undefined && value !== null && value !== "") return value;
+        }
+        return undefined;
+      };
+      const stringValue = (value) => typeof value === "string" ? value : value == null ? "" : String(value);
+      const timestampValue = (payload) => first(payload, ["server_timestamp", "serverTimestamp", "server_time", "serverTime", "updated_at", "updatedAt", "observed_at", "observedAt", "timestamp"]);
+      const timestampMs = (value) => {
+        if (typeof value === "number" && Number.isFinite(value)) return value < 100000000000 ? value * 1000 : value;
+        if (typeof value !== "string" || !value.trim()) return NaN;
+        const numeric = Number(value);
+        if (Number.isFinite(numeric)) return numeric < 100000000000 ? numeric * 1000 : numeric;
+        const parsed = Date.parse(value);
+        return Number.isFinite(parsed) ? parsed : NaN;
+      };
+      const finiteNumber = (value) => {
+        if (typeof value === "number" && Number.isFinite(value)) return value;
+        if (typeof value === "string" && value.trim() && Number.isFinite(Number(value))) return Number(value);
+        return NaN;
+      };
+      const formatTime = (value) => {
+        const ms = timestampMs(value);
+        return Number.isFinite(ms) ? new Date(ms).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit"}) : "—";
+      };
+      const ageText = (ms) => {
+        if (!Number.isFinite(ms)) return "timestamp unavailable";
+        const seconds = Math.max(0, Math.floor(ms / 1000));
+        return seconds < 2 ? "just now" : `${seconds}s ago`;
+      };
+      const frameObject = (payload) => {
+        if (payload && Object.prototype.hasOwnProperty.call(payload, "frame") && payload.frame === null) return {};
+        return first(payload, ["frame", "latest", "observation", "current"]) || payload || {};
+      };
+      const metric = (payload, paths) => first(frameObject(payload), paths) ?? first(payload, paths);
+      const actionText = (payload) => {
+        const value = metric(payload, ["selected_action", "selectedAction", "action_label", "action", "decision.choice", "choice", "key"]);
+        if (value && typeof value === "object") return first(value, ["label", "key", "choice", "action"]) ?? "No action reported";
+        return value == null || value === "" ? "No action reported" : String(value);
+      };
+      const status = (kind, label) => {
+        const element = $("live-status");
+        element.className = `status ${kind}`;
+        element.textContent = label;
+      };
+      const safeUrl = (value) => {
+        if (typeof value !== "string" || !value.trim()) return null;
+        try {
+          const url = new URL(value, window.location.href);
+          if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+          return url.href;
+        } catch (_) { return null; }
+      };
+      const link = (parent, label, value, download) => {
+        const href = safeUrl(value);
+        if (!href) return;
+        const anchor = document.createElement("a");
+        anchor.className = "button";
+        anchor.textContent = label;
+        anchor.href = href;
+        anchor.target = "_blank";
+        anchor.rel = "noopener";
+        if (download) anchor.setAttribute("download", download);
+        parent.append(anchor);
+      };
+
+      const freshnessFor = (payload, elapsedMs = 0) => {
+        const hasFrame = !Object.prototype.hasOwnProperty.call(payload || {}, "frame") || (payload.frame && typeof payload.frame === "object");
+        if (!hasFrame) return {frame: {}, timestamp: undefined, serverAge: NaN, captureAge: NaN, fresh: false, hasFrame: false};
+        const frame = frameObject(payload);
+        const timestamp = timestampValue(payload) ?? timestampValue(frame);
+        const capturedAt = first(frame, ["capturedAt", "captured_at"]);
+        const timestampValueMs = timestampMs(timestamp);
+        const capturedValueMs = timestampMs(capturedAt);
+        const reportedServerAge = finiteNumber(payload.ageMs);
+        const reportedCaptureAge = finiteNumber(payload.captureAgeMs);
+        const serverAge = Number.isFinite(reportedServerAge) ? reportedServerAge + elapsedMs : Number.isFinite(timestampValueMs) ? Date.now() - timestampValueMs : NaN;
+        const captureAge = Number.isFinite(reportedCaptureAge) ? reportedCaptureAge + elapsedMs : Number.isFinite(capturedValueMs) ? Date.now() - capturedValueMs : serverAge;
+        const freshnessWindow = Number.isFinite(finiteNumber(payload.freshnessWindowMs)) ? finiteNumber(payload.freshnessWindowMs) : FRESHNESS_MS;
+        const notFuture = serverAge >= -30000 && captureAge >= -30000;
+        const fresh = payload.live === true && frame.ended !== true && notFuture && serverAge <= freshnessWindow && captureAge <= freshnessWindow;
+        return {frame, timestamp, serverAge, captureAge, fresh, hasFrame: true};
+      };
+
+      const renderFreshness = (payload, elapsedMs = 0) => {
+        const {frame, timestamp, serverAge, captureAge, fresh, hasFrame} = freshnessFor(payload, elapsedMs);
+        if (liveTransportFailed) status("offline", "Offline · endpoint unavailable");
+        else if (!hasFrame) status("waiting", "Offline · waiting for frame");
+        else if (fresh) status("live", "Live");
+        else if (Number.isFinite(serverAge) || Number.isFinite(captureAge)) status("offline", frame.ended === true ? "Offline · ended" : "Offline · stale");
+        else status("offline", "Offline · no timestamp");
+        text("updated", Number.isFinite(serverAge) ? `Updated ${ageText(serverAge)}` : hasFrame ? "Waiting for server timestamp" : "Waiting for server frame");
+        text("freshness", Number.isFinite(captureAge) ? `Capture ${ageText(captureAge)}` : hasFrame ? "No timestamp" : "No frame");
+        return fresh;
+      };
+
+      function renderLive(payload) {
+        latestPayload = payload;
+        lastLiveReceivedAt = performance.now();
+        liveTransportFailed = false;
+        const {frame, timestamp, hasFrame} = freshnessFor(payload);
+        const fresh = renderFreshness(payload);
+        const capturedAt = first(frame, ["capturedAt", "captured_at"]);
+        const receivedAt = first(frame, ["receivedAt", "received_at"]);
+        text("server-time", formatTime(capturedAt || receivedAt || timestamp));
+        text("score", metric(payload, ["score", "state.score", "state.player.score", "before.score", "stats.score"]));
+        const hp = metric(payload, ["hp", "state.hp", "state.player.hp", "before.hp", "stats.hp"]);
+        const maxHp = metric(payload, ["max_hp", "maxHp", "state.max_hp", "state.maxHp", "state.player.max_hp", "state.player.maxHp", "before.max_hp", "before.maxHp", "stats.max_hp"]);
+        text("hp", hp == null ? undefined : maxHp == null ? hp : `${hp}/${maxHp}`);
+        text("depth", metric(payload, ["depth", "state.depth", "state.player.depth", "state.player.level", "dlevel", "level", "before.depth", "before.level", "stats.depth"]));
+        text("episode", metric(payload, ["episode", "run.episode", "recording.episode"]));
+        text("step", metric(payload, ["step", "action_index", "actionIndex", "run.step", "sequence"]));
+        const observedAction = actionText(payload);
+        if (observedAction !== "No action reported") lastAction = observedAction;
+        text("action", lastAction);
+        text("model", first(payload, ["model", "frame.model"]) || "Jev 1.13.0");
+        const terminal = metric(payload, ["terminal", "state.terminal", "state.tty", "state.screen", "tty", "screen", "terminal_text"]);
+        const terminalElement = $("terminal");
+        terminalElement.replaceChildren();
+        if (terminal == null || terminal === "") {
+          const empty = document.createElement("span");
+          empty.className = "terminal-empty";
+          empty.textContent = "Server returned no terminal observation.";
+          terminalElement.append(empty);
+        } else terminalElement.textContent = String(terminal);
+        $("source-state").textContent = !hasFrame ? "Waiting for server frame" : fresh ? "Current server observation" : "Last received observation (offline)";
+        $("recorder").textContent = !hasFrame ? "Waiting for a frame" : fresh ? "Publishing frames" : "No current frame confirmed";
+        $("source").textContent = !hasFrame ? "No frame timestamp" : receivedAt == null ? "No receipt timestamp" : String(receivedAt);
+      }
+
+      async function pollLive() {
+        if (liveBusy) return;
+        liveBusy = true;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        try {
+          const response = await fetch("/api/live", {cache: "no-store", headers: {Accept: "application/json"}, signal: controller.signal});
+          if (!response.ok) throw new Error("live endpoint unavailable");
+          const payload = await response.json();
+          if (payload == null || typeof payload !== "object") throw new Error("invalid live payload");
+          renderLive(payload);
+        } catch (_) {
+          liveTransportFailed = true;
+          status("offline", "Offline · endpoint unavailable");
+          $("recorder").textContent = latestPayload ? "Last frame retained; feed unavailable" : "Waiting for live frame";
+          $("source-state").textContent = latestPayload ? "Last received observation (offline)" : "No observation loaded";
+        } finally { clearTimeout(timeout); liveBusy = false; }
+      }
+
+      function refreshFreshness() {
+        if (!latestPayload || lastLiveReceivedAt === null) return;
+        const elapsed = Math.max(0, performance.now() - lastLiveReceivedAt);
+        const fresh = renderFreshness(latestPayload, elapsed);
+        if (!liveTransportFailed) {
+          $("source-state").textContent = fresh ? "Current server observation" : "Last received observation (offline)";
+          $("recorder").textContent = fresh ? "Publishing frames" : "No current frame confirmed";
+        }
+      }
+
+      function archiveItems(payload) {
+        if (Array.isArray(payload)) return payload;
+        if (payload && Array.isArray(payload.archives)) return payload.archives;
+        if (payload && Array.isArray(payload.recordings)) return payload.recordings;
+        if (payload && Array.isArray(payload.segments)) return payload.segments;
+        return [];
+      }
+
+      const archiveSource = (item) => {
+        const manifest = item && item.manifest && typeof item.manifest === "object" ? item.manifest : {};
+        return {...manifest, ...item};
+      };
+      const archiveSetSignature = (items) => JSON.stringify(items.map((item) => {
+        const source = archiveSource(item || {});
+        return {
+          sessionId: first(source, ["sessionId", "session_id"]),
+          broadcastId: first(source, ["broadcastId", "broadcast_id"]),
+          endedAt: first(source, ["endedAt", "ended_at"]),
+          frameCount: first(source, ["frameCount", "frame_count"]),
+          actionCount: first(source, ["actionCount", "action_count"]),
+          manifestUrl: first(source, ["manifestUrl", "manifest_url"]),
+          artifacts: Array.isArray(source.artifacts) ? source.artifacts.map((artifact) => [artifact && artifact.filename, artifact && artifact.url, artifact && artifact.sha256, artifact && artifact.bytes]) : [],
+        };
+      }));
+      const recordingPath = (item, names, fallbackName) => {
+        const source = archiveSource(item);
+        const directNames = names.filter((name) => !/filename|Filename$/.test(name));
+        const direct = first(source, directNames);
+        if (typeof direct === "string" && direct) return direct;
+        if (direct && typeof direct === "object") {
+          const directUrl = first(direct, ["url", "href", "path"]);
+          if (typeof directUrl === "string" && directUrl) return directUrl;
+        }
+        const artifacts = Array.isArray(source.artifacts) ? source.artifacts : [];
+        const isVideo = names.some((name) => /mp4|video/i.test(name));
+        const isEvents = names.some((name) => /event|jsonl/i.test(name));
+        const isManifest = names.some((name) => /manifest/i.test(name));
+        const artifact = artifacts.find((candidate) => {
+          if (!candidate || typeof candidate !== "object") return false;
+          const label = String(first(candidate, ["filename", "name", "kind", "type", "contentType"]) || "").toLowerCase();
+          if (isVideo) return label.includes(".mp4") || label.includes("video");
+          if (isEvents) return label.includes(".jsonl") || label.includes("event");
+          if (isManifest) return label.includes("manifest") || label.includes(".json");
+          return false;
+        });
+        if (artifact) {
+          const artifactUrl = first(artifact, ["url", "href"]);
+          if (typeof artifactUrl === "string" && artifactUrl) return artifactUrl;
+        }
+        const segment = first(source, ["segmentSessionId", "segment_session_id", "sessionId", "session_id"]);
+        if (!segment) return null;
+        const files = source.files && typeof source.files === "object" ? source.files : {};
+        const filenameNames = names.filter((name) => /filename|Filename$/.test(name));
+        let filename = first(source, filenameNames.concat(["filename"]));
+        if (!filename && artifact) filename = first(artifact, ["filename", "name", "path"]);
+        if (!filename) filename = first(files, filenameNames.concat(directNames));
+        if (filename && typeof filename === "object") filename = first(filename, ["filename", "name", "path"]);
+        if (typeof filename !== "string" || !filename) return null;
+        const encodedSegment = encodeURIComponent(String(segment));
+        const encodedFilename = filename.split("/").map((part) => encodeURIComponent(part)).join("/");
+        return `/api/recordings/${encodedSegment}/${encodedFilename}`;
+      };
+
+      function renderArchive(payload) {
+        const list = $("archive-list");
+        const items = archiveItems(payload);
+        const signature = archiveSetSignature(items);
+        if (signature === archiveSignature) return;
+        archiveSignature = signature;
+        list.replaceChildren();
+        if (!items.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "No public recordings are available yet.";
+          list.append(empty);
+          return;
+        }
+        for (const item of items) {
+          if (!item || typeof item !== "object") continue;
+          const source = archiveSource(item);
+          const card = document.createElement("article");
+          card.className = "archive-card";
+          const title = document.createElement("h3");
+          title.textContent = stringValue(first(source, ["title", "name", "segmentSessionId", "segment_session_id", "id"]) || "Public NetHack recording");
+          card.append(title);
+          const dl = document.createElement("dl");
+          const fields = [
+            ["Session", first(source, ["sessionId", "session_id", "segmentSessionId", "segment_session_id"])],
+            ["Frames", first(source, ["frameCount", "frame_count"])],
+            ["Actions", first(source, ["actionCount", "action_count"])],
+            ["Started", formatTime(first(source, ["started_at", "startedAt", "start_time"]))],
+            ["Ended", formatTime(first(source, ["ended_at", "endedAt", "end_time"]))],
+          ];
+          for (const [label, value] of fields) {
+            const dt = document.createElement("dt"); dt.textContent = label;
+            const dd = document.createElement("dd"); dd.textContent = value == null || value === "" ? "—" : String(value);
+            dl.append(dt, dd);
+          }
+          card.append(dl);
+          const videoUrl = recordingPath(source, ["mp4_url", "mp4Url", "video_url", "videoUrl", "downloads.video", "mp4", "video", "mp4_filename", "mp4Filename", "video_filename", "videoFilename"], "replay.mp4");
+          const video = safeUrl(videoUrl);
+          if (video) {
+            const player = document.createElement("video");
+            player.controls = true; player.preload = "metadata"; player.src = video;
+            player.setAttribute("aria-label", `${title.textContent} MP4 replay`);
+            card.append(player);
+          }
+          const links = document.createElement("div"); links.className = "archive-links";
+          link(links, "MP4 replay", videoUrl, "nethack-replay.mp4");
+          link(links, "Event JSONL", recordingPath(source, ["events_url", "eventsUrl", "event_jsonl_url", "eventJsonlUrl", "downloads.events", "events", "event_jsonl", "events_filename", "eventsFilename", "event_jsonl_filename", "eventJsonlFilename"], "events.jsonl"), "nethack-events.jsonl");
+          link(links, "Manifest", recordingPath(source, ["manifest_url", "manifestUrl", "downloads.manifest", "manifest", "manifest_filename", "manifestFilename"], "manifest.json"), "nethack-manifest.json");
+          if (links.childElementCount) card.append(links);
+          list.append(card);
+        }
+      }
+
+      async function loadArchive() {
+        if (archiveBusy) return;
+        archiveBusy = true;
+        $("refresh-archive").disabled = true;
+        try {
+          const all = [];
+          const seenCursors = new Set();
+          let cursor = null;
+          for (let page = 0; page < 20; page += 1) {
+            const query = new URLSearchParams({limit: "50"});
+            if (cursor) query.set("cursor", cursor);
+            const response = await fetch(`/api/archive?${query.toString()}`, {cache: "no-store", headers: {Accept: "application/json"}});
+            if (!response.ok) throw new Error("archive endpoint unavailable");
+            const payload = await response.json();
+            all.push(...archiveItems(payload));
+            const next = payload && typeof payload === "object" ? (payload.nextCursor || payload.next_cursor || (payload.cursor && payload.cursor) || null) : null;
+            if (!next || seenCursors.has(String(next))) break;
+            seenCursors.add(String(next));
+            cursor = String(next);
+          }
+          renderArchive(all);
+        } catch (_) {
+          if (!$("archive-list").querySelector(".archive-card")) {
+            const list = $("archive-list"); list.replaceChildren();
+            const empty = document.createElement("div"); empty.className = "empty";
+            empty.textContent = "The archive is temporarily unavailable."; list.append(empty);
+          }
+        } finally { archiveBusy = false; $("refresh-archive").disabled = false; }
+      }
+
+      $("share").addEventListener("click", async () => {
+        const button = $("share");
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          button.textContent = "Public link copied";
+        } catch (_) {
+          button.textContent = "Copy unavailable";
+        }
+        setTimeout(() => { button.textContent = "Copy public link"; }, 1800);
+      });
+      $("refresh-archive").addEventListener("click", loadArchive);
+      pollLive();
+      loadArchive();
+      setInterval(refreshFreshness, 250);
+      setInterval(pollLive, POLL_MS);
+      setInterval(loadArchive, 30000);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "jev-nethack-live-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test worker.test.mjs"
+  }
+}

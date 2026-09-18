@@ -1,0 +1,107 @@
+{
+  "actionCount": 24,
+  "archiveVerified": true,
+  "artifacts": [
+    {
+      "bytes": 25698,
+      "contentType": "video/mp4",
+      "filename": "segment-0001.mp4",
+      "sha256": "aec3418b69bde52d7cccdc0d9a57d8d235859cff81cb1e201b6f41613e4c1e22"
+    },
+    {
+      "bytes": 56198,
+      "contentType": "application/x-ndjson",
+      "filename": "segment-0001.jsonl",
+      "sha256": "6743128d54690573181d8568cef9b15dda8fe9b64497e1713ef6c3a17c2eadb1"
+    },
+    {
+      "bytes": 12931,
+      "contentType": "video/mp4",
+      "filename": "segment-0002.mp4",
+      "sha256": "36eb2434efbe886421c1621e1ae2bcccf7e0481cee6f7c9f994192b1f675e382"
+    },
+    {
+      "bytes": 85176,
+      "contentType": "application/x-ndjson",
+      "filename": "segment-0002.jsonl",
+      "sha256": "7406c775098431b2791f21e78c3db877c1edc754de74defef402709bb8fbdaff"
+    },
+    {
+      "bytes": 15315,
+      "contentType": "video/mp4",
+      "filename": "segment-0003.mp4",
+      "sha256": "0ccd86353c5cda90080a2725dadbbde59b32e8e2a2a298ba0ad6dff41adcb5f8"
+    },
+    {
+      "bytes": 86260,
+      "contentType": "application/x-ndjson",
+      "filename": "segment-0003.jsonl",
+      "sha256": "caedf8170f1eb8a758361beb2e6b8758867a916007f2601a75d23ec7a025b1ef"
+    },
+    {
+      "bytes": 8605,
+      "contentType": "video/mp4",
+      "filename": "segment-0005.mp4",
+      "sha256": "573f253b6a64c8bbc385d669c527e06c207fbed1b8549bd83be81575663dc6f6"
+    },
+    {
+      "bytes": 6369,
+      "contentType": "application/x-ndjson",
+      "filename": "segment-0005.jsonl",
+      "sha256": "5752588a572d8483fc96d5d06a1cfa1ec68405d4f63b9a9b2e540252b69193f8"
+    },
+    {
+      "bytes": 14054,
+      "contentType": "video/mp4",
+      "filename": "segment-0004.mp4",
+      "sha256": "fc0efbe5bfbe98cbde780c6fe230bce9431da40bdb2270865532d8a3c81adbe3"
+    },
+    {
+      "bytes": 86453,
+      "contentType": "application/x-ndjson",
+      "filename": "segment-0004.jsonl",
+      "sha256": "9acf296bbcaa6350c6ebe2f64f2eb41785de804944ac8d661ad9c9fb1be6c48a"
+    },
+    {
+      "bytes": 320456,
+      "contentType": "application/x-ndjson",
+      "filename": "events.jsonl",
+      "sha256": "c7d0a7098b90ecd4e3f9f47a5a619c03d94d48c994057765656af74243d3adb8"
+    }
+  ],
+  "completed": true,
+  "endedAt": "2026-09-18T05:02:06.255286+00:00",
+  "frameCount": 49,
+  "partialSegments": [],
+  "recordingComplete": true,
+  "schemaVersion": 1,
+  "segments": [
+    {
+      "completed": true,
+      "receipt": "segment-0001.receipt.json",
+      "segmentId": "broadcast-78a67686ccd748dbee762cc4981f1261-seg0001"
+    },
+    {
+      "completed": true,
+      "receipt": "segment-0002.receipt.json",
+      "segmentId": "broadcast-78a67686ccd748dbee762cc4981f1261-seg0002"
+    },
+    {
+      "completed": true,
+      "receipt": "segment-0003.receipt.json",
+      "segmentId": "broadcast-78a67686ccd748dbee762cc4981f1261-seg0003"
+    },
+    {
+      "completed": true,
+      "receipt": "segment-0004.receipt.json",
+      "segmentId": "broadcast-78a67686ccd748dbee762cc4981f1261-seg0004"
+    },
+    {
+      "completed": true,
+      "receipt": "segment-0005.receipt.json",
+      "segmentId": "broadcast-78a67686ccd748dbee762cc4981f1261-seg0005"
+    }
+  ],
+  "sessionId": "78a67686ccd748dbee762cc4981f1261",
+  "startedAt": "2026-09-18T05:01:49.573715+00:00"
+}
