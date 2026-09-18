@@ -13,7 +13,8 @@
     "typesafe-skill": "Official typesafe-ai/skills project install for Codex using npx skills add; installed skill and upstream source lock copied without modification.",
     "source-ledger": "Preserved September17 literature ledger with bounded September18 primary-source Puffer refresh; no protocol-backed Puffer win receipt located.",
     "cycle-aware-v1": "Frozen negative paired64+64 actual-game experiment; portable text path/editorial changes documented in source-public-hashes.tsv; raw arrays/probabilities preserved unchanged in release bundle.",
-    "runtime-support": "Six Python files match independently reviewed live publisher; portable README and non-ready LaunchAgent example.64tests passed; real firstcycle and subsequentbackgroundcycle verified."
+    "runtime-support": "Six Python files match independently reviewed live publisher; portable README and non-ready LaunchAgent example.64tests passed; real firstcycle and subsequentbackgroundcycle verified.",
+    "frontier-v2-preregistration": "Frozen exploratory two-branch direct-Jev protocol, public hash anchor before first gameplay request; no result or live migration claim."
   },
   "excluded": [
     "API and ingest credentials",
@@ -212,7 +213,16 @@
     "runtime-support/recover_video_tail.py": "b04e4c63a5d84ad1e3bac183f8871535f2674931f71b20374dd7723666593e3c",
     "runtime-support/test_publish_archives.py": "051ca84c8fba41d33cf47e8024db8bd9351fd1cf9cb39f7c59b2b93c8e40ef4f",
     "runtime-support/test_recover_training_tail.py": "16fe6670f8b2b452cad98cba215dfa44b51a8e425499a81751f23ce35371c955",
-    "runtime-support/test_recover_video_tail.py": "59bb2a56d01f6145d6fad0b33c57d55d070e7e8b44762238e3891ce43889a03f"
+    "runtime-support/test_recover_video_tail.py": "59bb2a56d01f6145d6fad0b33c57d55d070e7e8b44762238e3891ce43889a03f",
+    "research/frontier-v2-preregistration/operational-analysis-addendum.json": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049",
+    "research/frontier-v2-preregistration/freeze-receipt.json": "f815585a22f8b4c5953bd093fe104ee75a129f031c86506016efb03ef01d69d0",
+    "research/frontier-v2-preregistration/harness-freeze.public.json": "7e89be8afa6bcdf74f6536685f6aff2a9863203ab84349f401698cc7885a9acd",
+    "research/frontier-v2-preregistration/frozen-trial-plan.json": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48",
+    "research/frontier-v2-preregistration/test_candidate.py": "d427fec10e3521a06e9d6d87ca642df15813ccdbb7529a5968d5f3e473085215",
+    "research/frontier-v2-preregistration/public-anchor.json": "60134eb7b8ac038cbdd8aca2fc2b0a2e73059886c17c37692063994aa60f8c0a",
+    "research/frontier-v2-preregistration/README.md": "d145e5a437fa43a4110debe39841e19765b1eb4d835d498c3ebe8067a2fd01f2",
+    "research/frontier-v2-preregistration/fixtures.json": "7d542fb9e81d14e788181d2ce58d9ff7bc5abdf431d864e1bf294244e364d5de",
+    "research/frontier-v2-preregistration/candidate.py": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb"
   },
   "repository_url": "https://github.com/integrate-your-mind/jev-nethack",
   "recording_disclosure": "Completed game event logs and segment manifests are tracked; MP4 binaries and full recording bundles are GitHub Release assets with checksums."

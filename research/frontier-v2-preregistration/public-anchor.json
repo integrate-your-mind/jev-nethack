@@ -1,0 +1,21 @@
+{
+  "schema": "jev-nethack-frontier-v2-public-preregistration/v1",
+  "preparedAt": "2026-09-18T15:43:50.574710+00:00",
+  "status": "before_any_gameplay_provider_call",
+  "originalHarnessFreezeSha256": "f82516a936bf9ad60080b1154ac04daf7afba77955264133827c08f10c5a653b",
+  "originalHarnessSha256": "77f13a6a1c4e691ec96d3b9a43273b952eb7644d4bb781b3efce6d7833b60d55",
+  "originalAddendumSha256": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049",
+  "replayReceiptSha256": "f107f4cf5cc47af552258ca0cce067040c73b3f56e101b034aa480162371c8e5",
+  "maximumAttemptedProviderCalls": 192,
+  "candidateSha256": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb",
+  "portableMetadataTransformation": "Replace private absolute root in two metadata paths with <PRIVATE_JEV_ROOT>; original receipt hash above binds unmodified private original.",
+  "sha256": {
+    "operational-analysis-addendum.json": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049",
+    "freeze-receipt.json": "f815585a22f8b4c5953bd093fe104ee75a129f031c86506016efb03ef01d69d0",
+    "harness-freeze.public.json": "7e89be8afa6bcdf74f6536685f6aff2a9863203ab84349f401698cc7885a9acd",
+    "frozen-trial-plan.json": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48",
+    "test_candidate.py": "d427fec10e3521a06e9d6d87ca642df15813ccdbb7529a5968d5f3e473085215",
+    "fixtures.json": "7d542fb9e81d14e788181d2ce58d9ff7bc5abdf431d864e1bf294244e364d5de",
+    "candidate.py": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "jev-nethack-frontier-v2-trial-plan/v1",
+  "status": "frozen_not_run",
+  "decisionReceipt": "75824d12-b923-4c96-a038-af754e5f09cd",
+  "objective": "Test whether persistent observation-only frontier and bounded goal context produces useful progress from states not used to tune cycle-aware-v1.",
+  "source": {
+    "episodeId": 0,
+    "seed": 103,
+    "exactReplayRequired": true,
+    "branchPointsAfterCommittedStep": [3359, 3999],
+    "selectionReason": "Two fixed later committed points outside the v1 saved fixtures and v1 step-3029 branch; no state-dependent replacement is allowed."
+  },
+  "armsPerBranchPoint": [
+    {"name": "baseline", "actualActionsMaximum": 32, "goalCallsMaximum": 0},
+    {"name": "frontier-v2", "actualActionsMaximum": 32, "goalCallsMaximum": 32, "goalHorizonActions": 6}
+  ],
+  "maximumProviderCalls": 192,
+  "providerCallAccounting": "2 branch points times (32 baseline actions + 32 v2 actions + at most 32 v2 goal judgments)",
+  "frontierMemoryConstruction": "During provider-free exact replay, feed every captured raw observation through run.make_state and candidate.observe with its full-array digest. Do not import unseen map, seed internals, save data, or future observations.",
+  "goalLifecycle": {
+    "maximumActualActions": 6,
+    "refreshTriggers": ["no active goal", "six-action horizon", "visible prompt priority change", "low HP priority change", "combat priority change", "urgent hunger priority change", "observed frontier exhaustion"],
+    "chooser": "Jev Choice over the complete frozen goal criteria"
+  },
+  "actionLifecycle": {
+    "chooser": "Jev Choice for every actual action",
+    "criteria": "the complete ordered 121-action mapping with contextual labels",
+    "forbidden": ["heuristic execution", "action masking", "action removal", "probability reweighting", "forced route step"]
+  },
+  "retention": [
+    "full raw goal request and response bodies and complete goal probability distribution",
+    "full raw action request and response bodies and all 121 action probabilities",
+    "raw before and after NLE observation arrays with hashes",
+    "memory snapshot and digest, active goal contract, criteria, instructions, action and terminal outcome"
+  ],
+  "measures": [
+    "distinct positions and raw observations",
+    "cells newly visited relative to each exact prefix",
+    "observed frontier targets reached and route distance changes",
+    "two-step reversals and repeated-edge traversals",
+    "exact raw no-ops, unchanged-position actions, and blank or wall attempts",
+    "prompt, combat, low-HP, and hunger goal/action handling",
+    "NetHack turns, score, depth, experience level, HP, hunger, termination, truncation, and verified ascension"
+  ],
+  "stopRules": [
+    "retain and stop an arm on termination or truncation; never reset or replace it",
+    "stop on any replay mismatch or preservation failure",
+    "do not replace a branch point, tune questions, or extend an arm after results"
+  ],
+  "acceptance": "Development evidence only. Consider live migration only after both fixed pairs preserve safety/menu behavior and show more useful objective progress than baseline without a replacement cycle. Confidence is never accuracy."
+}

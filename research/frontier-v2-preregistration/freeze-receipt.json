@@ -1,0 +1,41 @@
+{
+  "artifacts": {
+    "README.md": "44a6f2b88f42c6221acc94126bab42106f82ab2a971b095790a20afbff891357",
+    "candidate.py": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb",
+    "fixtures.json": "7d542fb9e81d14e788181d2ce58d9ff7bc5abdf431d864e1bf294244e364d5de",
+    "frozen-trial-plan.json": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48",
+    "test_candidate.py": "d427fec10e3521a06e9d6d87ca642df15813ccdbb7529a5968d5f3e473085215"
+  },
+  "decisionReceipt": "75824d12-b923-4c96-a038-af754e5f09cd",
+  "liveActions": 0,
+  "liveMigrationPerformed": false,
+  "providerCalls": 0,
+  "questionContract": {
+    "actionCriteriaContract": "identity preserving; expected 121 at integration",
+    "actionInstructionsSha256": "85aae97b60ad887b695c1ebac86cb3ab7c19fe6ab447fa361416b2e2a542a479",
+    "goalCriteriaCount": 7,
+    "goalCriteriaSha256": "9ab3f7ed8e12ba56c9eb6794a9c863ec7d44bb5dc039f48fbc461487a052e77f",
+    "goalHorizonActions": 6,
+    "goalInstructionsSha256": "9ccdf767fda9fce34b99563ae4607e105bd36ee5a725ea9fc2d6b1bc1bff547c"
+  },
+  "schema": "jev-nethack-frontier-v2-freeze/v1",
+  "status": "frozen_pre_api_trial",
+  "tests": {
+    "command": "PYTHONWARNINGS=error::ResourceWarning <durable-python> -m unittest -v test_candidate.py",
+    "passed": 13
+  },
+  "trial": {
+    "branchPointsAfterCommittedStep": [
+      3359,
+      3999
+    ],
+    "maximumProviderCalls": 192,
+    "status": "frozen_not_run"
+  },
+  "typeSafeGuidance": [
+    "https://docs.typesafe.ai/concepts/how-to-build-with-system-one.md",
+    "https://docs.typesafe.ai/concepts/state.md",
+    "https://docs.typesafe.ai/primitives/choice.md",
+    "https://docs.typesafe.ai/cookbooks/hierarchical_classification.md"
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "combatSurvivalControl": {
+    "adjacent_cells": {
+      "E": {
+        "description": "floor of a room",
+        "symbol": "."
+      },
+      "W": {
+        "description": "solid stone",
+        "symbol": " "
+      }
+    },
+    "message": "The jackal bites!",
+    "player": {
+      "condition_bits": 1,
+      "dungeon": 0,
+      "hp": 2,
+      "hunger_code": 3,
+      "level": 1,
+      "max_hp": 17,
+      "x": 0,
+      "y": 4
+    },
+    "recent_actions": [],
+    "terminal": ""
+  },
+  "fixtureLimits": [
+    "Synthetic compact player observations only",
+    "No claim about Jev accuracy or NLE outcome"
+  ],
+  "longCycleWithRememberedFrontier": {
+    "expectedFrontierDirection": "E",
+    "expectedRouteDirections": [
+      "E",
+      "E"
+    ],
+    "expectedTarget": [
+      0,
+      1,
+      3,
+      4
+    ],
+    "states": [
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "solid stone",
+            "symbol": " "
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 0,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "floor of a room",
+            "symbol": "."
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 1,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "corridor",
+            "symbol": "."
+          },
+          "W": {
+            "description": "floor of a room",
+            "symbol": "."
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 2,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "floor of a room",
+            "symbol": "."
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 1,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "solid stone",
+            "symbol": " "
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 0,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "floor of a room",
+            "symbol": "."
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 1,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "solid stone",
+            "symbol": " "
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 0,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "floor of a room",
+            "symbol": "."
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 1,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "solid stone",
+            "symbol": " "
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 0,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "floor of a room",
+            "symbol": "."
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 1,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      },
+      {
+        "adjacent_cells": {
+          "E": {
+            "description": "floor of a room",
+            "symbol": "."
+          },
+          "W": {
+            "description": "solid stone",
+            "symbol": " "
+          }
+        },
+        "message": "",
+        "player": {
+          "condition_bits": 0,
+          "dungeon": 0,
+          "hp": 17,
+          "hunger_code": 1,
+          "level": 1,
+          "max_hp": 17,
+          "x": 0,
+          "y": 4
+        },
+        "recent_actions": [],
+        "terminal": ""
+      }
+    ]
+  },
+  "promptControl": {
+    "adjacent_cells": {
+      "E": {
+        "description": "floor of a room",
+        "symbol": "."
+      },
+      "W": {
+        "description": "solid stone",
+        "symbol": " "
+      }
+    },
+    "message": "",
+    "player": {
+      "condition_bits": 0,
+      "dungeon": 0,
+      "hp": 17,
+      "hunger_code": 1,
+      "level": 1,
+      "max_hp": 17,
+      "x": 0,
+      "y": 4
+    },
+    "recent_actions": [],
+    "terminal": "Things that are here:\n a lichen corpse\n --More--"
+  },
+  "schema": "jev-nethack-frontier-v2-fixtures/v1"
+}
