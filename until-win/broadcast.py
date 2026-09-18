@@ -18,6 +18,7 @@ import math
 import os
 from pathlib import Path
 import queue
+import re
 import secrets
 import signal
 import shutil
@@ -350,6 +351,166 @@ def render_segment_ffmpeg(frames: list[tuple[Path, float]], output: Path) -> Non
         concat.unlink(missing_ok=True)
 
 
+_PUBLIC_EPISODE_STATUSES = {
+    "engine_episode_limit",
+    "engine_truncation",
+    "game_end",
+    "stop_requested",
+    "verified_ascension",
+}
+_PUBLIC_SCORE_ERRORS = {
+    "ambiguous_xlogfile",
+    "episode_id_mismatch",
+    "episode_seed_mismatch",
+    "malformed_xlogfile",
+    "missing_bound_ttyrec",
+    "missing_xlogfile",
+    "unbound_episode_identity",
+    "unsafe_episode_directory",
+    "unsafe_ttyrec_directory",
+    "unsafe_ttyrec",
+    "unsafe_xlogfile",
+    "xlog_ttyrec_binding_mismatch",
+}
+
+
+def _public_int(value: Any) -> int | None:
+    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+        return value
+    return None
+
+
+def _public_text(value: Any, *, limit: int) -> str | None:
+    if not isinstance(value, str) or not value or len(value) > limit:
+        return None
+    if any(ord(char) < 32 or ord(char) == 127 for char in value):
+        return None
+    return value
+
+
+def _public_relative_path(value: Any) -> str | None:
+    text = _public_text(value, limit=256)
+    if text is None or text.startswith("/") or "\\" in text:
+        return None
+    parts = text.split("/")
+    if any(part in {"", ".", ".."} for part in parts):
+        return None
+    return text
+
+
+def _sanitize_score_evidence(
+    value: Any, *, episode_id: int | None, seed: int | None
+) -> dict[str, Any] | None:
+    if not isinstance(value, Mapping):
+        return None
+    relative_path = _public_relative_path(value.get("relativePath"))
+    ttyrec_path = _public_relative_path(value.get("ttyrecRelativePath"))
+    digest = value.get("sha256")
+    evidence_episode_id = _public_int(value.get("episodeId"))
+    evidence_seed = _public_int(value.get("seed"))
+    ttyrec_bytes = _public_int(value.get("ttyrecBytes"))
+    xlog_bytes = _public_int(value.get("xlogBytes"))
+    if (
+        value.get("source") != "native_xlogfile"
+        or value.get("record") != "single_native_xlog_record"
+        or relative_path is None
+        or ttyrec_path is None
+        or not isinstance(digest, str)
+        or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+        or episode_id is None
+        or seed is None
+        or evidence_episode_id != episode_id
+        or evidence_seed != seed
+        or ttyrec_bytes is None
+        or xlog_bytes is None
+    ):
+        return None
+    xlog_match = re.fullmatch(r"nle-ttyrec/nle\.([1-9][0-9]*)\.xlogfile", relative_path)
+    if xlog_match is None:
+        return None
+    pid = xlog_match.group(1)
+    if re.fullmatch(rf"nle-ttyrec/nle\.{pid}\.[0-9]+\.ttyrec3\.bz2", ttyrec_path) is None:
+        return None
+    return {
+        "source": "native_xlogfile",
+        "relativePath": relative_path,
+        "sha256": digest,
+        "xlogBytes": xlog_bytes,
+        "record": "single_native_xlog_record",
+        "ttyrecRelativePath": ttyrec_path,
+        "ttyrecBytes": ttyrec_bytes,
+        "episodeId": evidence_episode_id,
+        "seed": evidence_seed,
+    }
+
+
+def _sanitize_episode_result(row: Mapping[str, Any]) -> dict[str, Any]:
+    public: dict[str, Any] = {}
+    for key in (
+        "episodeId",
+        "seed",
+        "score",
+        "officialFinalScore",
+        "lastObservedScore",
+        "maxObservedScore",
+        "maxDepth",
+        "steps",
+    ):
+        if key in row and row[key] is None and key in {
+            "score",
+            "officialFinalScore",
+            "lastObservedScore",
+            "maxObservedScore",
+        }:
+            public[key] = None
+            continue
+        value = _public_int(row.get(key))
+        if value is not None:
+            public[key] = value
+    reward = row.get("totalReward")
+    if isinstance(reward, (int, float)) and not isinstance(reward, bool):
+        try:
+            public_reward = float(reward)
+        except (OverflowError, ValueError):
+            pass
+        else:
+            if math.isfinite(public_reward):
+                public["totalReward"] = public_reward
+    semantics = row.get("scoreSemantics")
+    if semantics in {"official_final", "last_observed"}:
+        public["scoreSemantics"] = semantics
+    status = row.get("status")
+    if status in _PUBLIC_EPISODE_STATUSES:
+        public["status"] = status
+    end_status = row.get("endStatus")
+    if end_status is None and "endStatus" in row:
+        public["endStatus"] = None
+    elif isinstance(end_status, str) and re.fullmatch(r"[A-Z_]{1,32}", end_status):
+        public["endStatus"] = end_status
+    for key, limit in (("deathCause", 256), ("deathWhile", 128)):
+        value = row.get(key)
+        if value is None and key in row:
+            public[key] = None
+        else:
+            text = _public_text(value, limit=limit)
+            if text is not None:
+                public[key] = text
+    error = row.get("officialScoreError")
+    if error in _PUBLIC_SCORE_ERRORS:
+        public["officialScoreError"] = error
+    evidence = _sanitize_score_evidence(
+        row.get("officialScoreEvidence"),
+        episode_id=public.get("episodeId"),
+        seed=public.get("seed"),
+    )
+    if evidence is not None:
+        public["officialScoreEvidence"] = evidence
+    for key in ("isAscended", "terminated", "truncated"):
+        if isinstance(row.get(key), bool):
+            public[key] = row[key]
+    return public
+
+
 class BroadcastRecorder:
     def __init__(self, output: Path, *, stream_id: str, ingest: IngestClient | None,
                  segment_seconds: float = DEFAULT_SEGMENT_SECONDS,
@@ -409,16 +570,17 @@ class BroadcastRecorder:
         if metrics is not None:
             public = {"scope": "continuous_run"}
             for key in ("totalActions", "completedEpisodes", "ascensions", "interruptedEpisodes",
-                        "bestScore", "maxDepth", "recoveries"):
+                        "bestScore", "maxDepth", "recoveries", "deaths"):
                 value = metrics.get(key)
                 if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
                     public[key] = value
             results = metrics.get("episodeResults")
             if isinstance(results, list):
-                allowed = ("episodeId", "seed", "score", "maxDepth", "steps", "status",
-                           "isAscended", "terminated", "truncated")
-                public["episodeResults"] = [{key: row[key] for key in allowed if key in row}
-                                            for row in results[-100:] if isinstance(row, Mapping)]
+                public["episodeResults"] = [
+                    _sanitize_episode_result(row)
+                    for row in results[-100:]
+                    if isinstance(row, Mapping)
+                ]
                 public["episodeResultsLimit"] = 100
             self.public_metrics = public
         if runtime_status is not None:

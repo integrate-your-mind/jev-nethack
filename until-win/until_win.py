@@ -50,8 +50,10 @@ from jev_client import (
     JevBudgetExceededError,
     JevClient,
     JevClientError,
+    JevHTTPError,
 )
 from menu_labels import contextual_choices
+from metrics import choose_compat_score, terminal_metrics
 from recovery import ReplayPlanError, load_legacy_plan, load_native_plan
 from transition_pack import (
     SCHEMA as TRANSITION_SCHEMA,
@@ -636,6 +638,7 @@ class UntilWinSupervisor:
             "jev_client.py",
             "menu_labels.py",
             "broadcast.py",
+            "metrics.py",
         )
         return {
             name: sha256_file(self.source_root / name)
@@ -944,13 +947,16 @@ class UntilWinSupervisor:
             except JevClientError as exc:
                 delay = self.backoff.next_delay()
                 retry_at = (datetime.now(timezone.utc) + timedelta(seconds=delay)).isoformat()
+                error_type = type(exc).__name__
+                if isinstance(exc, JevHTTPError) and isinstance(exc.status, int) and not isinstance(exc.status, bool):
+                    error_type = f"JevHTTPError:{exc.status}"
                 failure = {
                     "schema": RUNTIME_SCHEMA,
                     "eventType": "jev_error",
                     "at": utc_now(),
                     "episodeId": episode_id,
                     "step": step,
-                    "errorType": type(exc).__name__,
+                    "errorType": error_type,
                     "backoffSeconds": delay,
                     "retryAt": retry_at,
                 }
@@ -959,7 +965,7 @@ class UntilWinSupervisor:
                 self._persist_state()
                 self._report_recorder_status(
                     "provider_backoff",
-                    error_type=type(exc).__name__,
+                    error_type=error_type,
                     retry_at=retry_at,
                 )
                 self.backoff.wait(self.should_stop)
@@ -1039,12 +1045,16 @@ class UntilWinSupervisor:
         final_end_status: str | None = None
         status = "engine_episode_limit"
         obs: Mapping[str, Any] | None = None
+        last_observed_stats: Mapping[str, int] | None = None
+        max_observed_score: int | None = None
         pending_intent: Mapping[str, Any] | None = None
         expected_final_state: Mapping[str, Any] | None = None
         origin = replay_plan.get("origin") if replay_plan else "native_full_observation"
         try:
             env.unwrapped.seed(core=seed, disp=seed + 100000, lgen=seed + 200000, reseed=False)
             obs, _ = env.reset()
+            last_observed_stats = game.stats(obs)
+            max_observed_score = int(last_observed_stats["score"])
             self._prepare_initial_snapshot(
                 global_dir=global_dir,
                 observation=copy_observation(obs),
@@ -1075,6 +1085,8 @@ class UntilWinSupervisor:
                 if expected_before_digest is not None:
                     self._require_replay_equal("raw observation hash", before_digest, expected_before_digest, step)
                 before_stats = game.stats(obs)
+                last_observed_stats = before_stats
+                max_observed_score = max(int(max_observed_score or 0), int(before_stats["score"]))
                 visits[(before_stats["dungeon"], before_stats["level"], before_stats["x"], before_stats["y"])] += 1
                 state = game.make_state(obs, visits, history)
                 if isinstance(record.get("state"), Mapping):
@@ -1098,6 +1110,9 @@ class UntilWinSupervisor:
                 if record.get("origin") != "deterministically_reconstructed_legacy":
                     self._require_replay_equal("ascension flag", native_ascension, bool(record.get("isAscended")), step)
                 after_stats = game.stats(next_obs)
+                if not terminated and not truncated:
+                    last_observed_stats = after_stats
+                    max_observed_score = max(int(max_observed_score or 0), int(after_stats["score"]))
                 max_depth = max(max_depth, int(before_stats["depth"]), int(after_stats["depth"]))
                 total_reward += float(reward)
                 final_end_status = end_status_name(info)
@@ -1207,6 +1222,8 @@ class UntilWinSupervisor:
                 raw_before = copy_observation(obs)
                 before_digest = observation_digest(raw_before)
                 before_stats = game.stats(obs)
+                last_observed_stats = before_stats
+                max_observed_score = max(int(max_observed_score or 0), int(before_stats["score"]))
                 visits[(before_stats["dungeon"], before_stats["level"], before_stats["x"], before_stats["y"])] += 1
                 state = game.make_state(obs, visits, history)
                 if expected_final_state is not None:
@@ -1215,7 +1232,13 @@ class UntilWinSupervisor:
                 base_criteria = game.action_choices(env.unwrapped.actions)
                 criteria = contextual_choices(state, env.unwrapped.actions, base_criteria)
                 if self.recorder is not None:
-                    self.recorder.observed_frame(state=state, phase="before_action", episode=episode_id, step=step)
+                    self._set_recorder_telemetry("awaiting_decision")
+                    self.recorder.observed_frame(
+                        state=state,
+                        phase="awaiting_decision",
+                        episode=episode_id,
+                        step=step,
+                    )
 
                 recovered_intent = pending_intent is not None
                 if recovered_intent:
@@ -1305,6 +1328,9 @@ class UntilWinSupervisor:
                     raw_after = copy_observation(next_obs)
                     after_digest = observation_digest(raw_after)
                     after_stats = game.stats(next_obs)
+                    if not terminated and not truncated:
+                        last_observed_stats = after_stats
+                        max_observed_score = max(int(max_observed_score or 0), int(after_stats["score"]))
                     max_depth = max(max_depth, int(before_stats["depth"]), int(after_stats["depth"]))
                     total_reward += float(reward)
                     final_end_status = end_status_name(info)
@@ -1414,7 +1440,21 @@ class UntilWinSupervisor:
             if self.should_stop() and status == "engine_episode_limit":
                 status = "stop_requested"
         finally:
+            # Capture scalar state before close: some NLE wrappers replace the
+            # terminal observation with a zeroed buffer during cleanup.
+            preserved_last_stats = dict(last_observed_stats or {})
             env.close()
+        terminal = terminal_metrics(
+            episode_dir,
+            expected_episode_id=episode_id,
+            expected_seed=seed,
+            trusted_root=self.data_root,
+        )
+        last_observed_score = preserved_last_stats.get("score")
+        compatibility_score, score_semantics = choose_compat_score(
+            official_final_score=terminal.get("officialFinalScore"),
+            last_observed_score=last_observed_score,
+        )
         summary = {
             "schema": RUNTIME_SCHEMA,
             "episodeId": episode_id,
@@ -1422,13 +1462,22 @@ class UntilWinSupervisor:
             "endedAt": utc_now(),
             "status": status,
             "steps": step,
-            "score": game.stats(obs)["score"] if obs is not None else None,
+            "score": compatibility_score,
+            "scoreSemantics": score_semantics,
+            "officialFinalScore": terminal.get("officialFinalScore"),
+            "lastObservedScore": last_observed_score,
+            "maxObservedScore": max_observed_score,
             "maxDepth": max_depth,
             "totalReward": total_reward,
             "terminated": bool(terminated),
             "truncated": bool(truncated),
             "isAscended": verified_ascension,
             "endStatus": final_end_status,
+            "deathCause": terminal.get("deathCause"),
+            "deathWhile": terminal.get("deathWhile"),
+            "officialScoreEvidence": terminal.get("officialScoreEvidence"),
+            "officialScoreError": terminal.get("officialScoreError"),
+            "xlogfileCandidateCount": terminal.get("xlogfileCandidateCount"),
             "wallSeconds": time.monotonic() - started,
             "replayOrigin": origin if replay_plan else None,
         }
@@ -1554,9 +1603,19 @@ class UntilWinSupervisor:
                     "episodeId": episode_id,
                     "seed": seed,
                     "score": summary.get("score"),
+                    "scoreSemantics": summary.get("scoreSemantics"),
+                    "officialFinalScore": summary.get("officialFinalScore"),
+                    "lastObservedScore": summary.get("lastObservedScore"),
+                    "maxObservedScore": summary.get("maxObservedScore"),
+                    "totalReward": summary.get("totalReward"),
                     "maxDepth": summary.get("maxDepth"),
                     "steps": summary.get("steps"),
                     "status": summary.get("status"),
+                    "endStatus": summary.get("endStatus"),
+                    "deathCause": summary.get("deathCause"),
+                    "deathWhile": summary.get("deathWhile"),
+                    "officialScoreEvidence": summary.get("officialScoreEvidence"),
+                    "officialScoreError": summary.get("officialScoreError"),
                     "isAscended": summary.get("isAscended"),
                     "terminated": summary.get("terminated"),
                     "truncated": summary.get("truncated"),
@@ -1592,9 +1651,11 @@ class UntilWinSupervisor:
             fragment_complete = True
             return self.state
         finally:
+            fragment_closed = self.training is None
             if self.training is not None:
                 try:
                     self.training.close(completed=fragment_complete, reason=exit_reason)
+                    fragment_closed = True
                 except (OSError, TransitionPackError) as exc:
                     candidate = self.state.get("resumeCandidate")
                     if not isinstance(candidate, Mapping):
@@ -1613,7 +1674,15 @@ class UntilWinSupervisor:
                         pass
             if self.events is not None:
                 self.events.close()
-            self.recovery_log.close()
+            try:
+                # TransitionPackWriter.close() durably writes the final shard
+                # marker and training manifest before it returns.  Retain the
+                # fragment pointer unless that close completed successfully.
+                if fragment_complete and fragment_closed:
+                    self.state["activeFragment"] = None
+                    self._persist_state()
+            finally:
+                self.recovery_log.close()
 
 
 def build_parser() -> argparse.ArgumentParser:

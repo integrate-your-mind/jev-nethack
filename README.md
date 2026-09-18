@@ -14,6 +14,8 @@ The [cycle-aware-v1 experiment](research/cycle-aware-v1/README.md) reduced backt
 
 The [frontier-v2 validation-fix comparison](research/frontier-v2-validation-fix/README.md) found 14 more new cells across two saved positions, but its preregistered result is **negative** because safety gates failed. Detailed evidence shows a combat-priority lapse and a menu-evaluator false positive: the menu action actually opened the door correctly. All 143 provider responses and 128 raw transitions are preserved, with no live policy migration. The original zero-call infrastructure failure is preserved separately.
 
+Native terminal metrics now preserve NetHack’s recorded final score separately from observed score and reward. The first completed game ended by starvation with native score 138. The [metric repair and shutdown review](research/runtime-metrics-v1/README.md) retain source provenance and correction limits. The [next policy design](research/next-design-draft/README.md) remains a draft; it has not changed the live policy.
+
 ## Layout
 
 - `until-win/`: persistent direct Jev policy with verified same-game recovery and raw transition capture

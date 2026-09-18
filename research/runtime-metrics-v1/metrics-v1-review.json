@@ -1,0 +1,184 @@
+{
+  "acceptedLimitations": [
+    {
+      "disposition": "Do not reuse it. After STOP, process exit, and paused inactive state, atomically retain a fresh dry-run and pass that exact file and SHA-256 to apply.",
+      "finding": "The retained production dry-run was generated while live episode 1 advanced, so its full state hash is intentionally stale for apply.",
+      "id": "fresh-post-stop-dry-run-required",
+      "severity": "operational-condition"
+    },
+    {
+      "disposition": "The apply write set is restricted to state.json and its receipt; pack/index/marker sentinels verify that boundary. Do not claim training-pack validation.",
+      "finding": "The correction hash-binds only artifacts it reads for metrics. Training packs are not parsed.",
+      "id": "source-artifact-scope",
+      "severity": "scope-limit"
+    },
+    {
+      "disposition": "No claim is made against privileged writers that bypass both locks or against perpetual filesystem immutability after validation.",
+      "finding": "Concurrency guarantees assume legitimate runtime and correction writers honor the handoff-bound global lock and runtime.lock.",
+      "id": "cooperative-lock-boundary",
+      "severity": "scope-limit"
+    },
+    {
+      "disposition": "The frozen historical production dry-run, 41-test independent focused suite, existing recovery tests, and source rehash evidence cover this bounded metrics rollout; do not claim that skipped fixture ran.",
+      "finding": "The copied-production, two-restart recovery test is opt-in and was skipped in the final 94-test suite.",
+      "id": "opt-in-production-recovery-test",
+      "severity": "low"
+    }
+  ],
+  "decision": {
+    "currentEvidenceDryRunReusableForApply": false,
+    "historicalCorrectionAuthorizedByReview": true,
+    "liveDeploymentAuthorizedByReview": true,
+    "providerCallsAuthorized": false,
+    "rationale": "The final candidate separates official native score, last and maximum observed score, and reward; captures terminal evidence after close without accepting the zeroed terminal observation as the last valid scalar state; reconstructs replay metrics without provider calls; and binds one historical terminal row to unique schema-valid, contiguous source evidence. The correction requires reviewed evidence, exact state compare-and-swap, STOP, paused inactive state, the handoff-bound global lock, runtime.lock, a durable prepared receipt in a pre-existing directory, atomic state replacement, readback, source revalidation, and strict retry receipts.",
+    "scope": "Deploy exactly the four frozen source files, then correct only retained episode 0 terminal result index 1 after generating a fresh post-STOP dry-run from the exact paused state.",
+    "status": "accepted_for_stopped_runtime_deployment_and_one_bound_historical_correction"
+  },
+  "deploymentConditions": [
+    "Before copying files, verify the exact predeployment hashes and absence assertions recorded in expectedPredeploymentRuntime; retain the root-prepared backup.",
+    "Stop the runner and wait for process exit. Require a regular STOP latch, state.status=paused, activeEpisode=null, and activeFragment=null.",
+    "Copy only metrics.py, until_win.py, broadcast.py, and historical_metrics_correction.py; verify their exact frozen SHA-256 hashes after copy before restart.",
+    "Ensure the correction receipt parent already exists and is a safe directory.",
+    "Generate and durably retain a fresh dry-run after STOP from the exact paused state; compute its SHA-256 and use that exact path/hash for apply. Never use production-dry-run.json from this candidate for apply.",
+    "Apply only episode 0 under the handoff-bound global lock and runtime.lock. Require the completed correction receipt, corrected row index 1, unchanged non-target episodeResults, unchanged referenced source hashes, and unchanged raw-pack sentinels.",
+    "Restart only after deployment and correction readback succeed; verify emitted metrics and public telemetry from the deployed hashes."
+  ],
+  "expectedPredeploymentRuntime": {
+    "backupPreparedByRoot": "recovery/runtime-before-metrics-v1",
+    "fileSha256": {
+      "broadcast.py": "50f2c86c63864b98526691e5ac0c60ca05734330f2c61ce2e63b49db44bc854f",
+      "menu_labels.py": "78cf6894b60ec7af8ee3b991d39d0c8386401e490864f41ecf04ea47edb9ac4f",
+      "run.py": "9cb7033d0fc34c375fe0bea258763bcf54c0eff03da924da120a1f7924c59c02",
+      "until_win.py": "917157b89035d8f5641f47920178bc7dbf339d13ac64ef908a0634983733d4d1"
+    },
+    "historical_metrics_correction.py": "absent",
+    "metrics.py": "absent",
+    "requireExactCandidateHashesAfterCopy": true,
+    "requireExactMatchBeforeCopy": true
+  },
+  "reviewTarget": {
+    "candidateRoot": "JEV_NETHACK_ROOT/base/runtime-candidates/metrics-v1",
+    "productionDryRunSha256": "edefee9dd831895366858f7e4b68e01a475d41709d91d4f8881ceb39dc446a7c",
+    "productionDryRunVerificationSha256": "c35e178c98666b717d1c2cb8802f71d75ef1f30fcef46024c4651251c77dc717",
+    "readmeSha256": "8c4551a0e1ef59e3efe2843346680a55bb8e10c1365c9416ccb66eceafff5260",
+    "sourceSha256": {
+      "broadcast.py": "022d94e5402d1e9ccad089563d042adc037f5b2ccbc13c106992333f13fb3004",
+      "historical_metrics_correction.py": "0aaa44d2c8970b3ff76325e973aedbcd87e19b1fad70b29c84f7a584777adf3a",
+      "menu_labels.py": "78cf6894b60ec7af8ee3b991d39d0c8386401e490864f41ecf04ea47edb9ac4f",
+      "metrics.py": "7430fb511f07c2a3f0750acdf05401ac7fb051f663a7121594e86faea41b4e08",
+      "run.py": "9cb7033d0fc34c375fe0bea258763bcf54c0eff03da924da120a1f7924c59c02",
+      "until_win.py": "8ce68a8dd5b49f0a57eff45b41345df3b04d1568eef30992b8da01b1563b8972"
+    },
+    "testSha256": {
+      "test_historical_metrics_correction.py": "5983f2674b91c91c5d5e90152913a099e09e4634873e15c39c74d502b82ffe65",
+      "test_metrics.py": "9065d045234434b062a180d2920a41db0c64710dc011042f9822c0db373483f3",
+      "test_public_telemetry.py": "1406c7f49864fb331baa671c9620acb964ee617ece021eb5ccdcd3f6c87837e2",
+      "test_until_win.py": "3654a35b4be8c90ca4858d0521db9c76e9871e5467218ec0514e332f987de6ab"
+    }
+  },
+  "reviewedAt": "2026-09-18T16:42:09Z",
+  "reviewerActivity": {
+    "filesModified": [
+      "metrics-v1-review.json"
+    ],
+    "liveRuntimeFilesModified": false,
+    "nleGameplayActions": 0,
+    "productionStateModified": false,
+    "providerCalls": 0
+  },
+  "schema": "jev-nethack-metrics-v1-independent-review/v1",
+  "unresolvedBlockers": [],
+  "verifiedEvidence": {
+    "applyProtocol": {
+      "entireCorrectionRebuiltAndComparedUnderLocks": true,
+      "handoffRefreshRetrySupportedWhenSemanticallyEquivalent": true,
+      "idempotentCompletedRetry": true,
+      "nonTargetStateAndForgedAfterHashRejected": true,
+      "preparedReceiptFsyncedBeforeStateReplace": true,
+      "rawPackSentinelsUnchanged": true,
+      "requiresExactFreshDryRunFileAndCallerSuppliedSha256": true,
+      "requiresExactReviewedPrestate": true,
+      "requiresHandoffBoundGlobalLock": true,
+      "requiresNoActiveEpisodeOrFragment": true,
+      "requiresPausedState": true,
+      "requiresPreexistingReceiptParent": true,
+      "requiresRegularStopLatch": true,
+      "requiresRuntimeLock": true,
+      "sourceArtifactsVerifiedBeforeAndAfterStateWrite": true,
+      "stateReplaceAtomicAndReadBack": true,
+      "strictPreparedAndCompletedReceiptValidation": true,
+      "writeSet": [
+        "state.json",
+        "correction receipt"
+      ]
+    },
+    "historicalBinding": {
+      "allSourceArtifactHashesMatchedDuringIndependentReview": true,
+      "deathCause": "died of starvation",
+      "deathWhile": "fainted",
+      "earlierInterruptedRowPreserved": true,
+      "endStatus": "DEATH",
+      "episodeId": 0,
+      "episodeResultsUnchangedDuringDryRun": true,
+      "lastObservedScore": 138,
+      "maxObservedScore": 138,
+      "observationDigestChainContinuous": true,
+      "officialFinalScore": 138,
+      "productionWriteSetDuringDryRun": [],
+      "runtimeSchemasRequired": true,
+      "scoreChainContinuous": true,
+      "seed": 103,
+      "sourceArtifactsRehashed": 9,
+      "summaryImmediatelyFollowsTerminalTransition": true,
+      "targetEpisodeResultIndex": 1,
+      "terminalEventId": "episode-00000000-step-000005226",
+      "totalReward": 138.0,
+      "transitionCount": 5227,
+      "uniqueSummaryRequired": true,
+      "uniqueTerminalRowRequired": true
+    },
+    "publicTelemetry": {
+      "exactXlogAndTtyrecPathShapesAndPidPairRequired": true,
+      "nestedEvidenceMatchesEpisodeAndSeed": true,
+      "oversizedNumericConversionOmittedWithoutInterrupt": true,
+      "typedAllowlist": true
+    },
+    "replayMetrics": {
+      "nonterminalReplayedObservationUpdatesLastAndMaximum": true,
+      "providerCallsDuringReplay": 0,
+      "rewardReconstructed": true
+    },
+    "terminalMetrics": {
+      "episodeAndSeedBound": true,
+      "missingMalformedAmbiguousEvidenceIsExplicitlyUnknown": true,
+      "nativeXlogRequiresUniqueRegularBoundFile": true,
+      "terminalObservationZeroDoesNotReplaceLastValidPreterminalScore": true,
+      "ttyrecRequiredAndStatOnly": true,
+      "xlogAndTtyrecPidBound": true,
+      "xlogReadOccursAfterEnvironmentClose": true,
+      "zeroOfficialScorePreservedByNoneCheck": true
+    },
+    "tests": {
+      "ownerFullSuite": {
+        "optInSkip": "copied-production two-restart fixture",
+        "passed": 93,
+        "skipped": 1,
+        "total": 94
+      },
+      "reviewerEarlierFocusedSuite": {
+        "failed": 0,
+        "note": "Run before the final receipt-parent-only patch; the final delta was checked separately.",
+        "passed": 35
+      },
+      "reviewerFinalReceiptParentRegression": {
+        "failed": 0,
+        "passed": 1
+      },
+      "secondIndependentFocusedSuite": {
+        "failed": 0,
+        "passed": 41,
+        "realNleTestExcluded": true
+      }
+    }
+  }
+}

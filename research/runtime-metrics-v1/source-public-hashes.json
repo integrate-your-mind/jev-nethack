@@ -1,0 +1,17 @@
+{
+  "metrics-v1-review.json": {
+    "originalSha256": "92a7496faaabd140f0e128b7a69e391b3d8b15d33b2c73371bbfba05b721e0d7",
+    "publicSha256": "2f588330857c8f426db7336cbc908f70ea725211f8394d802227a87ea9f0dace",
+    "transformation": "Private runtime root replaced with literal JEV_NETHACK_ROOT; this is an evidence copy, not an executable path."
+  },
+  "active-fragment-finalization-review.json": {
+    "originalSha256": "6640c9d9a041f0475d26e0b435f04c7794203da4b34f82f9545872430a4e1727",
+    "publicSha256": "2c3299b042210e38ad9dd4df68ee0b9c434f7ced37859d82a7ca793ea59374a0",
+    "transformation": "Private runtime root replaced with literal JEV_NETHACK_ROOT; this is an evidence copy, not an executable path."
+  },
+  "awaiting-decision-telemetry-review.json": {
+    "originalSha256": "16fea7e71b0b1db85491fddd29998434b49f779b19551ab416a95dc5cf4964ab",
+    "publicSha256": "16fea7e71b0b1db85491fddd29998434b49f779b19551ab416a95dc5cf4964ab",
+    "transformation": "Private runtime root replaced with literal JEV_NETHACK_ROOT."
+  }
+}

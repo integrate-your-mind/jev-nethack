@@ -1,0 +1,37 @@
+{
+  "candidate": {
+    "testUntilWinSha256": "06b64fcfc1b42bf942208e8f2b5675f31fb0b87605b322bdbddd55f8670b4ece",
+    "untilWinSha256": "86100b0b16a6514acca18bdd66c61dafcc87656290e813bcc4310fa53871f539"
+  },
+  "limitations": [
+    "Telemetry publication can still fail closed through the pre-existing observed_frame I/O path.",
+    "No live runtime edit, provider call, gameplay action, deployment, or publication was performed by this review."
+  ],
+  "reviewedAt": "2026-09-18T17:08:28.223736+00:00",
+  "reviewer": "independent Codex review agent /root/frontier_trial_review",
+  "schema": "jev-nethack-awaiting-decision-telemetry-review/v1",
+  "scope": "first post-replay awaiting-decision observation and sanitized HTTP status only",
+  "status": "accepted",
+  "verification": {
+    "focusedTests": {
+      "failed": 0,
+      "names": [
+        "test_jev_error_uses_backoff_then_commits_one_action",
+        "test_first_http_failure_after_replay_publishes_current_observation_without_advancing"
+      ],
+      "passed": 2
+    },
+    "ownerFullSuite": {
+      "passed": 95,
+      "run": 96,
+      "skippedOptInRealNle": 1
+    },
+    "proven": [
+      "The current compact observation is published as awaiting_decision after full replay and before the first provider request.",
+      "Provider backoff republishes the same capturedAt and current state while refreshing heartbeat/runtime metrics.",
+      "HTTP failure telemetry contains only JevHTTPError plus integer status; no provider body or exception message is published.",
+      "The regression records one failed policy call, zero recorder actions, replay-only environment index 1, unchanged totalActions 1, and null public decision/action.",
+      "The source diff does not change criteria, decision recovery, policy request, action selection, environment step, transition commit, or replay validation logic."
+    ]
+  }
+}

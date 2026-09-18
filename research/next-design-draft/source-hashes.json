@@ -1,0 +1,12 @@
+{
+  "frontier-v2-next-design.md": {
+    "originalSha256": "38e6b3a3a4c34900abbaaeb0c56494f33c55819aaa2dd9e55ddf660a991453d0",
+    "publicSha256": "38e6b3a3a4c34900abbaaeb0c56494f33c55819aaa2dd9e55ddf660a991453d0",
+    "privatePathsRedacted": false
+  },
+  "frontier-v2-next-design-decision.json": {
+    "originalSha256": "48f95571b671e80594dc772656dedc0dd64b914ed725f6797ce5d6ff1a46ff59",
+    "publicSha256": "34d00515a7ba758a71a8cd4aeeb61e7870cda8a0c1d073eb604d91057305f146",
+    "privatePathsRedacted": true
+  }
+}

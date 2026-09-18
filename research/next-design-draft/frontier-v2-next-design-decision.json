@@ -1,0 +1,71 @@
+{
+  "candidates": [
+    {
+      "id": "A_explicit_restriction",
+      "summary": "Singleton goal criterion during active priority; Jev still chooses actions; goal compliance true by construction."
+    },
+    {
+      "id": "B_competing_goals_fresher_context",
+      "summary": "Keep all goals; distinguish current status from historical combat-message evidence; Jev chooses goals and actions; outcomes evaluated independently."
+    }
+  ],
+  "createdAt": "2026-09-18T16:26:29.360371Z",
+  "designNote": {
+    "path": "JEV_NETHACK_DATA_ROOT/research-notes/frontier-v2-next-design.md",
+    "previousSha256": "821ac9e0cb4a1817a7a05f1e7541ed9a4584e0655f86e59e4346fe9b5dedd623",
+    "sha256": "38e6b3a3a4c34900abbaaeb0c56494f33c55819aaa2dd9e55ddf660a991453d0",
+    "sizeBytes": 14167
+  },
+  "docsConsulted": [
+    "https://docs.typesafe.ai/concepts/state.md",
+    "https://docs.typesafe.ai/primitives/choice.md",
+    "https://docs.typesafe.ai/confidence.md"
+  ],
+  "jev": {
+    "advisoryOnly": true,
+    "choice": "B_competing_goals_fresher_context",
+    "confidence": 1.0,
+    "evidenceIds": [
+      "combat-counterevidence",
+      "menu-counterevidence",
+      "proxy-warning"
+    ],
+    "inputDigest": "5b59bb6dcf0a23ebf0e182c46409521ace4ec74aa36898b076ad3ead290c1f85",
+    "model": "jev-1.13.0",
+    "probabilities": {
+      "A_explicit_restriction": 0.0,
+      "B_competing_goals_fresher_context": 1.0,
+      "insufficient_evidence": 0.0
+    },
+    "receiptId": "f5d2c5ea-7ac5-4f03-aa16-2650f932d4b7",
+    "rubricVersion": "decision-2026-09-18.2",
+    "status": "assessed"
+  },
+  "ordinaryReviewConclusion": {
+    "reason": "It preserves real goal competition, represents recentCombat as historical message evidence rather than a current threat fact, and keeps actual safety/progress independent of goal-choice compliance.",
+    "recommendation": "B_competing_goals_fresher_context",
+    "singletonDisclosure": "A singleton criterion is a code-enforced restriction. Its compliance and confidence cannot be reported as learned goal skill or improvement.",
+    "taxonomyRepair": "Ordered exhaustive classes now include secondary_safety_only and a final hard_gates_pass_tradeoff fallback for all remaining hard-gate-pass results."
+  },
+  "question": "Choose between code-enforced singleton priority goals and complete competing goals with fresher structured priority context and independent outcome evaluation.",
+  "schema": "jev-nethack.frontier-v2-next-design-decision.v1",
+  "scope": "offline_design_only_no_implementation_no_trial_no_live_mutation",
+  "sourceEvidence": {
+    "developmentCombatEventId": "frontier-v2-3359-frontier-v2-3382",
+    "developmentMenuEventId": "frontier-v2-3999-frontier-v2-4017",
+    "developmentOnly": true,
+    "priorFrozenResult": "negative"
+  },
+  "verification": {
+    "checks": [
+      "decision receipt parses as JSON",
+      "recommended candidate preserves all seven competing goals",
+      "historical combat evidence is not asserted as an active threat",
+      "goal distributions are descriptive and cannot establish improvement",
+      "outcome taxonomy has an exhaustive all-hard-gates-pass fallback",
+      "no implementation or trial authorization is present"
+    ],
+    "status": "passed",
+    "verifiedAt": "2026-09-18T16:26:58.889790Z"
+  }
+}

@@ -30,6 +30,139 @@ class AtomicMetadataTests(unittest.TestCase):
             self.assertEqual(b'complete',path.read_bytes())
 
 class PublicTelemetryTests(unittest.TestCase):
+    def test_episode_metrics_are_typed_and_nested_evidence_is_allowlisted(self):
+        with tempfile.TemporaryDirectory() as temporary, patch('broadcast.LivePublisher'):
+            rec=BroadcastRecorder(Path(temporary)/'run',stream_id='run-a',ingest=object())
+            try:
+                rec.set_telemetry(metrics={
+                    'totalActions': 5227,
+                    'episodeResults': [{
+                        'episodeId': 0,
+                        'seed': 103,
+                        'score': 138,
+                        'scoreSemantics': 'official_final',
+                        'officialFinalScore': 138,
+                        'lastObservedScore': 137,
+                        'maxObservedScore': 137,
+                        'totalReward': 77.5,
+                        'status': 'game_end',
+                        'endStatus': 'DEATH',
+                        'deathCause': 'died of starvation',
+                        'deathWhile': 'fainted',
+                        'terminated': True,
+                        'officialScoreEvidence': {
+                            'source': 'native_xlogfile',
+                            'relativePath': 'nle-ttyrec/nle.4242.xlogfile',
+                            'sha256': 'a' * 64,
+                            'xlogBytes': 87,
+                            'record': 'single_native_xlog_record',
+                            'ttyrecRelativePath': 'nle-ttyrec/nle.4242.0.ttyrec3.bz2',
+                            'ttyrecBytes': 123,
+                            'episodeId': 0,
+                            'seed': 103,
+                            'rawXlog': 'PRIVATE_SENTINEL',
+                        },
+                        'private': 'PRIVATE_SENTINEL',
+                    }]
+                })
+                row=rec.public_metrics['episodeResults'][0]
+                self.assertEqual(138,row['officialFinalScore'])
+                self.assertEqual(137,row['lastObservedScore'])
+                self.assertEqual(137,row['maxObservedScore'])
+                self.assertEqual(77.5,row['totalReward'])
+                self.assertNotIn('PRIVATE_SENTINEL',json.dumps(row))
+                self.assertNotIn('rawXlog',row['officialScoreEvidence'])
+            finally: rec.close()
+
+    def test_malformed_public_metric_types_and_unsafe_evidence_are_omitted(self):
+        with tempfile.TemporaryDirectory() as temporary, patch('broadcast.LivePublisher'):
+            rec=BroadcastRecorder(Path(temporary)/'run',stream_id='run-a',ingest=object())
+            try:
+                rec.set_telemetry(metrics={'episodeResults': [{
+                    'episodeId': True,
+                    'seed': -1,
+                    'score': '138',
+                    'totalReward': float('nan'),
+                    'status': 'arbitrary-private-status',
+                    'endStatus': 'death\nPRIVATE_SENTINEL',
+                    'deathCause': 'x' * 300,
+                    'officialScoreError': 'arbitrary-private-error',
+                    'officialScoreEvidence': {
+                        'source': 'native_xlogfile',
+                        'relativePath': '../../private',
+                        'sha256': 'a' * 64,
+                        'xlogBytes': 87,
+                        'record': 'single_native_xlog_record',
+                        'ttyrecRelativePath': 'nle-ttyrec/nle.1.0.ttyrec3.bz2',
+                        'ttyrecBytes': 1,
+                        'episodeId': 0,
+                        'seed': 103,
+                    },
+                }]})
+                self.assertEqual({},rec.public_metrics['episodeResults'][0])
+                self.assertNotIn('PRIVATE_SENTINEL',json.dumps(rec.public_metrics))
+            finally: rec.close()
+
+    def test_score_evidence_must_match_row_identity_and_exact_bound_paths(self):
+        valid_evidence = {
+            'source': 'native_xlogfile',
+            'relativePath': 'nle-ttyrec/nle.4242.xlogfile',
+            'sha256': 'a' * 64,
+            'xlogBytes': 87,
+            'record': 'single_native_xlog_record',
+            'ttyrecRelativePath': 'nle-ttyrec/nle.4242.0.ttyrec3.bz2',
+            'ttyrecBytes': 123,
+            'episodeId': 7,
+            'seed': 103,
+        }
+        invalid_evidence = {
+            'foreign episode id': {**valid_evidence, 'episodeId': 8},
+            'foreign seed': {**valid_evidence, 'seed': 104},
+            'arbitrary safe xlog path': {
+                **valid_evidence,
+                'relativePath': 'nle-ttyrec/other.xlogfile',
+            },
+            'arbitrary safe ttyrec path': {
+                **valid_evidence,
+                'ttyrecRelativePath': 'nle-ttyrec/other.ttyrec3.bz2',
+            },
+            'ttyrec pid mismatch': {
+                **valid_evidence,
+                'ttyrecRelativePath': 'nle-ttyrec/nle.9999.0.ttyrec3.bz2',
+            },
+        }
+        with tempfile.TemporaryDirectory() as temporary, patch('broadcast.LivePublisher'):
+            rec=BroadcastRecorder(Path(temporary)/'run',stream_id='run-a',ingest=object())
+            try:
+                for label, evidence in invalid_evidence.items():
+                    with self.subTest(label=label):
+                        rec.set_telemetry(metrics={'episodeResults': [{
+                            'episodeId': 7,
+                            'seed': 103,
+                            'officialScoreEvidence': evidence,
+                        }]})
+                        row=rec.public_metrics['episodeResults'][0]
+                        self.assertEqual(7,row['episodeId'])
+                        self.assertEqual(103,row['seed'])
+                        self.assertNotIn('officialScoreEvidence',row)
+            finally: rec.close()
+
+    def test_huge_integer_reward_is_omitted_without_interrupting_telemetry(self):
+        with tempfile.TemporaryDirectory() as temporary, patch('broadcast.LivePublisher'):
+            rec=BroadcastRecorder(Path(temporary)/'run',stream_id='run-a',ingest=object())
+            try:
+                rec.set_telemetry(metrics={'episodeResults': [{
+                    'episodeId': 7,
+                    'seed': 103,
+                    'totalReward': 10 ** 10000,
+                    'status': 'game_end',
+                }]})
+                row=rec.public_metrics['episodeResults'][0]
+                self.assertEqual(7,row['episodeId'])
+                self.assertEqual('game_end',row['status'])
+                self.assertNotIn('totalReward',row)
+            finally: rec.close()
+
     def test_probabilities_keep_ids_labels_and_exclude_private_provenance(self):
         with tempfile.TemporaryDirectory() as temporary, patch('broadcast.LivePublisher') as publisher:
             rec=BroadcastRecorder(Path(temporary)/'run',stream_id='run-a',ingest=object())

@@ -1,0 +1,62 @@
+{
+  "schema": "jev-nethack-metrics-production-verification/v1",
+  "checkedAt": "2026-09-18T17:13:23.998038+00:00",
+  "runtimeSourceSha256": {
+    "until_win.py": "86100b0b16a6514acca18bdd66c61dafcc87656290e813bcc4310fa53871f539",
+    "metrics.py": "7430fb511f07c2a3f0750acdf05401ac7fb051f663a7121594e86faea41b4e08",
+    "broadcast.py": "022d94e5402d1e9ccad089563d042adc037f5b2ccbc13c106992333f13fb3004",
+    "historical_metrics_correction.py": "0aaa44d2c8970b3ff76325e973aedbcd87e19b1fad70b29c84f7a584777adf3a"
+  },
+  "historicalCorrection": {
+    "episodeId": 0,
+    "seed": 103,
+    "steps": 5227,
+    "officialFinalScore": 138,
+    "lastObservedScore": 138,
+    "maxObservedScore": 138,
+    "totalReward": 138,
+    "endStatus": "DEATH",
+    "deathCause": "died of starvation",
+    "receiptPhase": "completed",
+    "nonTargetRowsPreserved": true,
+    "resumeCandidatePreserved": true,
+    "closedFragmentArtifactsPreserved": true
+  },
+  "lastVerifiedSameGameReplay": {
+    "actionsReplayed": 5280,
+    "episodeId": 1,
+    "origin": "native_full_observation",
+    "providerCalls": 0,
+    "seed": 104,
+    "verifiedAt": "2026-09-18T17:13:04.909953+00:00"
+  },
+  "gameplayAfterReplay": {
+    "newActions": 0,
+    "providerHTTPStatus": 402,
+    "providerRequestsAvailable": false
+  },
+  "publicReadback": {
+    "nativeResultVisible": true,
+    "browserVerified": true,
+    "reportedDeaths": "1 / 1 reported outcomes",
+    "live": false,
+    "runtime": {
+      "phase": "recovery_blocked",
+      "errorType": "OSError"
+    },
+    "lastCapturedAt": "2026-09-18T17:07:18.179513+00:00"
+  },
+  "validation": {
+    "publicSourceSuitePassed": 95,
+    "publicSourceSuiteSkipped": 1,
+    "skip": "explicit opt-in copied-production fixture",
+    "earlierPublicSourceAttempt": "Seven ENOSPC errors; full suite rerun passed after stopping the runtime.",
+    "hostedCI": "not configured"
+  },
+  "limitations": [
+    "No ascension or SOTA result.",
+    "Provider requests return HTTP402; no new moves are currently available.",
+    "Repeated actual disk write failures interrupted runtime recovery; local preservation and automatic retries remain necessary.",
+    "The final telemetry fix is deployed and tested; current public observation is stale and is not presented as live gameplay."
+  ]
+}

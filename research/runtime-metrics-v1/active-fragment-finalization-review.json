@@ -1,0 +1,138 @@
+{
+  "candidate": {
+    "path": "JEV_NETHACK_ROOT/base/runtime-candidates/metrics-v1",
+    "testUntilWinSha256": "4e12a37cc038aa7ce6fb79055d5e62f86b16722df291cdc220d88e2fbd507d24",
+    "untilWinSha256": "089a119a72830874aa189ca6cb0985efbc3e63dd0cb9391e7683b982d8113e27"
+  },
+  "limitations": [
+    "This accepts one exact paused-state normalization and the future finalization delta; it is not a general filesystem concurrency or crash-recovery proof.",
+    "No live state, gameplay, provider call, deployment, or normalization was performed by this review."
+  ],
+  "noLiveMutationPerformed": true,
+  "normalizationPreflight": {
+    "acceptedConditionallyOnExactProcedure": true,
+    "activeFragment": {
+      "completed": true,
+      "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19",
+      "reason": "stop_requested",
+      "records": 62,
+      "sourceArtifacts": [
+        {
+          "bytes": 1128,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/config.json",
+          "sha256": "b42418dfd6b0b28555efb87581867c233d5162000ee0379faf83089879eae98e"
+        },
+        {
+          "bytes": 95801,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/episodes/episode-00000001-seed-104-replay/nle-ttyrec/nle.43384.0.ttyrec3.bz2",
+          "sha256": "db5d228246e2384cdb41dc5f7efdee16e7a768426bc7c6d18fc476770728336c"
+        },
+        {
+          "bytes": 0,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/episodes/episode-00000001-seed-104-replay/nle-ttyrec/nle.43384.xlogfile",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 405,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/episodes/episode-00000001-seed-104-replay/summary.json",
+          "sha256": "69c1a3efa29de2caed1760912337a362d6d748b40d51882dc7a49a3728693a7f"
+        },
+        {
+          "bytes": 631,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/training/training-manifest.json",
+          "sha256": "cae3306a969f46922d385c65d79c49f9755586dbe8d234a3d5891f71de55365f"
+        },
+        {
+          "bytes": 727,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/training/transitions-000001.complete.json",
+          "sha256": "0d9bcad008fcce55fd07e390bc4428524143a0c48581875329d4c8cf110204e2"
+        },
+        {
+          "bytes": 36293,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/training/transitions-000001.index.jsonl",
+          "sha256": "16d09ac37345726e664a2294bfd15887edf64de5909b55ccbb3bc57c2884f76d"
+        },
+        {
+          "bytes": 1237224,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/training/transitions-000001.npzpack",
+          "sha256": "037638b3570456103f8fc636a6248179179b803c8c64f0d04010b1649bd37d07"
+        },
+        {
+          "bytes": 4466444,
+          "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/transitions.jsonl",
+          "sha256": "14d783c18e8f0c41d297e35975558b21d4409d5d549ea2201b3e0663d3ee50d6"
+        }
+      ],
+      "trainingManifestSha256": "cae3306a969f46922d385c65d79c49f9755586dbe8d234a3d5891f71de55365f",
+      "validatedShards": [
+        {
+          "completed": true,
+          "indexedRecords": 62,
+          "partialTail": false,
+          "records": 62
+        }
+      ]
+    },
+    "additionalPreservedJournalEvidence": [
+      {
+        "path": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19/transitions.jsonl",
+        "sha256": "14d783c18e8f0c41d297e35975558b21d4409d5d549ea2201b3e0663d3ee50d6"
+      },
+      {
+        "path": "fragments/fragment-20260918T161704.762799Z-pid56419-33ad8d4f/transitions.jsonl",
+        "sha256": "af46736cca64f3753c8eaeee6ad7e352fd786599b11588a9c494fa813b884463"
+      }
+    ],
+    "expectedSnapshot": {
+      "bytes": 5448,
+      "equalsCurrentState": true,
+      "path": "JEV_NETHACK_ROOT/recovery/metrics-v1-paused-before-normalization.json",
+      "sha256": "8abfdcb6244d71a9505ee55eb588b349f0569e52e2691fd40dbd4d5e7001b2de"
+    },
+    "producerDead": true,
+    "producerPid": 43384,
+    "requiredProcedure": [
+      "Keep STOP present; acquire accepted handoff global-gameplay.lock then data/runtime.lock nonblocking.",
+      "Under both locks revalidate accepted handoff, no gameplay conflicts, dead producer, exact state-byte CAS, completed fragment manifest, every source artifact, and shard validation.",
+      "Write and fsync prepared receipt and its existing parent before replacing state.",
+      "Re-CAS state and source inventory; atomically replace and fsync the exact after-state; read it back and recheck unchanged source inventory.",
+      "Finalize and fsync completed receipt only after all postconditions pass."
+    ],
+    "state": {
+      "activeFragmentAfter": null,
+      "activeFragmentBefore": "fragments/fragment-20260918T164323.170316Z-pid43384-7a4d3b19",
+      "afterBytes": 5390,
+      "afterSha256": "65fdd32c1181fb6257f7e099e75ebe666f3bc30e954c39b8ddb395092fecc7b7",
+      "beforeSha256": "8abfdcb6244d71a9505ee55eb588b349f0569e52e2691fd40dbd4d5e7001b2de",
+      "changedFields": [
+        "activeFragment"
+      ],
+      "episodeResultsSha256": "03a00a77b119e0da7e66cbab2b0096818aafde77a8e1872adc2838f5d3396f00",
+      "resumeCandidateSha256": "fceb57bb5f5d560399432f21cb336ce53cb556cc942ea69cdfb664d39d3e322c"
+    },
+    "stopExists": true,
+    "stopPath": "JEV_NETHACK_ROOT/recordings/until-win/control/STOP"
+  },
+  "reviewedAt": "2026-09-18T16:58:19.473059+00:00",
+  "reviewer": "independent Codex review agent /root/frontier_trial_review",
+  "schema": "jev-nethack-active-fragment-finalization-review/v1",
+  "scope": "future activeFragment finalization and one-time paused-state normalization only",
+  "status": "accepted",
+  "verification": {
+    "findings": [
+      "Successful TransitionPackWriter.close is required before activeFragment is cleared and atomically persisted.",
+      "A TransitionPackError during close persists recovery_blocked and retains activeFragment.",
+      "The clean-stop regression reloads state.json and proves activeFragment null while resumeCandidate and episodeResults are preserved."
+    ],
+    "focusedTests": {
+      "command": "PYTHONDONTWRITEBYTECODE=1 JEV_NETHACK_ROOT/venv/bin/python -m unittest -v test_until_win.UntilWinTests.test_clean_stop_resumes_same_episode_and_seed test_until_win.UntilWinTests.test_failed_training_close_retains_active_fragment_for_recovery",
+      "failed": 0,
+      "passed": 2
+    },
+    "ownerFullSuite": {
+      "passed": 94,
+      "run": 95,
+      "skippedOptInRealNle": 1
+    }
+  }
+}

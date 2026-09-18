@@ -4,12 +4,14 @@ from types import SimpleNamespace
 import tempfile
 import threading
 import unittest
+from unittest import mock
 
 import numpy as np
 from nle import nethack
 
-from jev_client import JevTransportError
-from transition_pack import TransitionPackWriter, scan_pack
+from broadcast import BroadcastRecorder
+from jev_client import JevHTTPError, JevTransportError
+from transition_pack import TransitionPackError, TransitionPackWriter, scan_pack
 from until_win import (
     AlreadyRunningError,
     ErrorBackoff,
@@ -175,6 +177,98 @@ class UntilWinTests(unittest.TestCase):
         )
         return supervisor, recorder, created
 
+    def test_terminal_metrics_bind_xlog_written_on_close_and_preserve_preterminal_score(self):
+        class CloseFinalizedXlogEnv(FakeEnv):
+            def __init__(self, episode_dir):
+                super().__init__([{"terminated": True, "end_status": "DEATH"}])
+                self.episode_dir = episode_dir
+
+            def reset(self):
+                return fake_observation(137), {}
+
+            def step(self, action):
+                self.index += 1
+                return (
+                    fake_observation(0),
+                    11.5,
+                    True,
+                    False,
+                    {"is_ascended": False, "end_status": SimpleNamespace(name="DEATH")},
+                )
+
+            def close(self):
+                ttyrec = self.episode_dir / "nle-ttyrec"
+                ttyrec.mkdir(parents=True, exist_ok=True)
+                (ttyrec / "nle.4242.0.ttyrec3.bz2").write_bytes(b"retained terminal frames")
+                (ttyrec / "nle.4242.xlogfile").write_text(
+                    "version=3.6.7\tpoints=138\tdeath=died of starvation\twhile=fainted"
+                    "\tturns=4732\tttyrecname=nle.4242.0.ttyrec3.bz2\n"
+                )
+                self.closed = True
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            supervisor, _, created = self.make_supervisor(root)
+
+            def factory(_character, _limit, episode_dir):
+                env = CloseFinalizedXlogEnv(episode_dir)
+                created.append(env)
+                return env
+
+            created.clear()
+            supervisor.env_factory = factory
+            state = supervisor.run(max_episodes=1)
+            result = state["episodeResults"][-1]
+            self.assertEqual("ready", state["status"])
+            self.assertEqual(138, result["score"])
+            self.assertEqual("official_final", result["scoreSemantics"])
+            self.assertEqual(138, result["officialFinalScore"])
+            self.assertEqual(137, result["lastObservedScore"])
+            self.assertEqual(137, result["maxObservedScore"])
+            self.assertEqual(11.5, result["totalReward"])
+            self.assertEqual("DEATH", result["endStatus"])
+            self.assertEqual("died of starvation", result["deathCause"])
+            self.assertEqual("fainted", result["deathWhile"])
+            self.assertTrue(created[0].closed)
+
+    def test_replay_nonterminal_after_observation_updates_metrics_without_provider_call(self):
+        class ScoreSeventeenStopEnv(FakeEnv):
+            def __init__(self, stop_event):
+                super().__init__([{"terminated": False, "reward": 5.0}])
+                self.stop_event = stop_event
+
+            def step(self, action):
+                self.index += 1
+                self.stop_event.set()
+                return (
+                    fake_observation(17),
+                    5.0,
+                    False,
+                    False,
+                    {"is_ascended": False, "end_status": SimpleNamespace(name="RUNNING")},
+                )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            first_policy = FakePolicy()
+            first, _, _ = self.make_supervisor(root, policy=first_policy)
+            first.env_factory = lambda *_args: ScoreSeventeenStopEnv(first.stop_event)
+            first_state = first.run()
+            self.assertEqual("paused", first_state["status"])
+            self.assertEqual(1, first_policy.calls)
+            self.assertEqual(17, first_state["episodeResults"][-1]["lastObservedScore"])
+
+            second_policy = FakePolicy()
+            resumed, _, _ = self.make_supervisor(root, policy=second_policy)
+            resumed.env_factory = lambda *_args: ScoreSeventeenStopEnv(resumed.stop_event)
+            resumed_state = resumed.run()
+            result = resumed_state["episodeResults"][-1]
+            self.assertEqual("paused", resumed_state["status"])
+            self.assertEqual(0, second_policy.calls)
+            self.assertEqual(17, result["lastObservedScore"])
+            self.assertEqual(17, result["maxObservedScore"])
+            self.assertEqual(5.0, result["totalReward"])
+
     def test_verified_ascension_stops_and_persists_complete_transition(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "data"
@@ -229,6 +323,87 @@ class UntilWinTests(unittest.TestCase):
             log = next((root / "fragments").glob("*/transitions.jsonl")).read_text()
             self.assertIn('"eventType":"jev_error"', log)
             self.assertIn('"backoffSeconds":2.0', log)
+
+    def test_first_http_failure_after_replay_publishes_current_observation_without_advancing(self):
+        class HTTP402Policy:
+            def __init__(self):
+                self.calls = 0
+
+            def choose(self, state, criteria, instructions):
+                self.calls += 1
+                raise JevHTTPError(402)
+
+        class CaptureLive:
+            def __init__(self):
+                self.payloads = []
+
+            def submit(self, payload):
+                self.payloads.append(dict(payload))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            first, _, _ = self.make_supervisor(
+                root,
+                outcomes=[{"terminated": False, "is_ascended": False}],
+            )
+
+            class StoppingEnv(FakeEnv):
+                def step(inner_self, action):
+                    result = super().step(action)
+                    first.stop_event.set()
+                    return result
+
+            first.env_factory = lambda *_args: StoppingEnv(
+                [{"terminated": False, "is_ascended": False}]
+            )
+            first.run()
+
+            policy = HTTP402Policy()
+            resumed, _, created = self.make_supervisor(
+                root,
+                policy=policy,
+                outcomes=[{"terminated": False, "is_ascended": False}],
+            )
+            resumed.backoff = ErrorBackoff(2.0, 8.0, sleep=lambda _seconds: resumed.stop_event.set())
+            recorder = BroadcastRecorder(
+                Path(temporary) / "broadcast",
+                stream_id="replay-http-402",
+                ingest=None,
+            )
+            live = CaptureLive()
+            recorder.ingest = object()
+            recorder.live = live
+            resumed.recorder = recorder
+            try:
+                with mock.patch(
+                    "broadcast.render_terminal_png",
+                    side_effect=lambda _terminal, path: path.write_bytes(b"png"),
+                ):
+                    state = resumed.run()
+            finally:
+                recorder.close()
+
+            backoff = next(
+                payload
+                for payload in live.payloads
+                if payload.get("runtime", {}).get("phase") == "provider_backoff"
+            )
+            observed = live.payloads[0]
+            self.assertEqual("awaiting_decision", observed["phase"])
+            self.assertEqual("awaiting_decision", observed["runtime"]["phase"])
+            self.assertEqual(1, observed["step"])
+            self.assertEqual(1, observed["state"]["player"]["score"])
+            self.assertEqual(observed["capturedAt"], backoff["capturedAt"])
+            self.assertEqual("JevHTTPError:402", backoff["runtime"]["errorType"])
+            self.assertEqual(1, backoff["metrics"]["totalActions"])
+            self.assertIsNone(backoff["decision"])
+            self.assertIsNone(backoff["action"])
+            self.assertEqual(1, policy.calls)
+            self.assertEqual(1, created[0].index)
+            self.assertEqual(1, state["totalActions"])
+            self.assertEqual(0, recorder.action_count)
+            log = "".join(path.read_text() for path in (root / "fragments").glob("*/transitions.jsonl"))
+            self.assertIn('"errorType":"JevHTTPError:402"', log)
 
     def test_previous_running_episode_is_latched_for_same_game_replay(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -356,7 +531,21 @@ class UntilWinTests(unittest.TestCase):
             first.env_factory = lambda *_args: StoppingEnv([{"terminated": False, "is_ascended": False}])
             paused = first.run()
             self.assertEqual("paused", paused["status"])
+            self.assertIsNone(paused["activeFragment"])
             self.assertEqual(101, paused["resumeCandidate"]["seed"])
+            self.assertEqual(1, paused["resumeCandidate"]["episodeId"])
+            self.assertEqual(1, paused["resumeCandidate"]["stepsCommitted"])
+            self.assertEqual("stop_requested", paused["episodeResults"][-1]["status"])
+            fragment = root / paused["resumeCandidate"]["fragments"][-1]
+            manifest = json.loads((fragment / "training" / "training-manifest.json").read_text())
+            self.assertTrue(manifest["completed"])
+            self.assertEqual("stop_requested", manifest["reason"])
+            self.assertEqual(1, manifest["records"])
+            self.assertEqual(1, len(list((fragment / "training").glob("*.complete.json"))))
+            persisted = json.loads((root / "state.json").read_text())
+            self.assertIsNone(persisted["activeFragment"])
+            self.assertEqual(paused["resumeCandidate"], persisted["resumeCandidate"])
+            self.assertEqual(paused["episodeResults"], persisted["episodeResults"])
 
             next_policy = FakePolicy()
             resumed, recorder, _ = self.make_supervisor(
@@ -374,6 +563,39 @@ class UntilWinTests(unittest.TestCase):
             self.assertEqual(1, next_policy.calls)
             self.assertTrue(any(item.get("metrics", {}).get("scope") == "continuous_run" for item in recorder.telemetry))
             self.assertTrue(all("criteria" in decision for decision in recorder.decisions))
+
+    def test_failed_training_close_retains_active_fragment_for_recovery(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            supervisor, _, _ = self.make_supervisor(
+                root,
+                outcomes=[{"terminated": False, "is_ascended": False}],
+            )
+
+            class StoppingEnv(FakeEnv):
+                def step(inner_self, action):
+                    result = super().step(action)
+                    supervisor.stop_event.set()
+                    return result
+
+            supervisor.env_factory = lambda *_args: StoppingEnv(
+                [{"terminated": False, "is_ascended": False}]
+            )
+            original_close = TransitionPackWriter.close
+            with mock.patch.object(
+                TransitionPackWriter,
+                "close",
+                side_effect=TransitionPackError("simulated close failure"),
+            ):
+                state = supervisor.run()
+
+            self.assertEqual("recovery_blocked", state["status"])
+            self.assertIsNotNone(state["activeFragment"])
+            self.assertEqual(
+                state["activeFragment"],
+                json.loads((root / "state.json").read_text())["activeFragment"],
+            )
+            original_close(supervisor.training, completed=False, reason="test_cleanup")
 
     def test_real_nle_seed_replay_is_deterministic_and_uses_explicit_engine_limit(self):
         with tempfile.TemporaryDirectory() as temporary:
