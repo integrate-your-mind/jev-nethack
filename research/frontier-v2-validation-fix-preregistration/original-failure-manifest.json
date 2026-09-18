@@ -1,0 +1,70 @@
+{
+  "attemptedProviderCalls": 0,
+  "failure": {
+    "canonicalActionContractSha256": "92e41e74c51bbd1e916074ac2e2fdc70d482cbcd55f228762945d0e4bf539362",
+    "message": "frozen ordered action map or labels drifted",
+    "type": "ExperimentError"
+  },
+  "maximumAggregateProviderAttempts": 192,
+  "originalArtifacts": {
+    "originalAddendum": {
+      "path": "operational-analysis-addendum.json",
+      "sha256": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049"
+    },
+    "originalCandidate": {
+      "path": "candidate.py",
+      "sha256": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb"
+    },
+    "originalClaim": {
+      "path": "trial-execution-claim.json",
+      "sha256": "db5399bd6bdf36daa633f80e9ef6d40229665e46a48b3caf62a35a6964f44662"
+    },
+    "originalFreeze": {
+      "path": "harness-freeze.json",
+      "sha256": "f82516a936bf9ad60080b1154ac04daf7afba77955264133827c08f10c5a653b"
+    },
+    "originalHarness": {
+      "path": "branch_experiment.py",
+      "sha256": "77f13a6a1c4e691ec96d3b9a43273b952eb7644d4bb781b3efce6d7833b60d55"
+    },
+    "originalLedger": {
+      "path": "trial-attempt-ledger.jsonl",
+      "sha256": "10e5f229106f598e78777a60a8222517780539821baff82e85c68b02164a6d0b"
+    },
+    "originalOutcome": {
+      "path": "trial-runs/frontier-v2-paired-20260918T154833Z/execution-outcome-receipt.json",
+      "sha256": "7ba03a2a737db23d483149289b5cd87dd7fc8518de94ca2e108adb4007d39ab7"
+    },
+    "originalRelease": {
+      "path": "execution-release.json",
+      "sha256": "70aedd76dd79bd90cc72b939351a315368ea645dd4e92febf289ced32a83eded"
+    },
+    "originalReview": {
+      "path": "review-independent.json",
+      "sha256": "06d977978ce5b0e1d147853a924a916078a7976c4e53345842652d472e28e0c3"
+    },
+    "originalTerminal": {
+      "path": "trial-runs/frontier-v2-paired-20260918T154833Z/terminal-incomplete.json",
+      "sha256": "c65b05a1f20f58f33a22a6552f12025ef76a24fbffc9cea0055f46522f7c0e36"
+    }
+  },
+  "portablePackage": {
+    "artifacts": {
+      "execution-outcome-receipt.original.json": "7ba03a2a737db23d483149289b5cd87dd7fc8518de94ca2e108adb4007d39ab7",
+      "replay-verification.json": "043bdf24e849ec77faaf2ed54544ded81c8d57fdf433a5b01830af72aa60ccfd",
+      "terminal-incomplete.json": "c65b05a1f20f58f33a22a6552f12025ef76a24fbffc9cea0055f46522f7c0e36",
+      "training-manifest.json": "6155317b4dbf00b9a93ddab05ed1745c4bc766411595b699155c15622fe191ec",
+      "trial-attempt-ledger.jsonl": "10e5f229106f598e78777a60a8222517780539821baff82e85c68b02164a6d0b",
+      "trial-execution-claim.json": "db5399bd6bdf36daa633f80e9ef6d40229665e46a48b3caf62a35a6964f44662"
+    },
+    "directory": "original-failure-package"
+  },
+  "publicAnchor": {
+    "anchorSha256": "60134eb7b8ac038cbdd8aca2fc2b0a2e73059886c17c37692063994aa60f8c0a",
+    "commit": "cdcff4b310d20c199d6fdada735256ef0cf62e94"
+  },
+  "recordedAt": "2026-09-18T15:52:43.749832+00:00",
+  "rerunPermitted": false,
+  "schema": "jev-nethack-frontier-v2-original-failure/v1",
+  "status": "terminal_incomplete"
+}

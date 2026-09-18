@@ -1,0 +1,9 @@
+{
+  "actionContractSha256": "92e41e74c51bbd1e916074ac2e2fdc70d482cbcd55f228762945d0e4bf539362",
+  "actionCount": 121,
+  "harnessFreezeSha256": "820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d",
+  "originalAttemptedProviderCalls": 0,
+  "providerCalls": 0,
+  "successorMaximumProviderAttempts": 192,
+  "verified": true
+}

@@ -1,0 +1,162 @@
+{
+  "acceptedLimitations": [
+    {
+      "disposition": "Documentation only. The reviewer ran the exact frozen suite successfully with the interpreter path quoted; execution does not consume this command string.",
+      "finding": "harness-freeze.json records a test command whose absolute interpreter path contains spaces but is not shell-quoted.",
+      "id": "successor-test-command-quoting",
+      "severity": "low"
+    },
+    {
+      "disposition": "Before any gameplay-provider call, publish and verify a hash anchor covering the exact successor set and this receipt. Do not release on the predecessor anchor alone.",
+      "finding": "The exact successor freeze, preflight, original-failure manifest, and this review receipt were not yet externally anchored when this review was written.",
+      "id": "precall-anchor-pending-at-review",
+      "severity": "release-condition"
+    }
+  ],
+  "decision": {
+    "externalHashAnchorRequiredBeforeGameplayCalls": true,
+    "generalizationOrSotaClaimSupported": false,
+    "livePolicyMigrationAuthorized": false,
+    "originalTrialRerunAuthorized": false,
+    "rationale": "The successor changes only the action-contract serialization validator and adds hash-bound predecessor accounting. Canonical JSON accepts the exact tuple-versus-list roundtrip that stopped the original before its first provider request, while the unchanged digest and full canonical comparison reject label, keycode, and order drift. The original remains terminal incomplete and cannot be rerun. Policy, points, comparator, actions, prompts, analysis, and stop rules remain frozen.",
+    "releaseRequired": true,
+    "rlTrainingAuthorized": false,
+    "scope": "Exactly the frozen paired comparison at seed 103 after committed steps 3359 and 3999, with 32 future actions per arm and at most 192 aggregate attempted provider calls across the original terminal attempt and this successor.",
+    "separateSuccessor": true,
+    "status": "accepted_for_one_separate_bounded_successor_trial_after_anchor_and_release"
+  },
+  "inheritedReview": {
+    "acceptedLimitationIds": [
+      "compound-priority-refresh",
+      "stale-or-missing-refresh",
+      "historical-route-inference",
+      "narrow-prompt-detector",
+      "one-seed-two-correlated-points",
+      "concurrent-isolated-nle",
+      "hard-signal-forensics",
+      "manifest-test-command-path",
+      "malformed-response-body-forensics"
+    ],
+    "inferenceBoundary": "This is one-seed, two-correlated-point exploratory development evidence. It cannot support held-out generalization, statistical superiority, throughput, SOTA, ascension, or live-policy claims.",
+    "receiptSha256": "06d977978ce5b0e1d147853a924a916078a7976c4e53345842652d472e28e0c3",
+    "scope": "The original independent review and every accepted limitation remain applicable unchanged. This narrow successor review does not reinterpret or broaden them."
+  },
+  "originalTrial": {
+    "attemptedProviderCalls": 0,
+    "claimSha256": "db5399bd6bdf36daa633f80e9ef6d40229665e46a48b3caf62a35a6964f44662",
+    "failureCause": "The live Python action contract contained tuples while its JSON-frozen roundtrip contained lists. Direct Python equality failed although canonical JSON bytes and the action-contract digest matched.",
+    "futureActionsExecuted": 0,
+    "ledgerProviderCallReservations": 0,
+    "ledgerSha256": "10e5f229106f598e78777a60a8222517780539821baff82e85c68b02164a6d0b",
+    "outcomeSha256": "7ba03a2a737db23d483149289b5cd87dd7fc8518de94ca2e108adb4007d39ab7",
+    "rerunPermitted": false,
+    "status": "terminal_incomplete",
+    "terminalSha256": "c65b05a1f20f58f33a22a6552f12025ef76a24fbffc9cea0055f46522f7c0e36"
+  },
+  "pendingPreCallConditions": [
+    "successor public hash anchor",
+    "exact single-use successor release"
+  ],
+  "releaseConditions": [
+    "Before any gameplay-provider call, externally anchor and verify the exact candidate, plan, addendum, successor harness, successor harness-freeze, successor replay receipt, preflight-verification receipt, original-failure manifest, original outcome receipt, and this independent successor-review receipt.",
+    "Issue one new release receipt with executeFrontierV2Trial=true, singleUse=true, decisionReceipt=98974b34-9546-4da2-905a-1d2ee2cfe71e, maximumAggregateProviderAttempts=192, originalAttemptedProviderCalls=0, successorMaximumProviderAttempts=192, harnessSha256=70e6397f4b386f7739a785438aa0fb338ec53bba5d810ac694551fda12cddc25, addendumSha256=d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049, harnessFreezeSha256=820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d, and originalFailureManifestSha256=f6ef6a8817a100331aebabdba05f39d553a420d937a4fb8efd0e2013c214a438.",
+    "Do not alter the candidate, plan, addendum, prefix, branch points, comparator, arm lengths, ordered 121-action contract, analysis rule, stop rules, successor harness, or freeze after anchoring and release.",
+    "If the successor claim, ledger, preflight mismatch, replay mismatch, provider failure, cancellation, crash ambiguity, or preservation error appears, stop terminal incomplete. Do not retry, resume, rerun, replace a point, or extend an arm.",
+    "Interpret any result only with operational-analysis-addendum.json and the original independent review. A positive exploratory classification does not authorize live-policy migration; RL remains a later separate decision."
+  ],
+  "reviewTarget": {
+    "analysisAddendumSha256": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049",
+    "candidateFreezeReceiptSha256": "f815585a22f8b4c5953bd093fe104ee75a129f031c86506016efb03ef01d69d0",
+    "candidateSha256": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb",
+    "candidateTestSha256": "d427fec10e3521a06e9d6d87ca642df15813ccdbb7529a5968d5f3e473085215",
+    "harnessFreezeSha256": "820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d",
+    "harnessSha256": "70e6397f4b386f7739a785438aa0fb338ec53bba5d810ac694551fda12cddc25",
+    "harnessTestSha256": "cc61fb6c837fe1bdd4521281b2f7abd7b6ac0cf62a8ab499e66ef80b158c3335",
+    "originalFailureManifestSha256": "f6ef6a8817a100331aebabdba05f39d553a420d937a4fb8efd0e2013c214a438",
+    "originalIndependentReviewSha256": "06d977978ce5b0e1d147853a924a916078a7976c4e53345842652d472e28e0c3",
+    "planSha256": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48",
+    "preflightVerificationSha256": "a2a29a4893b69b710b8a5c5be802eb5f68421b9c4353e030cbbf729912d8a1e2",
+    "replayReceiptPath": "harness-runs/replay-freeze-20260918T155504Z/replay-only-receipt.json",
+    "replayReceiptSha256": "d61f7546442ddcdcec35051116314d3d0057e8e6bf5dfc806d56afc6fabc71a2",
+    "successorDecisionReceipt": "98974b34-9546-4da2-905a-1d2ee2cfe71e"
+  },
+  "reviewedAt": "2026-09-18T16:01:30Z",
+  "reviewerActivity": {
+    "candidateOrPlanTuned": false,
+    "filesModified": [
+      "review-independent-validation-fix.json"
+    ],
+    "gameplayProviderCallsExecutedByReviewer": 0,
+    "jevReviewAdvisoryCalls": 0,
+    "livePolicyMutationPerformed": false,
+    "nleReplayOrGameplayActionsExecutedByReviewer": 0
+  },
+  "schema": "jev-nethack-frontier-v2-validation-fix-independent-review/v1",
+  "unresolvedBlockers": [],
+  "verifiedEvidence": {
+    "actualFreezeLoadPreflight": {
+      "actionCount": 121,
+      "harnessFreezeSha256": "820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d",
+      "originalAttemptedProviderCalls": 0,
+      "providerCalls": 0,
+      "savedReceiptMatchesIndependentLiveResult": true,
+      "successorClaimExistsAfterPreflight": false,
+      "successorLedgerExistsAfterPreflight": false,
+      "successorMaximumProviderAttempts": 192,
+      "verified": true
+    },
+    "boundedAccounting": {
+      "failedTimeoutOrAmbiguousAttemptConsumesCap": true,
+      "maximumAggregateProviderAttempts": 192,
+      "originalAttemptedProviderCalls": 0,
+      "originalTrialRerunPermitted": false,
+      "providerRetryPermitted": false,
+      "successorMaximumProviderAttempts": 192,
+      "successorRerunAfterClaimPermitted": false,
+      "successorReserveLimitSubtractsOriginalAttempts": true
+    },
+    "secondIndependentAudit": {
+      "providerOrGameplayCalls": 0,
+      "status": "accepted",
+      "testsPassed": 33
+    },
+    "serializationFix": {
+      "actionContractSha256": "92e41e74c51bbd1e916074ac2e2fdc70d482cbcd55f228762945d0e4bf539362",
+      "canonicalJsonEquality": true,
+      "changedKeycodeRejected": true,
+      "changedLabelRejected": true,
+      "changedOrderRejected": true,
+      "existingDigestCheckRetained": true,
+      "liveActionCount": 121,
+      "liveTupleVersusFrozenListDirectEquality": false,
+      "providerClientConstructedDuringPreflight": false,
+      "validatorRunsBeforeSingleUseClaim": true
+    },
+    "tests": {
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS=error::ResourceWarning \"<PRIVATE_JEV_ROOT>/venv/bin/python\" -B -m unittest -v test_candidate.py test_branch_experiment.py",
+      "failed": 0,
+      "independentlyRerun": true,
+      "passed": 33
+    },
+    "unchangedScope": {
+      "analysisAddendumByteIdenticalToOriginal": true,
+      "analyzeResultsAstIdentical": true,
+      "branchPoints": [
+        3359,
+        3999
+      ],
+      "candidateByteIdenticalToOriginal": true,
+      "candidateOrAnalysisTuningFound": false,
+      "candidateTestsByteIdenticalToOriginal": true,
+      "extractSnapshotAstIdentical": true,
+      "fixturesByteIdenticalToOriginal": true,
+      "futureActionsPerArm": 32,
+      "loadPrefixRecordsAstIdentical": true,
+      "planByteIdenticalToOriginal": true,
+      "replayToBranchAstIdentical": true,
+      "retainedDecisionsAstIdentical": true,
+      "runArmAstIdentical": true,
+      "sanitizeStateAstIdentical": true
+    }
+  }
+}

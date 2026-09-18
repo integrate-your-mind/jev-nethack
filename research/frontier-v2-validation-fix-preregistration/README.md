@@ -1,0 +1,9 @@
+# Frontier-v2 validation-fix preregistration
+
+This is a separately named, single-use successor to the original failed frontier-v2 attempt. The original stopped before its first provider call because Python tuple pairs did not compare equal to their JSON-loaded list representation, despite identical canonical JSON and SHA-256. The original remains terminal incomplete and is not rerun.
+
+The successor changes only the action-contract serialization validator and its associated bookkeeping/tests. Candidate, questions, all 121 actions, saved branch points 3359 and 3999, 32 actions per arm, and analysis are unchanged. The aggregate ceiling is 192 attempted provider requests across original (zero) and successor. Failures and ambiguous calls consume attempts; no retries or repeated execution are permitted.
+
+The public anchor binds the exact original harness, frozen protocol and independent review before any successor call. Copied metadata replaces private machine paths only; the anchor records both original and public hashes. The test log reports 33 passing local tests, and the actual 121-action JSON round-trip preflight made zero provider calls. One-seed exploratory evidence cannot establish ascension, SOTA, generalization, or permission to migrate the live policy.
+
+The original failed attempt, including preserved binary replay/training evidence, is published as [v0.4.0-frontier-v2-incomplete](https://github.com/integrate-your-mind/jev-nethack/releases/tag/v0.4.0-frontier-v2-incomplete). A corrected, shell-quoted test invocation for the frozen local harness is: `JEV_NETHACK_BASE="$JEV_NETHACK_BASE" "$JEV_NETHACK_BASE/venv/bin/python" -m unittest discover -s "$JEV_NETHACK_BASE/policy-candidates/frontier-v2-validation-fix" -p 'test_*.py' -v`. The archived freeze contains an unquoted rendering; this note does not modify that frozen receipt.

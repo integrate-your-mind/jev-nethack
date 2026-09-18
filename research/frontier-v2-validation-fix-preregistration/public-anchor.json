@@ -1,0 +1,93 @@
+{
+  "anchoredAt": "2026-09-18T16:02:34.306306+00:00",
+  "files": {
+    "candidate.py": {
+      "originalSha256": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb",
+      "privatePathsRedacted": false,
+      "publicPath": "candidate.py",
+      "publicSha256": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb"
+    },
+    "fixtures.json": {
+      "originalSha256": "7d542fb9e81d14e788181d2ce58d9ff7bc5abdf431d864e1bf294244e364d5de",
+      "privatePathsRedacted": false,
+      "publicPath": "fixtures.json",
+      "publicSha256": "7d542fb9e81d14e788181d2ce58d9ff7bc5abdf431d864e1bf294244e364d5de"
+    },
+    "frozen-trial-plan.json": {
+      "originalSha256": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48",
+      "privatePathsRedacted": false,
+      "publicPath": "frozen-trial-plan.json",
+      "publicSha256": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48"
+    },
+    "harness-freeze.json": {
+      "originalSha256": "820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d",
+      "privatePathsRedacted": true,
+      "publicPath": "harness-freeze.public.json",
+      "publicSha256": "5d558377ea60daf600a29242ac33330d05ceaee97f37e66d07d7cec04b33a500"
+    },
+    "harness-runs/replay-freeze-20260918T155504Z/replay-only-receipt.json": {
+      "originalSha256": "d61f7546442ddcdcec35051116314d3d0057e8e6bf5dfc806d56afc6fabc71a2",
+      "privatePathsRedacted": true,
+      "publicPath": "harness-runs/replay-freeze-20260918T155504Z/replay-only-receipt.json",
+      "publicSha256": "04dc12c6c872557b75a619c6078c2730b169dea59d8aa2b5fc309e2faecd2b1c"
+    },
+    "operational-analysis-addendum.json": {
+      "originalSha256": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049",
+      "privatePathsRedacted": false,
+      "publicPath": "operational-analysis-addendum.json",
+      "publicSha256": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049"
+    },
+    "original-failure-manifest.json": {
+      "originalSha256": "f6ef6a8817a100331aebabdba05f39d553a420d937a4fb8efd0e2013c214a438",
+      "privatePathsRedacted": false,
+      "publicPath": "original-failure-manifest.json",
+      "publicSha256": "f6ef6a8817a100331aebabdba05f39d553a420d937a4fb8efd0e2013c214a438"
+    },
+    "preflight-verification.json": {
+      "originalSha256": "a2a29a4893b69b710b8a5c5be802eb5f68421b9c4353e030cbbf729912d8a1e2",
+      "privatePathsRedacted": false,
+      "publicPath": "preflight-verification.json",
+      "publicSha256": "a2a29a4893b69b710b8a5c5be802eb5f68421b9c4353e030cbbf729912d8a1e2"
+    },
+    "review-independent-validation-fix.json": {
+      "originalSha256": "3eb2860cf56c7dfdbbee854cc8ec56102030883f6c31507bb8c12520ad27c754",
+      "privatePathsRedacted": true,
+      "publicPath": "review-independent-validation-fix.json",
+      "publicSha256": "6efa896e21eeee5067a5710dd30cd52a1426614547fb2316f72ecc552fe5cacf"
+    },
+    "test-verification.txt": {
+      "originalSha256": "c49f9a1b9bc0cbc7c9a47424bf4df8971ffc4c52902fb44df2f2e4d7bbfbe88b",
+      "privatePathsRedacted": false,
+      "publicPath": "test-verification.txt",
+      "publicSha256": "c49f9a1b9bc0cbc7c9a47424bf4df8971ffc4c52902fb44df2f2e4d7bbfbe88b"
+    },
+    "test_candidate.py": {
+      "originalSha256": "d427fec10e3521a06e9d6d87ca642df15813ccdbb7529a5968d5f3e473085215",
+      "privatePathsRedacted": false,
+      "publicPath": "test_candidate.py",
+      "publicSha256": "d427fec10e3521a06e9d6d87ca642df15813ccdbb7529a5968d5f3e473085215"
+    }
+  },
+  "livePolicyMigration": false,
+  "maximumAggregateProviderAttempts": 192,
+  "originalFrozenHashes": {
+    "branch_experiment.py": "70e6397f4b386f7739a785438aa0fb338ec53bba5d810ac694551fda12cddc25",
+    "candidate.py": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb",
+    "frozen-trial-plan.json": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48",
+    "harness-freeze.json": "820cbf949397b127f7b24a27c16c2477c786e2741db940f3ddd6d429053b8c1d",
+    "operational-analysis-addendum.json": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049",
+    "original-failure-manifest.json": "f6ef6a8817a100331aebabdba05f39d553a420d937a4fb8efd0e2013c214a438",
+    "review-independent-validation-fix.json": "3eb2860cf56c7dfdbbee854cc8ec56102030883f6c31507bb8c12520ad27c754",
+    "test_branch_experiment.py": "cc61fb6c837fe1bdd4521281b2f7abd7b6ac0cf62a8ab499e66ef80b158c3335"
+  },
+  "originalTrial": {
+    "archiveSha256": "1e9e37a105e2ad68673a607deb65546d89c5a88e7df46f5fb331868db9f598d8",
+    "futureActions": 0,
+    "providerAttempts": 0,
+    "releaseTag": "v0.4.0-frontier-v2-incomplete",
+    "status": "terminal_incomplete"
+  },
+  "schema": "jev-nethack-frontier-v2-validation-fix-public-anchor/v1",
+  "status": "before_successor_claim_and_provider_calls",
+  "successorProviderCallsSoFar": 0
+}

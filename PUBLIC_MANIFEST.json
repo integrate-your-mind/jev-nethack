@@ -1,7 +1,7 @@
 {
   "repository_proposal": "integrate-your-mind/jev-nethack",
   "prepared_at": "2026-09-18",
-  "status": "Public Site v6, verified persistent crash recovery, and automatic archive publishing active. Direct policy experiments remain negative or unproven; no ascension.",
+  "status": "Public Site v7, verified same-game crash recovery, and automatic archive publishing active. Original frontier-v2 failed before provider calls; validation-fix successor preregistered. No ascension.",
   "research_disclosure": "Included pilots are negative or inconclusive. No ascension, SOTA, or general learned-skill claim is made.",
   "data_disclosure": "The initial 12-row sample is illustrative. Full completed recording and raw-transition artifacts are published through the public Site and daily GitHub release archives; the isolated cycle-aware-v1 bundle preserves both selected-state iterations and full paired branch observations.",
   "source_provenance": {
@@ -14,7 +14,8 @@
     "source-ledger": "Preserved September17 literature ledger with bounded September18 primary-source Puffer refresh; no protocol-backed Puffer win receipt located.",
     "cycle-aware-v1": "Frozen negative paired64+64 actual-game experiment; portable text path/editorial changes documented in source-public-hashes.tsv; raw arrays/probabilities preserved unchanged in release bundle.",
     "runtime-support": "Six Python files match independently reviewed live publisher; portable README and non-ready LaunchAgent example.64tests passed; real firstcycle and subsequentbackgroundcycle verified.",
-    "frontier-v2-preregistration": "Frozen exploratory two-branch direct-Jev protocol, public hash anchor before first gameplay request; no result or live migration claim."
+    "frontier-v2-preregistration": "Frozen exploratory two-branch direct-Jev protocol, public hash anchor before first gameplay request; no result or live migration claim.",
+    "frontier-v2-validation-fix": "Separate preregistration after zero-call infrastructure failure. Exact original hashes and independent review anchored before execution; copied private paths explicitly redacted."
   },
   "excluded": [
     "API and ingest credentials",
@@ -222,7 +223,24 @@
     "research/frontier-v2-preregistration/public-anchor.json": "60134eb7b8ac038cbdd8aca2fc2b0a2e73059886c17c37692063994aa60f8c0a",
     "research/frontier-v2-preregistration/README.md": "d145e5a437fa43a4110debe39841e19765b1eb4d835d498c3ebe8067a2fd01f2",
     "research/frontier-v2-preregistration/fixtures.json": "7d542fb9e81d14e788181d2ce58d9ff7bc5abdf431d864e1bf294244e364d5de",
-    "research/frontier-v2-preregistration/candidate.py": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb"
+    "research/frontier-v2-preregistration/candidate.py": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb",
+    "research/frontier-v2-validation-fix-preregistration/review-independent-validation-fix.json": "6efa896e21eeee5067a5710dd30cd52a1426614547fb2316f72ecc552fe5cacf",
+    "research/frontier-v2-validation-fix-preregistration/operational-analysis-addendum.json": "d84b91a129695aad82b707f792e4cfad1b9632c95360f803ba4aedfc9cba3049",
+    "research/frontier-v2-validation-fix-preregistration/harness-freeze.public.json": "5d558377ea60daf600a29242ac33330d05ceaee97f37e66d07d7cec04b33a500",
+    "research/frontier-v2-validation-fix-preregistration/preflight-verification.json": "a2a29a4893b69b710b8a5c5be802eb5f68421b9c4353e030cbbf729912d8a1e2",
+    "research/frontier-v2-validation-fix-preregistration/original-failure-manifest.json": "f6ef6a8817a100331aebabdba05f39d553a420d937a4fb8efd0e2013c214a438",
+    "research/frontier-v2-validation-fix-preregistration/test-verification.txt": "c49f9a1b9bc0cbc7c9a47424bf4df8971ffc4c52902fb44df2f2e4d7bbfbe88b",
+    "research/frontier-v2-validation-fix-preregistration/frozen-trial-plan.json": "ad29ba1c239e0118205b65304fb95917ab36f28d979c68f3c432de3e2f451f48",
+    "research/frontier-v2-validation-fix-preregistration/test_candidate.py": "d427fec10e3521a06e9d6d87ca642df15813ccdbb7529a5968d5f3e473085215",
+    "research/frontier-v2-validation-fix-preregistration/public-anchor.json": "25d3c13b3203b082c8d97a55e1f971c39ee5b6bfd2bc06d3ec8615d3ab0a682f",
+    "research/frontier-v2-validation-fix-preregistration/README.md": "ce06a6678eca152bfbac149d89604358cc07c42136e57864517cda0996758afe",
+    "research/frontier-v2-validation-fix-preregistration/fixtures.json": "7d542fb9e81d14e788181d2ce58d9ff7bc5abdf431d864e1bf294244e364d5de",
+    "research/frontier-v2-validation-fix-preregistration/candidate.py": "b29743bfc43e34b9771a143623e4d7026aef96b80039d11848af6b7751f1bcbb",
+    "research/frontier-v2-validation-fix-preregistration/harness-runs/replay-freeze-20260918T155504Z/replay-only-receipt.json": "04dc12c6c872557b75a619c6078c2730b169dea59d8aa2b5fc309e2faecd2b1c",
+    "research/frontier-v2-incomplete/MEMBERS.sha256.json": "34b10a6d35d9bd6149fd2de844af57d73a8ed3eec5c72450405bd1693e5a2a92",
+    "research/frontier-v2-incomplete/packaging-readback.public.json": "37b0c51fc427453ade240c60f949425a2595e8a0512f9fefd8381c273136e6ba",
+    "research/frontier-v2-incomplete/README.md": "d0d74bcfe3c05386d53e2c188805666dd59cf4593ff47e9ebf4e1c049494939d",
+    "research/frontier-v2-incomplete/RELEASE-NOTES-INCOMPLETE.md": "9a619d488eedf4cf84b012c2c1a5be85ec56b135cdcca35b9c594aa40bf9428d"
   },
   "repository_url": "https://github.com/integrate-your-mind/jev-nethack",
   "recording_disclosure": "Completed game event logs and segment manifests are tracked; MP4 binaries and full recording bundles are GitHub Release assets with checksums."

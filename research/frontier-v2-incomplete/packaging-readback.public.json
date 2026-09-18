@@ -1,0 +1,14 @@
+{
+  "schema": "jev-nethack-frontier-v2-packaging-readback/v1",
+  "archive": "frontier-v2-incomplete.tar.gz",
+  "archiveSha256": "1e9e37a105e2ad68673a607deb65546d89c5a88e7df46f5fb331868db9f598d8",
+  "archiveBytes": 514970,
+  "manifestMemberCount": 51,
+  "extractedMemberCount": 51,
+  "missingMembers": [],
+  "extraMembers": [],
+  "hashMismatches": [],
+  "secretOrPrivatePathScanHits": [],
+  "gzipReadback": "tarfile r:gz extraction succeeded",
+  "verified": true
+}

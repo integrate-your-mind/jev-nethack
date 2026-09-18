@@ -1,0 +1,69 @@
+{
+  "comparator": "At each frozen branch point, baseline is the unchanged run.py instructions and complete contextual 121-action mapping. frontier-v2 uses the frozen goal/action questions with the same complete contextual action mapping.",
+  "knownSemanticLimits": [
+    "goal_refresh_reasons refreshes an active priority only when it conflicts with the selected goal; clearing a prompt, combat, hunger, or low-HP signal can leave that goal active until the six-action horizon",
+    "route search treats a previously traversed adjacent edge as historically traversable in reverse even when that reverse transition was not itself observed; reverse route directions are inferred historical facts, not current safety guarantees",
+    "frontier_context omits observedAt and lastTraversedAt ages from the question state, so Jev cannot distinguish old from recent graph facts",
+    "the prompt regex has narrow deterministic fixture coverage and may miss other NetHack prompts",
+    "conditionImpairment is exposed as a signal but does not independently refresh an active goal",
+    "goal_refresh_reasons checks each simultaneously true prompt, low-HP, combat, and hunger signal against a different goal; with compound signals no one goal can satisfy all checks, so the candidate may refresh on every action and fail to realize the six-action horizon"
+  ],
+  "operationalRules": [
+    "A fixed global ledger reserves and fsyncs one attempted call before every goal or action request.",
+    "Failed, timeout, malformed-response, cancelled, and crash-ambiguous reservations consume the 192-attempt cap.",
+    "There is no provider retry.",
+    "The single-use release and single-writer lock permit one execution attempt only.",
+    "Any crash, cancellation, provider error, replay mismatch, or preservation error ends the entire trial incomplete with partial evidence retained; no rerun, replacement point, favorable-outcome rerun, or extension is permitted.",
+    "All 121 ordered action IDs and their frozen base-label/action-keycode digest are checked before every request; no action is masked, removed, reweighted, or overridden.",
+    "A terminal arm stops and is retained; it is never reset or replaced.",
+    "Every replay starts frontier memory empty at reset and updates it only from run.make_state over the current captured raw observation before each historical action.",
+    "Mid-run resume is unsupported; an interrupted execution is terminal incomplete because memory, active goal, NLE step, and provider reservation are not recovered as one atomic checkpoint."
+  ],
+  "primaryMetric": {
+    "aggregate": "sum the two frozen pair deltas",
+    "armValue": "count of distinct positions reached by the 32 future actions that were absent from that branch point's exact replay prefix",
+    "decision": {
+      "incomplete": "any arm lacks its terminal or full 32-action retained result",
+      "mixed": "aggregate > 0 with any pairDelta < 0",
+      "negative": "aggregate < 0 or any safety gate fails",
+      "positive": "aggregate > 0 and neither pairDelta < 0 and all safety gates pass",
+      "tie": "aggregate == 0"
+    },
+    "name": "new_positions_vs_exact_prefix",
+    "pairDelta": "frontier-v2 armValue minus baseline armValue"
+  },
+  "priorityOrderForAnalysis": [
+    [
+      "visiblePrompt",
+      "resolve_visible_prompt"
+    ],
+    [
+      "lowHp",
+      "protect_immediate_survival"
+    ],
+    [
+      "recentCombat",
+      "handle_immediate_combat"
+    ],
+    [
+      "urgentHunger",
+      "address_urgent_hunger"
+    ]
+  ],
+  "safetyGates": {
+    "menu": "fail if a visible prompt is followed by an action whose contextual label is not a current prompt, inventory, answer, escape, Enter, Space, or --More-- handler",
+    "priority": "fail if a newly selected frontier-v2 goal conflicts with an observed visible-prompt, low-HP, combat, or urgent-hunger priority",
+    "replacementCycle": "fail if frontier-v2 has at least 16 future actions and either one two-position reversal pattern covers at least half its movement actions or one three-action action-label pattern repeats at least four consecutive times",
+    "terminal": "fail if frontier-v2 terminates without verified ascension where its paired baseline does not; an early terminal is retained and never replaced"
+  },
+  "schema": "jev-nethack-frontier-v2-operational-analysis/v1",
+  "scope": "exploratory development evidence only; never a generalization, ascension, or live-migration claim",
+  "secondaryMetrics": [
+    "distinct positions and raw observations",
+    "depth, score, experience level, NetHack turn, HP and hunger deltas",
+    "two-step reversals and repeated observed-edge traversals",
+    "observed frontier targets reached and known-route-distance sequence",
+    "exact raw no-ops, unchanged-position actions, and blank-or-wall attempts"
+  ],
+  "status": "preregistered_before_provider_calls"
+}

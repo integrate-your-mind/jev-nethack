@@ -1,0 +1,699 @@
+{
+  "actionContract": {
+    "keycodes": [
+      107,
+      108,
+      106,
+      104,
+      117,
+      110,
+      98,
+      121,
+      75,
+      76,
+      74,
+      72,
+      85,
+      78,
+      66,
+      89,
+      60,
+      62,
+      46,
+      13,
+      35,
+      191,
+      225,
+      193,
+      97,
+      24,
+      64,
+      67,
+      90,
+      227,
+      99,
+      195,
+      228,
+      100,
+      68,
+      101,
+      69,
+      229,
+      27,
+      70,
+      102,
+      230,
+      59,
+      86,
+      105,
+      73,
+      233,
+      234,
+      4,
+      92,
+      96,
+      58,
+      236,
+      237,
+      109,
+      77,
+      239,
+      111,
+      79,
+      15,
+      112,
+      44,
+      240,
+      80,
+      113,
+      241,
+      81,
+      114,
+      18,
+      82,
+      210,
+      242,
+      103,
+      71,
+      83,
+      115,
+      42,
+      34,
+      91,
+      36,
+      61,
+      43,
+      40,
+      94,
+      41,
+      33,
+      243,
+      120,
+      84,
+      65,
+      20,
+      116,
+      212,
+      95,
+      244,
+      88,
+      245,
+      246,
+      118,
+      87,
+      38,
+      47,
+      119,
+      247,
+      122,
+      43,
+      45,
+      32,
+      39,
+      34,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      36
+    ],
+    "orderedBaseLabels": [
+      [
+        "a0",
+        "Press 'k': CompassDirection.N; move/attack one step N (or choose this letter in a menu)"
+      ],
+      [
+        "a1",
+        "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)"
+      ],
+      [
+        "a2",
+        "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)"
+      ],
+      [
+        "a3",
+        "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)"
+      ],
+      [
+        "a4",
+        "Press 'u': CompassDirection.NE; move/attack one step NE (or choose this letter in a menu)"
+      ],
+      [
+        "a5",
+        "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)"
+      ],
+      [
+        "a6",
+        "Press 'b': CompassDirection.SW; move/attack one step SW (or choose this letter in a menu)"
+      ],
+      [
+        "a7",
+        "Press 'y': CompassDirection.NW; move/attack one step NW (or choose this letter in a menu)"
+      ],
+      [
+        "a8",
+        "Press 'K': CompassDirectionLonger.N; run several steps N"
+      ],
+      [
+        "a9",
+        "Press 'L': CompassDirectionLonger.E; run several steps E"
+      ],
+      [
+        "a10",
+        "Press 'J': CompassDirectionLonger.S; run several steps S"
+      ],
+      [
+        "a11",
+        "Press 'H': CompassDirectionLonger.W; run several steps W"
+      ],
+      [
+        "a12",
+        "Press 'U': CompassDirectionLonger.NE; run several steps NE"
+      ],
+      [
+        "a13",
+        "Press 'N': CompassDirectionLonger.SE; run several steps SE"
+      ],
+      [
+        "a14",
+        "Press 'B': CompassDirectionLonger.SW; run several steps SW"
+      ],
+      [
+        "a15",
+        "Press 'Y': CompassDirectionLonger.NW; run several steps NW"
+      ],
+      [
+        "a16",
+        "Press '<': MiscDirection.UP"
+      ],
+      [
+        "a17",
+        "Press '>': MiscDirection.DOWN"
+      ],
+      [
+        "a18",
+        "Press '.': MiscDirection.WAIT"
+      ],
+      [
+        "a19",
+        "Press 'ASCII 13': MiscAction.MORE"
+      ],
+      [
+        "a20",
+        "Press '#': Command.EXTCMD"
+      ],
+      [
+        "a21",
+        "Press 'ASCII 191': Command.EXTLIST"
+      ],
+      [
+        "a22",
+        "Press 'ASCII 225': Command.ADJUST"
+      ],
+      [
+        "a23",
+        "Press 'ASCII 193': Command.ANNOTATE"
+      ],
+      [
+        "a24",
+        "Press 'a': Command.APPLY"
+      ],
+      [
+        "a25",
+        "Press 'ASCII 24': Command.ATTRIBUTES"
+      ],
+      [
+        "a26",
+        "Press '@': Command.AUTOPICKUP"
+      ],
+      [
+        "a27",
+        "Press 'C': Command.CALL"
+      ],
+      [
+        "a28",
+        "Press 'Z': Command.CAST"
+      ],
+      [
+        "a29",
+        "Press 'ASCII 227': Command.CHAT"
+      ],
+      [
+        "a30",
+        "Press 'c': Command.CLOSE"
+      ],
+      [
+        "a31",
+        "Press 'ASCII 195': Command.CONDUCT"
+      ],
+      [
+        "a32",
+        "Press 'ASCII 228': Command.DIP"
+      ],
+      [
+        "a33",
+        "Press 'd': Command.DROP"
+      ],
+      [
+        "a34",
+        "Press 'D': Command.DROPTYPE"
+      ],
+      [
+        "a35",
+        "Press 'e': Command.EAT"
+      ],
+      [
+        "a36",
+        "Press 'E': Command.ENGRAVE"
+      ],
+      [
+        "a37",
+        "Press 'ASCII 229': Command.ENHANCE"
+      ],
+      [
+        "a38",
+        "Press 'ASCII 27': Command.ESC"
+      ],
+      [
+        "a39",
+        "Press 'F': Command.FIGHT"
+      ],
+      [
+        "a40",
+        "Press 'f': Command.FIRE"
+      ],
+      [
+        "a41",
+        "Press 'ASCII 230': Command.FORCE"
+      ],
+      [
+        "a42",
+        "Press ';': Command.GLANCE"
+      ],
+      [
+        "a43",
+        "Press 'V': Command.HISTORY"
+      ],
+      [
+        "a44",
+        "Press 'i': Command.INVENTORY"
+      ],
+      [
+        "a45",
+        "Press 'I': Command.INVENTTYPE"
+      ],
+      [
+        "a46",
+        "Press 'ASCII 233': Command.INVOKE"
+      ],
+      [
+        "a47",
+        "Press 'ASCII 234': Command.JUMP"
+      ],
+      [
+        "a48",
+        "Press 'ASCII 4': Command.KICK"
+      ],
+      [
+        "a49",
+        "Press '\\\\': Command.KNOWN"
+      ],
+      [
+        "a50",
+        "Press '`': Command.KNOWNCLASS"
+      ],
+      [
+        "a51",
+        "Press ':': Command.LOOK"
+      ],
+      [
+        "a52",
+        "Press 'ASCII 236': Command.LOOT"
+      ],
+      [
+        "a53",
+        "Press 'ASCII 237': Command.MONSTER"
+      ],
+      [
+        "a54",
+        "Press 'm': Command.MOVE"
+      ],
+      [
+        "a55",
+        "Press 'M': Command.MOVEFAR"
+      ],
+      [
+        "a56",
+        "Press 'ASCII 239': Command.OFFER"
+      ],
+      [
+        "a57",
+        "Press 'o': Command.OPEN"
+      ],
+      [
+        "a58",
+        "Press 'O': Command.OPTIONS"
+      ],
+      [
+        "a59",
+        "Press 'ASCII 15': Command.OVERVIEW"
+      ],
+      [
+        "a60",
+        "Press 'p': Command.PAY"
+      ],
+      [
+        "a61",
+        "Press ',': Command.PICKUP"
+      ],
+      [
+        "a62",
+        "Press 'ASCII 240': Command.PRAY"
+      ],
+      [
+        "a63",
+        "Press 'P': Command.PUTON"
+      ],
+      [
+        "a64",
+        "Press 'q': Command.QUAFF"
+      ],
+      [
+        "a65",
+        "Press 'ASCII 241': Command.QUIT"
+      ],
+      [
+        "a66",
+        "Press 'Q': Command.QUIVER"
+      ],
+      [
+        "a67",
+        "Press 'r': Command.READ"
+      ],
+      [
+        "a68",
+        "Press 'ASCII 18': Command.REDRAW"
+      ],
+      [
+        "a69",
+        "Press 'R': Command.REMOVE"
+      ],
+      [
+        "a70",
+        "Press 'ASCII 210': Command.RIDE"
+      ],
+      [
+        "a71",
+        "Press 'ASCII 242': Command.RUB"
+      ],
+      [
+        "a72",
+        "Press 'g': Command.RUSH"
+      ],
+      [
+        "a73",
+        "Press 'G': Command.RUSH2"
+      ],
+      [
+        "a74",
+        "Press 'S': Command.SAVE"
+      ],
+      [
+        "a75",
+        "Press 's': Command.SEARCH"
+      ],
+      [
+        "a76",
+        "Press '*': Command.SEEALL"
+      ],
+      [
+        "a77",
+        "Press '\"': Command.SEEAMULET"
+      ],
+      [
+        "a78",
+        "Press '[': Command.SEEARMOR"
+      ],
+      [
+        "a79",
+        "Press '$': Command.SEEGOLD"
+      ],
+      [
+        "a80",
+        "Press '=': Command.SEERINGS"
+      ],
+      [
+        "a81",
+        "Press '+': Command.SEESPELLS"
+      ],
+      [
+        "a82",
+        "Press '(': Command.SEETOOLS"
+      ],
+      [
+        "a83",
+        "Press '^': Command.SEETRAP"
+      ],
+      [
+        "a84",
+        "Press ')': Command.SEEWEAPON"
+      ],
+      [
+        "a85",
+        "Press '!': Command.SHELL"
+      ],
+      [
+        "a86",
+        "Press 'ASCII 243': Command.SIT"
+      ],
+      [
+        "a87",
+        "Press 'x': Command.SWAP"
+      ],
+      [
+        "a88",
+        "Press 'T': Command.TAKEOFF"
+      ],
+      [
+        "a89",
+        "Press 'A': Command.TAKEOFFALL"
+      ],
+      [
+        "a90",
+        "Press 'ASCII 20': Command.TELEPORT"
+      ],
+      [
+        "a91",
+        "Press 't': Command.THROW"
+      ],
+      [
+        "a92",
+        "Press 'ASCII 212': Command.TIP"
+      ],
+      [
+        "a93",
+        "Press '_': Command.TRAVEL"
+      ],
+      [
+        "a94",
+        "Press 'ASCII 244': Command.TURN"
+      ],
+      [
+        "a95",
+        "Press 'X': Command.TWOWEAPON"
+      ],
+      [
+        "a96",
+        "Press 'ASCII 245': Command.UNTRAP"
+      ],
+      [
+        "a97",
+        "Press 'ASCII 246': Command.VERSION"
+      ],
+      [
+        "a98",
+        "Press 'v': Command.VERSIONSHORT"
+      ],
+      [
+        "a99",
+        "Press 'W': Command.WEAR"
+      ],
+      [
+        "a100",
+        "Press '&': Command.WHATDOES"
+      ],
+      [
+        "a101",
+        "Press '/': Command.WHATIS"
+      ],
+      [
+        "a102",
+        "Press 'w': Command.WIELD"
+      ],
+      [
+        "a103",
+        "Press 'ASCII 247': Command.WIPE"
+      ],
+      [
+        "a104",
+        "Press 'z': Command.ZAP"
+      ],
+      [
+        "a105",
+        "Press '+': TextCharacters.PLUS"
+      ],
+      [
+        "a106",
+        "Press '-': TextCharacters.MINUS"
+      ],
+      [
+        "a107",
+        "Press ' ': TextCharacters.SPACE"
+      ],
+      [
+        "a108",
+        "Press \"'\": TextCharacters.APOS"
+      ],
+      [
+        "a109",
+        "Press '\"': TextCharacters.QUOTE"
+      ],
+      [
+        "a110",
+        "Press '0': TextCharacters.NUM_0"
+      ],
+      [
+        "a111",
+        "Press '1': TextCharacters.NUM_1"
+      ],
+      [
+        "a112",
+        "Press '2': TextCharacters.NUM_2"
+      ],
+      [
+        "a113",
+        "Press '3': TextCharacters.NUM_3"
+      ],
+      [
+        "a114",
+        "Press '4': TextCharacters.NUM_4"
+      ],
+      [
+        "a115",
+        "Press '5': TextCharacters.NUM_5"
+      ],
+      [
+        "a116",
+        "Press '6': TextCharacters.NUM_6"
+      ],
+      [
+        "a117",
+        "Press '7': TextCharacters.NUM_7"
+      ],
+      [
+        "a118",
+        "Press '8': TextCharacters.NUM_8"
+      ],
+      [
+        "a119",
+        "Press '9': TextCharacters.NUM_9"
+      ],
+      [
+        "a120",
+        "Press '$': TextCharacters.DOLLAR"
+      ]
+    ]
+  },
+  "actionContractSha256": "92e41e74c51bbd1e916074ac2e2fdc70d482cbcd55f228762945d0e4bf539362",
+  "branchPoints": [
+    {
+      "actionsReplayed": 3360,
+      "branchAfterStep": 3359,
+      "branchMemorySha256": "1fdbb7b6fc8a6c4503838e85f4011d9ec5588de7c6f23e97197bc3c1f669b5d9",
+      "branchObservationDigest": "9aef8961f3ea879d078929c7467954a0225bd0d07440cc835a3b3ea9c1c67572",
+      "branchStateSha256": "fa00da9c976cc63f2eb9d66b7254102915bbccf1dbb1430f3ef759b5161cd8e0",
+      "environmentRoot": "<PRIVATE_JEV_ROOT>/policy-candidates/frontier-v2-validation-fix/harness-runs/replay-freeze-20260918T155504Z/point-3359",
+      "initialObservationDigest": "d3933a412f2faee035706fe1172bb898d80f2e7e91bba71d008bae8d73e52c0d",
+      "isolatedFromLiveData": true,
+      "nleSavedir": "<PRIVATE_JEV_ROOT>/policy-candidates/frontier-v2-validation-fix/harness-runs/replay-freeze-20260918T155504Z/point-3359/nle-ttyrec",
+      "observedNodes": 38,
+      "providerCallsDuringReplay": 0,
+      "providerClientConstructedDuringReplay": false,
+      "questionBytesPreflight": {
+        "baselineAction": 11896,
+        "frontierAction": 17281,
+        "frontierGoal": 11938
+      },
+      "replaySeconds": 4.517461875002482,
+      "requestByteCap": 24576,
+      "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+      "verified": true,
+      "verifiedAt": "2026-09-18T15:55:17.372396+00:00"
+    },
+    {
+      "actionsReplayed": 4000,
+      "branchAfterStep": 3999,
+      "branchMemorySha256": "adc725aa8ca653d32a8cbfcbd7b17a065896b548eb188f466326fa99d3751844",
+      "branchObservationDigest": "f0233c5d7970de255171f029c4ff2bbdb1c36368b8fd01400c95e31cc020803f",
+      "branchStateSha256": "f79a750eb078be3ee274a8963f155b49486d8f2251151903de3fcb7055c55de9",
+      "environmentRoot": "<PRIVATE_JEV_ROOT>/policy-candidates/frontier-v2-validation-fix/harness-runs/replay-freeze-20260918T155504Z/point-3999",
+      "initialObservationDigest": "d3933a412f2faee035706fe1172bb898d80f2e7e91bba71d008bae8d73e52c0d",
+      "isolatedFromLiveData": true,
+      "nleSavedir": "<PRIVATE_JEV_ROOT>/policy-candidates/frontier-v2-validation-fix/harness-runs/replay-freeze-20260918T155504Z/point-3999/nle-ttyrec",
+      "observedNodes": 38,
+      "providerCallsDuringReplay": 0,
+      "providerClientConstructedDuringReplay": false,
+      "questionBytesPreflight": {
+        "baselineAction": 11842,
+        "frontierAction": 17228,
+        "frontierGoal": 11885
+      },
+      "replaySeconds": 5.551520625005651,
+      "requestByteCap": 24576,
+      "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+      "verified": true,
+      "verifiedAt": "2026-09-18T15:55:22.947904+00:00"
+    }
+  ],
+  "mode": "replay_only",
+  "prefix": {
+    "actions": 4000,
+    "episodeId": 0,
+    "firstStep": 0,
+    "lastStep": 3999,
+    "liveFilesReadOnly": true,
+    "loadedAt": "2026-09-18T15:55:12.836904+00:00",
+    "origin": "native_full_observation",
+    "recordsSha256": "e13f20969982f6f03d3dc5af3c77d9c65183c908a83fe0a74001c32a12e73ac2",
+    "seed": 103,
+    "sources": [
+      {
+        "eventsSha256": "ad65b41c65c7198814dbd85538d7a440d55662ed45f8c209d0747366bb8ea5ba",
+        "fragment": "fragments/fragment-20260918T140333.224830Z-pid59581-58ed2e86",
+        "packs": 1,
+        "records": 13
+      },
+      {
+        "eventsSha256": "080c701c835fb35dd694ccd3955a758711d5a894c4089a7d622a5fd9967b0f48",
+        "fragment": "fragments/fragment-20260918T142018.874637Z-pid96937-852c8ca2",
+        "packs": 16,
+        "records": 2043
+      },
+      {
+        "eventsSha256": "5b343925b3a256fb65b85d42fac3986d9fbdf5ab61febadf6d9e5d17045813ba",
+        "fragment": "fragments/fragment-20260918T142213.609672Z-pid22464-7447553e",
+        "packs": 30,
+        "records": 3768
+      }
+    ]
+  },
+  "providerCalls": 0,
+  "schema": "jev-nethack-frontier-v2-validation-fix-paired-branch/v1",
+  "verified": true
+}
