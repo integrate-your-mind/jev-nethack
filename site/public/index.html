@@ -290,6 +290,7 @@
     <section aria-labelledby="archive-title">
       <div class="section-head"><div><p class="eyebrow">Complete recordings</p><h2 id="archive-title">Archive</h2></div><p>Completed segments retain the full terminal recording and event history.</p></div>
       <div id="archive-list" class="archive-list" aria-live="polite"><div class="empty">Loading the public archive…</div></div>
+      <div class="analytics-foot"><span id="archive-page-status">Loading the first page.</span><button id="load-more-archive" hidden>Load more recordings</button></div>
     </section>
   </main>
 
@@ -311,7 +312,8 @@
       let liveTransportFailed = false;
       let lastAction = "No action reported";
       let archiveBusy = false;
-      let archiveSignature = null;
+      let archivePageState = {records: [], cursor: null, seen: []};
+      const archiveCards = new Set();
       const HISTORY_LIMIT = 180;
       let sessionIdentity = null;
       let telemetryHistory = [];
@@ -410,6 +412,13 @@
         return "other";
       };
       const numericMetric = (payload, paths) => finiteNumber(metric(payload, paths));
+      const mergeArchivePage = (previous, incoming, cursor, append) => {
+        const next = typeof cursor === "string" && cursor ? cursor : null;
+        if (append && next && previous.seen.includes(next)) throw new Error("Archive returned a repeated cursor");
+        const records = new Map(previous.records.map(item => [String(item.sessionId), item]));
+        for (const item of incoming) if (item && typeof item.sessionId === "string" && item.sessionId && !records.has(item.sessionId)) records.set(item.sessionId, item);
+        return {records: [...records.values()], cursor: next, seen: next ? [...(append ? previous.seen : []), next] : (append ? previous.seen : [])};
+      };
       const movementSummary = (payload) => {
         const recent = metric(payload, ["state.recent_actions"]);
         if (!Array.isArray(recent) || !recent.length) return null;
@@ -664,18 +673,6 @@
         const manifest = item && item.manifest && typeof item.manifest === "object" ? item.manifest : {};
         return {...manifest, ...item};
       };
-      const archiveSetSignature = (items) => JSON.stringify(items.map((item) => {
-        const source = archiveSource(item || {});
-        return {
-          sessionId: first(source, ["sessionId", "session_id"]),
-          broadcastId: first(source, ["broadcastId", "broadcast_id"]),
-          endedAt: first(source, ["endedAt", "ended_at"]),
-          frameCount: first(source, ["frameCount", "frame_count"]),
-          actionCount: first(source, ["actionCount", "action_count"]),
-          manifestUrl: first(source, ["manifestUrl", "manifest_url"]),
-          artifacts: Array.isArray(source.artifacts) ? source.artifacts.map((artifact) => [artifact && artifact.filename, artifact && artifact.url, artifact && artifact.sha256, artifact && artifact.bytes]) : [],
-        };
-      }));
       const recordingPath = (item, names, fallbackName) => {
         const source = archiveSource(item);
         const directNames = names.filter((name) => !/filename|Filename$/.test(name));
@@ -718,10 +715,7 @@
       function renderArchive(payload) {
         const list = $("archive-list");
         const items = archiveItems(payload);
-        const signature = archiveSetSignature(items);
-        if (signature === archiveSignature) return;
-        archiveSignature = signature;
-        list.replaceChildren();
+        if (!archiveCards.size) list.replaceChildren();
         if (!items.length) {
           const empty = document.createElement("div");
           empty.className = "empty";
@@ -732,6 +726,8 @@
         for (const item of items) {
           if (!item || typeof item !== "object") continue;
           const source = archiveSource(item);
+          const key = String(source.sessionId || "");
+          if (!key || archiveCards.has(key)) continue;
           const card = document.createElement("article");
           card.className = "archive-card";
           const title = document.createElement("h3");
@@ -755,7 +751,7 @@
           const video = safeUrl(videoUrl);
           if (video) {
             const player = document.createElement("video");
-            player.controls = true; player.preload = "metadata"; player.src = video;
+            player.controls = true; player.preload = "none"; player.src = video;
             player.setAttribute("aria-label", `${title.textContent} MP4 replay`);
             card.append(player);
           }
@@ -765,37 +761,35 @@
           link(links, "Manifest", recordingPath(source, ["manifest_url", "manifestUrl", "downloads.manifest", "manifest", "manifest_filename", "manifestFilename"], "manifest.json"), "nethack-manifest.json");
           if (links.childElementCount) card.append(links);
           list.append(card);
+          archiveCards.add(key);
         }
       }
 
-      async function loadArchive() {
+      async function loadArchive(append = false) {
         if (archiveBusy) return;
+        if (append && !archivePageState.cursor) return;
         archiveBusy = true;
         $("refresh-archive").disabled = true;
+        $("load-more-archive").disabled = true;
+        text("archive-page-status", append ? "Loading another page…" : "Refreshing the first archive page…");
         try {
-          const all = [];
-          const seenCursors = new Set();
-          let cursor = null;
-          for (let page = 0; page < 20; page += 1) {
-            const query = new URLSearchParams({limit: "50"});
-            if (cursor) query.set("cursor", cursor);
-            const response = await fetch(`/api/archive?${query.toString()}`, {cache: "no-store", headers: {Accept: "application/json"}});
-            if (!response.ok) throw new Error("archive endpoint unavailable");
-            const payload = await response.json();
-            all.push(...archiveItems(payload));
-            const next = payload && typeof payload === "object" ? (payload.nextCursor || payload.next_cursor || (payload.cursor && payload.cursor) || null) : null;
-            if (!next || seenCursors.has(String(next))) break;
-            seenCursors.add(String(next));
-            cursor = String(next);
-          }
-          renderArchive(all);
+          const query = new URLSearchParams({limit: "9"});
+          if (append) query.set("cursor", archivePageState.cursor);
+          const response = await fetch(`/api/archive?${query.toString()}`, {cache: "no-store", headers: {Accept: "application/json"}});
+          if (!response.ok) throw new Error("archive endpoint unavailable");
+          const payload = await response.json();
+          archivePageState = mergeArchivePage(archivePageState, archiveItems(payload).map(archiveSource), payload.cursor, append);
+          renderArchive(archivePageState.records);
+          text("archive-page-status", `${archivePageState.records.length} recordings loaded. ${archivePageState.cursor ? "More archive pages are available." : "End of the current archive listing."} Pages follow archive order, not a global newest-first ranking.`);
+          $("load-more-archive").hidden = !archivePageState.cursor;
         } catch (_) {
+          text("archive-page-status", "This archive page could not be loaded. Existing footage remains available; retry with the same button.");
           if (!$("archive-list").querySelector(".archive-card")) {
             const list = $("archive-list"); list.replaceChildren();
             const empty = document.createElement("div"); empty.className = "empty";
             empty.textContent = "The archive is temporarily unavailable."; list.append(empty);
           }
-        } finally { archiveBusy = false; $("refresh-archive").disabled = false; }
+        } finally { archiveBusy = false; $("refresh-archive").disabled = false; $("load-more-archive").disabled = false; }
       }
 
       $("share").addEventListener("click", async () => {
@@ -808,12 +802,12 @@
         }
         setTimeout(() => { button.textContent = "Copy public link"; }, 1800);
       });
-      $("refresh-archive").addEventListener("click", loadArchive);
+      $("refresh-archive").addEventListener("click", () => loadArchive(false));
+      $("load-more-archive").addEventListener("click", () => loadArchive(true));
       pollLive();
       loadArchive();
       setInterval(refreshFreshness, 250);
       setInterval(pollLive, POLL_MS);
-      setInterval(loadArchive, 30000);
     })();
   </script>
 </body>

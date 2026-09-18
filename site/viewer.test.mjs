@@ -33,7 +33,7 @@ function viewerHelpers() {
   const script = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/)?.[1];
   const start = script.indexOf("const first =");
   const end = script.indexOf("const status =");
-  return vm.runInNewContext(`(function(){${script.slice(start, end)}; return {asProbability, probabilityEntries, actionLabel, telemetrySample, outcomeSummary, movementSummary};})()`);
+  return vm.runInNewContext(`(function(){${script.slice(start, end)}; return {asProbability, probabilityEntries, actionLabel, telemetrySample, outcomeSummary, movementSummary, mergeArchivePage};})()`);
 }
 
 test("pure viewer helpers validate probabilities, criteria labels, and episode identity", () => {
@@ -115,4 +115,21 @@ test("locations include dungeon level and the reported window is bounded", () =>
   assert.equal(levelChange.positions, 2); assert.equal(levelChange.positionChanges, 1); assert.equal(levelChange.depthDelta, 1); assert.equal(levelChange.pairs, 0);
   const many = Array.from({length: 120}, (_, i) => ({before: position(i, i), after: position(i + 1, i + 1)}));
   assert.equal(movementSummary(movementFrame(many)).actions, 100);
+});
+
+test("archive pagination reaches beyond the old cap, deduplicates refreshes and preserves existing recordings", () => {
+  const {mergeArchivePage} = viewerHelpers();
+  let page = {records: [], cursor: null, seen: []};
+  const first = {sessionId: "recording-0", frameCount: 100};
+  page = mergeArchivePage(page, [first], "cursor-1", false);
+  for (let i = 1; i < 1002; i++) page = mergeArchivePage(page, [{sessionId: `recording-${i}`}], `cursor-${i + 1}`, true);
+  assert.equal(page.records.length, 1002);
+  page = mergeArchivePage(page, [{sessionId: "recording-0", frameCount: 100}], "cursor-1", false);
+  assert.equal(page.records.length, 1002); assert.equal(page.records[0], first);
+  assert.throws(() => mergeArchivePage(page, [], "cursor-1", true), /repeated cursor/);
+  page = mergeArchivePage(page, [], null, true); assert.equal(page.cursor, null);
+  assert.equal(page.records[0], first);
+  assert.match(html, /if \(!key \|\| archiveCards\.has\(key\)\) continue/);
+  assert.match(html, /player\.preload = "none"/);
+  assert.doesNotMatch(html, /setInterval\(loadArchive/);
 });
