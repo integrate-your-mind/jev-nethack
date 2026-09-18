@@ -143,9 +143,42 @@
     .archive-links a { font-size: .8rem; }
     .empty { grid-column: 1 / -1; padding: 1.2rem; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); }
     .notice { margin: 1.2rem 0 0; padding: 1rem 1.1rem; border-left: 3px solid var(--amber); color: var(--muted); background: rgba(63, 52, 29, .18); }
+    .analytics-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 1rem; }
+    .analytics-panel { padding: 1rem; }
+    .analytics-panel h3 { margin: 0; font-size: .95rem; }
+    .subtle { margin: .3rem 0 0; color: var(--muted); font-size: .78rem; }
+    .decision-current { display: flex; align-items: baseline; justify-content: space-between; gap: .8rem; margin: .9rem 0; padding: .75rem; border: 1px solid rgba(240, 198, 117, .35); border-radius: 9px; background: rgba(63, 52, 29, .2); }
+    .decision-current strong { color: var(--amber); font: 1rem ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .decision-current span { color: var(--muted); font-size: .78rem; text-align: right; }
+    .prob-list { display: grid; gap: .55rem; }
+    .prob-row { display: grid; grid-template-columns: minmax(92px, 1.1fr) minmax(80px, 2fr) 3.5rem; align-items: center; gap: .55rem; font-size: .78rem; }
+    .prob-row.selected { color: var(--amber); }
+    .prob-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .prob-bar { height: .55rem; overflow: hidden; border-radius: 99px; background: #26352d; }
+    .prob-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green), #bddf90); }
+    .prob-value { color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
+    .decision-note { margin: .75rem 0 0; color: var(--muted); font-size: .78rem; }
+    .decision-more { margin-top: .8rem; color: var(--muted); font-size: .78rem; }
+    .decision-more summary { cursor: pointer; color: var(--green); }
+    .confidence-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; margin-top: .9rem; }
+    .confidence { padding: .65rem; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-hi); }
+    .confidence dt { color: var(--muted); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+    .confidence dd { margin: .18rem 0 0; font-weight: 700; }
+    .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin-top: 1rem; }
+    .chart-card { min-width: 0; padding: .7rem; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-hi); }
+    .chart-card h4 { margin: 0; font-size: .78rem; }
+    .chart-card p { min-height: 2.3em; margin: .25rem 0 0; color: var(--muted); font-size: .7rem; }
+    .chart { display: block; width: 100%; height: 86px; margin-top: .25rem; }
+    .chart-empty { display: grid; place-items: center; height: 86px; color: var(--muted); font-size: .72rem; text-align: center; }
+    .outcome-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .55rem; margin-top: .8rem; }
+    .outcome-stats div { padding: .6rem; border: 1px solid var(--line); border-radius: 8px; }
+    .outcome-stats dt { color: var(--muted); font-size: .68rem; }
+    .outcome-stats dd { margin: .15rem 0 0; font-weight: 700; }
+    .analytics-foot { display: flex; justify-content: space-between; gap: .7rem; margin-top: .7rem; color: var(--muted); font-size: .72rem; }
     code { color: var(--green); font: .9em ui-monospace, SFMono-Regular, Menlo, monospace; }
     @media (max-width: 820px) {
       .watch-grid { grid-template-columns: 1fr; }
+      .analytics-grid { grid-template-columns: 1fr; }
       .hero { padding-top: 1.4rem; }
       pre { min-height: 22rem; }
     }
@@ -157,6 +190,8 @@
       .metric-grid { grid-template-columns: repeat(2, 1fr); padding: .7rem; gap: .5rem; }
       .metric { padding: .65rem; }
       .metric dd { font-size: 1.1rem; }
+      .chart-grid { grid-template-columns: 1fr; }
+      .prob-row { grid-template-columns: minmax(80px, 1fr) minmax(70px, 1.5fr) 3.5rem; }
       .action-box, .details { margin-left: .7rem; margin-right: .7rem; }
       pre { min-height: 18rem; padding: .8rem; font-size: 12px; }
     }
@@ -211,6 +246,39 @@
       </aside>
     </div>
 
+    <section aria-labelledby="analytics-title">
+      <div class="section-head"><div><p class="eyebrow">Decision telemetry</p><h2 id="analytics-title">What Jev is doing</h2></div><p>Probabilities and progress come from the server frame. Browser history is bounded to this session and is never presented as lifetime accuracy.</p></div>
+      <div class="analytics-grid">
+        <article class="panel analytics-panel" aria-labelledby="decision-title">
+          <h3 id="decision-title">Current action distribution</h3>
+          <p class="subtle" id="decision-source">Waiting for an optional decision distribution from the server.</p>
+          <div class="decision-current"><strong id="decision-selected">No selected action</strong><span id="decision-selected-detail">Selection not reported</span></div>
+          <div id="prob-list" class="prob-list"><div class="empty">Older live bridge frames do not include probabilities yet.</div></div>
+          <details class="decision-more"><summary>Show full distribution</summary><div id="prob-full" class="prob-list" style="margin-top:.7rem"></div></details>
+          <div class="confidence-grid">
+            <dl class="confidence"><dt>Model reported confidence</dt><dd id="model-confidence">Not reported</dd></dl>
+            <dl class="confidence"><dt>Decision model</dt><dd id="decision-model">Not reported</dd></dl>
+          </div>
+          <p class="decision-note">Confidence describes certainty in the reported action choice. It is not calibrated accuracy or a prediction of winning.</p>
+        </article>
+
+        <article class="panel analytics-panel" aria-labelledby="progress-title">
+          <h3 id="progress-title">Progress and outcomes</h3>
+          <p class="subtle" id="history-source">No server metrics history loaded.</p>
+          <div class="chart-grid">
+            <div class="chart-card"><h4>Current score</h4><p>Score over recent observations seen in this browser.</p><div id="score-chart" class="chart-empty">Waiting for observations.</div></div>
+            <div class="chart-card"><h4>Depth</h4><p>Observed dungeon depth, with its own scale.</p><div id="depth-chart" class="chart-empty">Waiting for enough telemetry.</div></div>
+            <div class="chart-card"><h4>HP</h4><p>Observed player HP, with its own scale.</p><div id="hp-chart" class="chart-empty">Waiting for enough telemetry.</div></div>
+            <div class="chart-card"><h4>Game turn</h4><p>Observed game turn from server state, not polling step.</p><div id="turn-chart" class="chart-empty">Waiting for enough telemetry.</div></div>
+            <div class="chart-card"><h4>Final score by completed episode</h4><p>Up to 100 recent completed episodes, in order.</p><div id="final-score-chart" class="chart-empty">No completed episode scores reported.</div></div>
+            <div class="chart-card"><h4>Verified episode outcome rate</h4><p>Ascensions among completed episodes when server episode results are supplied. This is not action accuracy.</p><div id="outcome-chart" class="chart-empty">Not reported by this run.</div></div>
+            <div class="chart-card"><h4>Episode outcomes</h4><p>Verified ascensions and other completed episodes, with the denominator shown.</p><dl id="outcome-stats" class="outcome-stats"><div><dt>Verified ascensions</dt><dd>—</dd></div><div><dt>Other completed</dt><dd>—</dd></div><div><dt>Interrupted</dt><dd>—</dd></div></dl></div>
+          </div>
+          <div class="analytics-foot"><span id="recovery-state">Recovery/backoff: not reported</span><span id="history-count">0 / 180 samples</span></div>
+        </article>
+      </div>
+    </section>
+
     <p class="notice">LIVE means the latest server frame is fresh. OFFLINE means no current frame is confirmed. Archive files are complete recorded segments.</p>
 
     <section aria-labelledby="archive-title">
@@ -238,6 +306,13 @@
       let lastAction = "No action reported";
       let archiveBusy = false;
       let archiveSignature = null;
+      const HISTORY_LIMIT = 180;
+      let sessionIdentity = null;
+      let telemetryHistory = [];
+      let observedOutcomes = [];
+      let lastTelemetryKey = null;
+      let lastOutcomeKey = null;
+      let serverOutcomeStats = null;
 
       const $ = (id) => document.getElementById(id);
       const text = (id, value) => { $(id).textContent = value == null || value === "" ? "—" : String(value); };
@@ -281,6 +356,82 @@
         return first(payload, ["frame", "latest", "observation", "current"]) || payload || {};
       };
       const metric = (payload, paths) => first(frameObject(payload), paths) ?? first(payload, paths);
+      const decisionObject = (payload) => {
+        const value = metric(payload, ["decision", "telemetry.decision", "metrics.decision"]);
+        return value && typeof value === "object" ? value : {};
+      };
+      const metricsObject = (payload) => {
+        const value = metric(payload, ["metrics", "telemetry.metrics", "run.metrics"]);
+        return value && typeof value === "object" ? value : {};
+      };
+      const actionLabel = (value) => {
+        const raw = String(value);
+        const labels = {h:"move west", j:"move south", k:"move north", l:"move east", y:"move northwest", u:"move northeast", b:"move southwest", n:"move southeast", ".":"wait", " ":"wait", s:"search", e:"eat", q:"quaff", r:"read", z:"zap", o:"open", c:"close", ">":"descend", "<":"ascend"};
+        return labels[raw] ? `${labels[raw]} (${raw === " " ? "space" : raw})` : raw;
+      };
+      const asProbability = (value) => {
+        const number = finiteNumber(value);
+        return Number.isFinite(number) && number >= 0 && number <= 1 ? number : NaN;
+      };
+      const probabilityEntries = (payload) => {
+        const decision = decisionObject(payload);
+        const raw = first(decision, ["probabilities", "distribution", "action_probabilities", "actionProbabilities", "policy"]) ?? metric(payload, ["probabilities", "action_probabilities", "actionProbabilities"]);
+        const entries = [];
+        if (Array.isArray(raw)) {
+          for (const item of raw) {
+            if (!item || typeof item !== "object") continue;
+            const value = finiteNumber(first(item, ["probability", "prob", "p", "value"]));
+            const id = first(item, ["id", "action_id", "actionId", "choice", "key", "action", "name"]);
+            if (Number.isFinite(value) && value >= 0 && value <= 1 && id != null) entries.push({id: String(id), label: actionLabel(first(decision.criteria || {}, [String(id)]) || id), value});
+          }
+        } else if (raw && typeof raw === "object") {
+          for (const [label, value] of Object.entries(raw)) {
+            const probability = finiteNumber(value);
+            if (Number.isFinite(probability) && probability >= 0 && probability <= 1) entries.push({id: label, label: actionLabel((decision.criteria || {})[label] || label), value: probability});
+          }
+        }
+        return entries.filter((item) => item.value >= 0).sort((a, b) => b.value - a.value);
+      };
+      const percentText = (value) => Number.isFinite(value) ? `${(value * 100).toFixed(value * 100 < .1 ? 2 : 1)}%` : "Not reported";
+      const selectedAction = (payload) => actionText(payload);
+      const sessionValue = (payload) => first(payload, ["sessionId", "session_id", "broadcastId", "broadcast_id"]) ?? metric(payload, ["sessionId", "session_id", "run.sessionId", "run.session_id"]);
+      const recoveryValue = (payload) => first(payload, ["recovery", "backoff", "retry", "reconnect", "phase"]) ?? metric(payload, ["recovery", "backoff", "retry", "reconnect", "phase"]);
+      const outcomeValue = (payload) => {
+        const frame = frameObject(payload);
+        const explicit = first(frame, ["outcome", "episodeOutcome", "episode_outcome", "endReason", "end_reason", "result"]);
+        if (explicit != null && explicit !== "") return String(explicit).toLowerCase();
+        if (frame.ended !== true && metric(payload, ["ended", "episodeEnded", "episode_ended"]) !== true) return null;
+        return "other";
+      };
+      const numericMetric = (payload, paths) => finiteNumber(metric(payload, paths));
+      const telemetrySample = (payload) => {
+        const frame = frameObject(payload);
+        const metrics = metricsObject(payload);
+        const episode = first(frame, ["episode", "episodeId", "episode_id"]) ?? first(metrics, ["episode", "episodeId", "episode_id"]);
+        const sequence = first(frame, ["sequence", "seq", "capturedAt", "captured_at"]) ?? timestampValue(payload);
+        return {
+          key: `${episode == null ? "unknown" : episode}:${sequence == null ? performance.now() : sequence}`,
+          score: numericMetric(payload, ["score", "state.score", "state.player.score", "stats.score"]),
+          depth: numericMetric(payload, ["depth", "state.depth", "state.player.depth", "dlevel", "stats.depth"]),
+          hp: numericMetric(payload, ["hp", "state.hp", "state.player.hp", "stats.hp"]),
+          turn: numericMetric(payload, ["state.player.turn", "player.turn", "turn"]),
+          episode
+        };
+      };
+      const outcomeSummary = (metrics = {}) => {
+        const count = (value) => Number.isSafeInteger(value) && value >= 0 ? value : null;
+        const results = Array.isArray(metrics.episodeResults) ? metrics.episodeResults.filter(item => item && typeof item === "object").slice(-100) : null;
+        const completedResults = (results || []).filter(item => item.terminated === true);
+        const scores = completedResults.filter(item => Number.isFinite(finiteNumber(item.score))).map((item, index) => ({episode: first(item, ["episodeId", "episode_id", "episode"]) ?? index + 1, score: finiteNumber(item.score)}));
+        const completed = count(metrics.completedEpisodes), ascension = count(metrics.ascensions), interrupted = count(metrics.interruptedEpisodes);
+        if (completed !== null && ascension !== null && ascension <= completed) {
+          return {source: "counters", windowLabel: "Continuous run totals; score chart shows up to 100 recent completed episodes", total: interrupted === null ? null : completed + interrupted, completed, ascension, interrupted, otherCompleted: completed - ascension, death: null, unknown: null, scores};
+        }
+        if (!results) return null;
+        const ascendedResults = completedResults.filter(item => item.isAscended === true);
+        const interruptedResults = results.filter(item => item.terminated !== true && (item.truncated === true || item.status === "interrupted"));
+        return {source: "episodeResults", windowLabel: `Last ${results.length} reported episode results only`, total: results.length, completed: completedResults.length, ascension: ascendedResults.length, interrupted: interruptedResults.length, otherCompleted: completedResults.length - ascendedResults.length, death: null, unknown: Math.max(0, results.length - completedResults.length - interruptedResults.length), scores};
+      };
       const actionText = (payload) => {
         const value = metric(payload, ["selected_action", "selectedAction", "action_label", "action", "decision.choice", "choice", "key"]);
         if (value && typeof value === "object") return first(value, ["label", "key", "choice", "action"]) ?? "No action reported";
@@ -342,6 +493,45 @@
         return fresh;
       };
 
+      const renderDistribution = (payload) => {
+        const entries = probabilityEntries(payload);
+        const selected = selectedAction(payload);
+        const decision = decisionObject(payload);
+        const modelConfidence = asProbability(first(decision, ["model_confidence", "modelConfidence", "confidence"]));
+        const selectedId = first(decision, ["choice", "selected", "selected_action", "selectedAction"]);
+        const criteria = decision.criteria && typeof decision.criteria === "object" ? decision.criteria : {};
+        text("decision-selected", selected === "No action reported" ? "No selected action" : actionLabel(criteria[selectedId] || selectedId || selected));
+        text("decision-selected-detail", entries.length ? `Decision at move ${Number.isInteger(decision.step) ? decision.step + 1 : "unknown"} · ${selectedId || "selection not reported"}` : "Selection reported without probabilities.");
+        text("model-confidence", percentText(modelConfidence));
+        text("decision-model", first(decision, ["model", "model_name", "modelName"]) || "Not reported");
+        $("decision-source").textContent = entries.length ? "Server-reported action probabilities; sorted highest first." : "Waiting for an optional decision distribution from the server.";
+        const renderRows = (container, rows) => { container.replaceChildren(); for (const entry of rows) { const row = document.createElement("div"); row.className = `prob-row${String(entry.id) === String(selectedId) ? " selected" : ""}`; const label = document.createElement("span"); label.className = "prob-label"; label.textContent = `${entry.label}${String(entry.id) === String(selectedId) ? " · selected" : ""}`; const bar = document.createElement("span"); bar.className = "prob-bar"; const fill = document.createElement("i"); fill.style.width = `${entry.value * 100}%`; bar.append(fill); const value = document.createElement("span"); value.className = "prob-value"; value.textContent = percentText(entry.value); row.append(label, bar, value); container.append(row); } if (!rows.length) { const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = "Older live bridge frames do not include probabilities yet."; container.append(empty); } };
+        renderRows($("prob-list"), entries.slice(0, 6)); renderRows($("prob-full"), entries);
+      };
+      const lineChart = (containerId, values, color, label) => {
+        const container = $(containerId); container.replaceChildren(); const usable = values.filter((value) => Number.isFinite(value));
+        if (!usable.length) { container.className = "chart-empty"; container.textContent = "No server values reported."; return; }
+        container.className = "chart"; const width = 320, height = 86, pad = 14; const min = Math.min(...usable), max = Math.max(...usable), span = max === min ? 1 : max - min;
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", `0 0 ${width} ${height}`); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", label); const guide = document.createElementNS("http://www.w3.org/2000/svg", "path"); guide.setAttribute("d", `M${pad} ${pad}V${height-pad}H${width-pad}`); guide.setAttribute("stroke", "#294338"); guide.setAttribute("fill", "none"); svg.append(guide); const axis = document.createElementNS("http://www.w3.org/2000/svg", "text"); axis.setAttribute("x", "1"); axis.setAttribute("y", "12"); axis.setAttribute("fill", "#9caea2"); axis.setAttribute("font-size", "9"); axis.textContent = String(max); svg.append(axis); const points = usable.map((value, i) => { const x = pad + (usable.length <= 1 ? 0 : i * (width - pad * 2) / (usable.length - 1)); const y = height - pad - ((value - min) / span) * (height - pad * 2); return `${x.toFixed(1)},${y.toFixed(1)}`; }).join(" "); const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline"); polyline.setAttribute("points", points); polyline.setAttribute("fill", "none"); polyline.setAttribute("stroke", color); polyline.setAttribute("stroke-width", "2"); polyline.setAttribute("stroke-linecap", "round"); polyline.setAttribute("stroke-linejoin", "round"); svg.append(polyline); const floor = document.createElementNS("http://www.w3.org/2000/svg", "text"); floor.setAttribute("x", "1"); floor.setAttribute("y", String(height - 2)); floor.setAttribute("fill", "#9caea2"); floor.setAttribute("font-size", "9"); floor.textContent = String(min); svg.append(floor); container.append(svg);
+      };
+      const renderOutcomeChart = (summary) => {
+        const container = $("outcome-chart");
+        container.replaceChildren();
+        if (!summary || summary.completed === null || summary.completed === 0 || summary.ascension === null) { container.className = "chart-empty"; container.textContent = "No verified completed-episode outcome values reported."; return; }
+        container.className = "chart";
+        const rate = summary.ascension / summary.completed;
+        const title = document.createElement("p"); title.textContent = `Verified ascensions: ${summary.ascension} / ${summary.completed} completed (${percentText(rate)})`; container.append(title);
+        const bar = document.createElement("div"); bar.className = "prob-bar"; const fill = document.createElement("i"); fill.style.width = `${rate * 100}%`; bar.append(fill); container.append(bar);
+        const detail = document.createElement("small"); detail.textContent = summary.windowLabel; container.append(detail);
+      };
+      const renderHistory = () => {
+        const values = telemetryHistory; lineChart("score-chart", values.map((sample) => sample.score), "#8ce0a1", "score"); lineChart("depth-chart", values.map((sample) => sample.depth), "#f0c675", "depth"); lineChart("hp-chart", values.map((sample) => sample.hp), "#ee8c8c", "HP"); lineChart("turn-chart", values.map((sample) => sample.turn), "#8cb9ee", "game turn");
+        const stats = serverOutcomeStats; const denominator = stats ? stats.completed : null; const ascension = stats ? stats.ascension : null; const interrupted = stats ? stats.interrupted : null; const otherCompleted = stats ? stats.otherCompleted : null; $("outcome-stats").innerHTML = stats ? `<div><dt>Verified ascensions</dt><dd>${ascension == null ? "—" : `${ascension} / ${denominator == null ? "—" : denominator}`}</dd></div><div><dt>Other completed</dt><dd>${otherCompleted == null ? "—" : `${otherCompleted} / ${denominator}`}</dd></div><div><dt>Interrupted</dt><dd>${interrupted == null ? "—" : `${interrupted} / ${stats.total == null ? "—" : stats.total}`}</dd></div>` : `<div><dt>Verified ascensions</dt><dd>—</dd></div><div><dt>Other completed</dt><dd>—</dd></div><div><dt>Interrupted</dt><dd>—</dd></div>`; renderOutcomeChart(stats); lineChart("final-score-chart", (stats?.scores || []).map(item => item.score), "#8ce0a1", "final score by completed episode"); text("history-count", `${values.length} / ${HISTORY_LIMIT} samples`); $("history-source").textContent = values.length ? `Bounded browser view for session ${sessionIdentity || "unknown"}; ${stats ? stats.windowLabel : "outcomes are not reported"}.` : "No server metrics history loaded.";
+      };
+      const recordTelemetry = (payload) => {
+        const identity = sessionValue(payload); if (identity && sessionIdentity && String(identity) !== String(sessionIdentity)) { telemetryHistory = []; observedOutcomes = []; lastTelemetryKey = null; lastOutcomeKey = null; serverOutcomeStats = null; } if (identity) sessionIdentity = String(identity); const sample = telemetrySample(payload); if (sample.key !== lastTelemetryKey) { lastTelemetryKey = sample.key; telemetryHistory.push(sample); if (telemetryHistory.length > HISTORY_LIMIT) telemetryHistory.shift(); } const metrics = metricsObject(payload); serverOutcomeStats = outcomeSummary(metrics); const recovery = recoveryValue(payload); $("recovery-state").textContent = recovery == null ? "Recovery/backoff: not reported" : `Recovery/backoff: ${typeof recovery === "object" ? String(first(recovery, ["phase", "state", "status"]) || "reported") : String(recovery)}`; renderHistory();
+      };
+
       function renderLive(payload) {
         latestPayload = payload;
         lastLiveReceivedAt = performance.now();
@@ -374,6 +564,8 @@
         $("source-state").textContent = !hasFrame ? "Waiting for server frame" : fresh ? "Current server observation" : "Last received observation (offline)";
         $("recorder").textContent = !hasFrame ? "Waiting for a frame" : fresh ? "Publishing frames" : "No current frame confirmed";
         $("source").textContent = !hasFrame ? "No frame timestamp" : receivedAt == null ? "No receipt timestamp" : String(receivedAt);
+        renderDistribution(payload);
+        recordTelemetry(payload);
       }
 
       async function pollLive() {

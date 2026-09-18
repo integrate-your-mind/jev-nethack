@@ -12,6 +12,12 @@ const SESSION_RE = /^[a-z0-9][a-z0-9_-]{0,79}$/;
 const FILE_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const SHA256_RE = /^[a-f0-9]{64}$/;
 
+const TRAINING_BODY_LIMIT = 32 * 1024 * 1024;
+const TRAINING_PAGE_LIMIT = 50;
+const TRAINING_MAGIC = new TextEncoder().encode("JEVNHNPZ1\n");
+const TRAINING_SHARD_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/;
+const TRAINING_FILE_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+
 class HttpError extends Error {
   constructor(status, code, message, headers = undefined) {
     super(message);
@@ -163,6 +169,176 @@ function contentTypeFor(filename) {
 function objectKey(sessionId, filename) {
   if (filename === "manifest.json") return `manifests/${sessionId}.json`;
   return `recordings/${sessionId}/${filename}`;
+}
+
+function trainingObjectKey(shardId, filename) {
+  return `training/${shardId}/${filename}`;
+}
+
+function parseTrainingPath(pathname) {
+  const match = /^\/api\/training\/([^/]+)\/([^/]+)$/.exec(pathname);
+  if (!match) return null;
+  let shardId;
+  let filename;
+  try {
+    shardId = decodeURIComponent(match[1]);
+    filename = decodeURIComponent(match[2]);
+  } catch {
+    throw new HttpError(400, "invalid_path", "The training path is invalid.");
+  }
+  if (!TRAINING_SHARD_RE.test(shardId) || !TRAINING_FILE_RE.test(filename)) {
+    throw new HttpError(400, "invalid_path", "The training path is invalid.");
+  }
+  if (filename !== "manifest.json" && !filename.endsWith(".npzpack") && !filename.endsWith(".index.jsonl")) {
+    throw new HttpError(400, "invalid_filename", "Training artifacts must be .npzpack, .index.jsonl, or manifest.json.");
+  }
+  return { shardId, filename };
+}
+
+function trainingContentType(filename) {
+  if (filename === "manifest.json") return "application/json; charset=utf-8";
+  if (filename.endsWith(".npzpack")) return "application/vnd.jev-nethack.transitions+npz";
+  return "application/x-ndjson; charset=utf-8";
+}
+
+function trainingBytesEqual(left, right) {
+  if (left.byteLength !== right.byteLength) return false;
+  let result = 0;
+  for (let index = 0; index < left.byteLength; index += 1) result |= left[index] ^ right[index];
+  return result === 0;
+}
+
+async function validateFramedTransitionPack(bytes) {
+  if (bytes.byteLength <= TRAINING_MAGIC.byteLength || !trainingBytesEqual(bytes.subarray(0, TRAINING_MAGIC.byteLength), TRAINING_MAGIC)) {
+    throw new HttpError(422, "invalid_transition_pack", "The NPZ pack has an invalid magic header.");
+  }
+  let offset = TRAINING_MAGIC.byteLength;
+  const frames = [];
+  while (offset < bytes.byteLength) {
+    if (bytes.byteLength - offset < 40) throw new HttpError(422, "invalid_transition_pack", "The NPZ pack contains a truncated frame header.");
+    const lengthBig = new DataView(bytes.buffer, bytes.byteOffset + offset, 8).getBigUint64(0);
+    if (lengthBig === 0n || lengthBig > BigInt(TRAINING_BODY_LIMIT)) throw new HttpError(422, "invalid_transition_pack", "The NPZ pack contains an invalid frame length.");
+    const length = Number(lengthBig);
+    const expectedDigest = bytes.subarray(offset + 8, offset + 40);
+    offset += 40;
+    if (length > bytes.byteLength - offset) {
+      throw new HttpError(422, "invalid_transition_pack", "The NPZ pack contains an invalid frame length.");
+    }
+    const payload = bytes.subarray(offset, offset + length);
+    if (!trainingBytesEqual(new Uint8Array(await crypto.subtle.digest("SHA-256", payload)), expectedDigest)) throw new HttpError(422, "invalid_transition_pack", "The NPZ pack frame checksum is invalid.");
+    frames.push({ offset: offset - 40, payloadBytes: length, sha256: [...expectedDigest].map(value => value.toString(16).padStart(2, "0")).join("") });
+    offset += length;
+  }
+  if (frames.length === 0 || offset !== bytes.byteLength) throw new HttpError(422, "invalid_transition_pack", "The NPZ pack must contain at least one complete frame.");
+  return frames;
+}
+
+function validateTrainingManifest(manifest, shardId) {
+  if (!isObject(manifest) || manifest.schemaVersion !== 1 || manifest.schema !== "jev-nethack-transition-pack/v1" || manifest.completed !== true) {
+    throw new HttpError(400, "invalid_training_manifest", "A completed jev-nethack-transition-pack/v1 manifest is required.");
+  }
+  if (manifest.sessionId !== shardId || !TRAINING_SHARD_RE.test(manifest.sessionId)) {
+    throw new HttpError(400, "invalid_training_manifest", "Manifest sessionId must match the shard path.");
+  }
+  if (manifest.broadcastId !== undefined && !TRAINING_SHARD_RE.test(manifest.broadcastId)) throw new HttpError(400, "invalid_training_manifest", "Manifest broadcastId is invalid.");
+  if (!validDate(manifest.startedAt) || !validDate(manifest.endedAt) || Date.parse(manifest.endedAt) < Date.parse(manifest.startedAt)) throw new HttpError(400, "invalid_training_manifest", "Manifest timestamps are invalid.");
+  if (!Number.isSafeInteger(manifest.transitionCount) || manifest.transitionCount < 1) throw new HttpError(400, "invalid_training_manifest", "transitionCount must be a positive integer.");
+  if (!Array.isArray(manifest.artifacts) || manifest.artifacts.length !== 2) throw new HttpError(400, "invalid_training_manifest", "Exactly two training artifacts are required.");
+  const names = new Set();
+  for (const artifact of manifest.artifacts) {
+    if (!isObject(artifact) || !TRAINING_FILE_RE.test(artifact.filename ?? "") || artifact.filename === "manifest.json" || names.has(artifact.filename)) throw new HttpError(400, "invalid_training_manifest", "Training artifact filenames are invalid or duplicated.");
+    const expected = trainingContentType(artifact.filename);
+    if (artifact.contentType !== expected.split(";", 1)[0] || !SHA256_RE.test(String(artifact.sha256 ?? "")) || !Number.isSafeInteger(artifact.bytes) || artifact.bytes <= 0) throw new HttpError(400, "invalid_training_manifest", `Training artifact metadata is invalid for ${artifact.filename}.`);
+    names.add(artifact.filename);
+  }
+  if (![...names].some((name) => name.endsWith(".npzpack")) || ![...names].some((name) => name.endsWith(".index.jsonl"))) throw new HttpError(400, "invalid_training_manifest", "A training manifest requires one .npzpack and one .index.jsonl artifact.");
+}
+
+async function verifyTrainingArtifacts(bucket, manifest, shardId, verifyBodies = true) {
+  let frames;
+  let index;
+  for (const artifact of manifest.artifacts) {
+    const key = trainingObjectKey(shardId, artifact.filename);
+    const stored = await bucket.head(key);
+    if (!stored || stored.size !== artifact.bytes || stored.customMetadata?.sha256 !== artifact.sha256) throw new HttpError(409, "artifact_mismatch", `Stored training artifact does not match ${artifact.filename}.`);
+    if (!verifyBodies) continue;
+    const object = await bucket.get(key);
+    if (!object) throw new HttpError(409, "artifact_mismatch", `Stored training artifact is missing ${artifact.filename}.`);
+    const bytes = new Uint8Array(await object.arrayBuffer());
+    if (bytes.byteLength !== artifact.bytes || await sha256Hex(bytes) !== artifact.sha256) throw new HttpError(409, "artifact_mismatch", `Stored training artifact checksum does not match ${artifact.filename}.`);
+    if (artifact.filename.endsWith(".npzpack")) frames = await validateFramedTransitionPack(bytes);
+    else {
+      try { index = new TextDecoder("utf-8", { fatal: true }).decode(bytes).trimEnd().split("\n").map(line => JSON.parse(line)); }
+      catch { throw new HttpError(422, "invalid_transition_index", "The transition index must contain complete JSON lines."); }
+    }
+  }
+  if (!verifyBodies) return;
+  if (frames.length !== manifest.transitionCount || index.length !== frames.length) throw new HttpError(422, "transition_count_mismatch", "The manifest, index and pack must contain the same number of transitions.");
+  const ids = new Set();
+  for (let i = 0; i < frames.length; i += 1) {
+    const entry = index[i];
+    if (!isObject(entry) || entry.schema !== manifest.schema || typeof entry.eventId !== "string" || !entry.eventId || ids.has(entry.eventId) || entry.offset !== frames[i].offset || entry.payloadBytes !== frames[i].payloadBytes || entry.sha256 !== frames[i].sha256) throw new HttpError(422, "invalid_transition_index", "The transition index does not match the checksummed pack frames.");
+    ids.add(entry.eventId);
+  }
+}
+
+async function putTraining(request, env, path) {
+  await requireAuth(request, env);
+  const sha256 = (request.headers.get("X-Content-SHA256") ?? "").toLowerCase();
+  if (!SHA256_RE.test(sha256)) throw new HttpError(400, "invalid_sha256", "X-Content-SHA256 must be a 64-character hex digest.");
+  const limit = path.filename === "manifest.json" ? MANIFEST_BODY_LIMIT : TRAINING_BODY_LIMIT;
+  const length = requiredUploadLength(request, limit);
+  const key = trainingObjectKey(path.shardId, path.filename);
+  const existing = await env.BUCKET.head(key);
+  const bytes = await readBounded(request, limit);
+  if (bytes.byteLength !== length || await sha256Hex(bytes) !== sha256) throw new HttpError(422, "checksum_mismatch", "The upload body does not match Content-Length or X-Content-SHA256.");
+  const location = `/api/training/${encodeURIComponent(path.shardId)}/${encodeURIComponent(path.filename)}`;
+  if (existing) {
+    if (existing.size !== length || existing.customMetadata?.sha256 !== sha256) throw new HttpError(409, "immutable_object_exists", "This immutable path contains different bytes.");
+    return json({ stored: true, alreadyStored: true, shardId: path.shardId, filename: path.filename, bytes: length, sha256, download_url: new URL(location, request.url).href }, 200);
+  }
+  let manifest;
+  if (path.filename === "manifest.json") {
+    try { manifest = JSON.parse(new TextDecoder().decode(bytes)); } catch { throw new HttpError(400, "invalid_json", "Training manifest must be valid JSON."); }
+    validateTrainingManifest(manifest, path.shardId);
+    await verifyTrainingArtifacts(env.BUCKET, manifest, path.shardId);
+  } else if (path.filename.endsWith(".npzpack")) {
+    await validateFramedTransitionPack(bytes);
+  }
+  const stored = await env.BUCKET.put(key, bytes, {
+    onlyIf: new Headers({ "If-None-Match": "*" }), sha256,
+    httpMetadata: { contentType: trainingContentType(path.filename), cacheControl: "public, max-age=31536000, immutable", contentDisposition: `attachment; filename="${path.filename}"` },
+    customMetadata: { shardId: path.shardId, filename: path.filename, sha256, ...(manifest ? { verifiedTraining: "v1" } : {}) },
+  });
+  if (!stored) throw new HttpError(409, "immutable_object_exists", "Training objects are immutable and this path already exists.");
+  return json({ stored: true, shardId: path.shardId, filename: path.filename, bytes: length, sha256, completed: Boolean(manifest?.completed), download_url: new URL(location, request.url).href }, 201, { ETag: stored.httpEtag, Location: location });
+}
+
+async function getTraining(request, env, path) {
+  const object = await env.BUCKET.get(trainingObjectKey(path.shardId, path.filename));
+  if (!object) throw new HttpError(404, "not_found", "Training object not found.");
+  const headers = new Headers(); object.writeHttpMetadata(headers);
+  headers.set("Content-Type", trainingContentType(path.filename)); headers.set("Content-Disposition", `attachment; filename="${path.filename}"`); headers.set("ETag", object.httpEtag); headers.set("X-Content-Type-Options", "nosniff"); headers.set("Cache-Control", "public, max-age=31536000, immutable"); headers.set("Content-Length", String(object.size));
+  return new Response(request.method === "HEAD" ? null : object.body, { status: 200, headers });
+}
+
+async function getTrainingArchive(request, env) {
+  const url = new URL(request.url); const rawLimit = Number(url.searchParams.get("limit") ?? "20");
+  if (!Number.isSafeInteger(rawLimit) || rawLimit < 1 || rawLimit > TRAINING_PAGE_LIMIT) throw new HttpError(400, "invalid_limit", `limit must be between 1 and ${TRAINING_PAGE_LIMIT}.`);
+  const cursor = url.searchParams.get("cursor") ?? undefined;
+  const listed = await env.BUCKET.list({ prefix: "training/", limit: rawLimit, cursor });
+  const manifests = [];
+  for (const summary of listed.objects) {
+    if (!summary.key.endsWith("/manifest.json")) continue;
+    const parts = summary.key.split("/"); const shardId = parts[1];
+    try {
+      const object = await env.BUCKET.get(summary.key); if (!object || object.size > MANIFEST_BODY_LIMIT || object.customMetadata?.verifiedTraining !== "v1") continue;
+      const manifest = JSON.parse(await object.text()); validateTrainingManifest(manifest, shardId); await verifyTrainingArtifacts(env.BUCKET, manifest, shardId, false);
+      manifests.push({ ...manifest, manifestUrl: `/api/training/${encodeURIComponent(shardId)}/manifest.json`, artifacts: manifest.artifacts.map((artifact) => ({ ...artifact, url: `/api/training/${encodeURIComponent(shardId)}/${encodeURIComponent(artifact.filename)}` })) });
+    } catch { /* incomplete or invalid claims are never listed */ }
+  }
+  manifests.sort((a, b) => b.endedAt.localeCompare(a.endedAt));
+  return json({ manifests, cursor: listed.truncated ? listed.cursor : null }, 200, { "Cache-Control": "public, max-age=5" });
 }
 
 function parseByteRange(header, size) {
@@ -605,6 +781,16 @@ function indexResponse() {
 async function route(request, env) {
   if (!env?.BUCKET) throw new HttpError(500, "missing_bucket", "Storage binding is unavailable.");
   const url = new URL(request.url);
+  const trainingPath = parseTrainingPath(url.pathname);
+  if (url.pathname === "/api/training") {
+    if (request.method === "GET") return getTrainingArchive(request, env);
+    throw new HttpError(405, "method_not_allowed", "Method not allowed.", { Allow: "GET" });
+  }
+  if (trainingPath) {
+    if (request.method === "GET" || request.method === "HEAD") return getTraining(request, env, trainingPath);
+    if (request.method === "PUT") return putTraining(request, env, trainingPath);
+    throw new HttpError(405, "method_not_allowed", "Method not allowed.", { Allow: "GET, HEAD, PUT" });
+  }
   const recordingPath = parseRecordingPath(url.pathname);
   if (url.pathname === "/api/live") {
     if (request.method === "GET") return getLive(env);

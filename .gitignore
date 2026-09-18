@@ -8,3 +8,7 @@ dist/
 *.zip
 *.mp4
 .DS_Store
+
+# Large recording archives are GitHub release assets.
+*.tar.gz
+site/.openai/hosting.json

@@ -4,6 +4,6 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test worker.test.mjs"
+    "test": "node --test worker.test.mjs training-api.test.mjs viewer.test.mjs"
   }
 }
