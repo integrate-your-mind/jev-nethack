@@ -15,6 +15,7 @@ The [cycle-aware-v1 experiment](research/cycle-aware-v1/README.md) reduced backt
 ## Layout
 
 - `until-win/`: persistent direct Jev policy with verified same-game recovery and raw transition capture
+- `runtime-support/`: automatic verified archive publishing and recovery of interrupted video/training tails
 - `runner/`: bounded experiment runner and broadcast client
 - `site/`: public read-only viewer and authenticated ingest Worker
 - `research/`: bounded recurrent BC/PPO pilot and frozen direct-policy experiments
@@ -42,4 +43,4 @@ Completed footage is available in [GitHub Releases](https://github.com/integrate
 
 The persistent direct Jev runtime resumed episode 0, seed 103, from move 1,980. A controlled process crash at move 2,055 caused the installed background service to restart automatically, verify 2,056 saved actions (including the pending action) with zero provider calls during replay, and continue the same game past move 2,080. This validates that crash path, not arbitrary hardware failures. A Mac restart runs the service after login; local play requires the host to remain powered on. That recovered game subsequently ended in death after 5,227 actions, and the same process automatically began episode 1, seed 104. Native ascension is still unachieved.
 
-See `until-win/README.md` for the save/replay contract, STOP controls, training format, and compatibility checks; `docs/typesafe-skill.md` describes the TypeSafe workflow.
+See `until-win/README.md` for the save/replay contract, STOP controls, training format, and compatibility checks; [archive operations](runtime-support/README.md) documents publication, readback verification, retries, and the portable background-service example; `docs/typesafe-skill.md` describes the TypeSafe workflow.

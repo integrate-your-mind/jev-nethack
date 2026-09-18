@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  NON-READY EXAMPLE. Replace every /ABSOLUTE/PATH, URL, label, and repository
+  placeholder. Verify the equivalent one-shot command before loading this file.
+  Never put a token value in this plist; the token-file argument must name a
+  private file.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.example.jev-nethack-archive-publisher</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/ABSOLUTE/PATH/TO/REPOSITORY/.venv/bin/python</string>
+    <string>/ABSOLUTE/PATH/TO/REPOSITORY/runtime-support/publish_archives.py</string>
+    <string>--data-root</string>
+    <string>/ABSOLUTE/PATH/TO/PRIVATE-DATA/recordings/until-win</string>
+    <string>--recordings-root</string>
+    <string>/ABSOLUTE/PATH/TO/PRIVATE-DATA/recordings/until-win/broadcast-fragments</string>
+    <string>--runtime-root</string>
+    <string>/ABSOLUTE/PATH/TO/PRIVATE-DATA/publisher-state</string>
+    <string>--site-url</string>
+    <string>https://YOUR-SITE.example</string>
+    <string>--token-file</string>
+    <string>/ABSOLUTE/PATH/TO/PRIVATE-DATA/ingest.token</string>
+    <string>--github-repo</string>
+    <string>OWNER/REPOSITORY</string>
+    <string>--gh</string>
+    <string>/ABSOLUTE/PATH/TO/gh</string>
+    <string>--interval</string>
+    <string>60</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/ABSOLUTE/PATH/TO/REPOSITORY/runtime-support</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>PYTHONDONTWRITEBYTECODE</key>
+    <string>1</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+
+  <key>StandardOutPath</key>
+  <string>/ABSOLUTE/PATH/TO/PRIVATE-DATA/logs/archive-publisher.stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string>/ABSOLUTE/PATH/TO/PRIVATE-DATA/logs/archive-publisher.stderr.log</string>
+</dict>
+</plist>

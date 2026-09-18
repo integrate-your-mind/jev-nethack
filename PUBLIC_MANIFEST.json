@@ -12,7 +12,8 @@
     "until-win": "Frozen runtime after production-copy two-restart test and actual process-crash recovery on September18,2026; portable deployment template and minimal verified direct-play dependency lock.",
     "typesafe-skill": "Official typesafe-ai/skills project install for Codex using npx skills add; installed skill and upstream source lock copied without modification.",
     "source-ledger": "Preserved September17 literature ledger with bounded September18 primary-source Puffer refresh; no protocol-backed Puffer win receipt located.",
-    "cycle-aware-v1": "Frozen negative paired64+64 actual-game experiment; portable text path/editorial changes documented in source-public-hashes.tsv; raw arrays/probabilities preserved unchanged in release bundle."
+    "cycle-aware-v1": "Frozen negative paired64+64 actual-game experiment; portable text path/editorial changes documented in source-public-hashes.tsv; raw arrays/probabilities preserved unchanged in release bundle.",
+    "runtime-support": "Six Python files match independently reviewed live publisher; portable README and non-ready LaunchAgent example.64tests passed; real firstcycle and subsequentbackgroundcycle verified."
   },
   "excluded": [
     "API and ingest credentials",
@@ -24,7 +25,7 @@
   "sha256": {
     ".agents/skills/typesafe-ai/SKILL.md": "71ea90d7906c6554c4f4c460ef7361b2d26f59116ccdae986dc6d997b9389f52",
     ".gitignore": "325b3fedb4c1753a8a3c7f3d6821af924ed32e96212669b5129c04d1aca43a6c",
-    "README.md": "e6392dce4c8921472227ab289777c0137fc809a7f1a22828168a265665dbaa18",
+    "README.md": "6dc365dac6b4c8c95a257cdad8ffc18d9a82e6c99ef78d8665dcf7e060c6e11b",
     "RELEASE_NOTES.md": "4d40a2ba06db90ccc69e547823ee888e504f33cbe2ee995a0334245bf138254e",
     "data/training/README.md": "74361749d1ad7e501cf46267e8e689adace65abedf3cfb5f8bc340067a8c77fd",
     "data/training/sample.jsonl": "a3e9009f3c58a6b10be46e0d4067eb796c9a035dd3926f2bf90e1785dcb7cc8f",
@@ -203,7 +204,15 @@
     "research/cycle-aware-v1/candidate-receipt.json": "11fe1c2cc960b212fde69b3e5bae517acb912d28c022174f5854aa785833c8fa",
     "research/cycle-aware-v1/evidence/iteration1/evaluation-receipt.json": "ec85f26c75e46a9a4b2c5842a0ccea063f44b7aabdd1b043aa9aba145a693ac9",
     "research/cycle-aware-v1/evidence/iteration1/evaluation-summary.json": "0fb616727a2ea17a41c37f8db7cf6157ebe6fc2cd2c07bb2b2d31ebc26adec73",
-    "research/cycle-aware-v1/evidence/iteration1/evaluation-results.jsonl": "d19fe4b4596f4ba401fdc66d36bff6c4c26ff3908f5dc7b6033a69e8cd3e5ecd"
+    "research/cycle-aware-v1/evidence/iteration1/evaluation-results.jsonl": "d19fe4b4596f4ba401fdc66d36bff6c4c26ff3908f5dc7b6033a69e8cd3e5ecd",
+    "runtime-support/README.md": "535e752150aa9dd0552f2cb91b1be4e92c77b99730b936fe1425d94e58a0aebf",
+    "runtime-support/com.example.jev-nethack-archive-publisher.plist.example": "46cd873fd86363b8f3df452ac5f11085fd59de9e0b5e4ff8d51e2c4c0f8375ca",
+    "runtime-support/publish_archives.py": "21b5479abbae23967d30b32c6482b0c1e67f1d99793095e00d00c7d2fa4130e6",
+    "runtime-support/recover_training_tail.py": "7b9d744617957019cc975c9c6370a8712340424374fd4dbdc731efbea9094b5f",
+    "runtime-support/recover_video_tail.py": "b04e4c63a5d84ad1e3bac183f8871535f2674931f71b20374dd7723666593e3c",
+    "runtime-support/test_publish_archives.py": "051ca84c8fba41d33cf47e8024db8bd9351fd1cf9cb39f7c59b2b93c8e40ef4f",
+    "runtime-support/test_recover_training_tail.py": "16fe6670f8b2b452cad98cba215dfa44b51a8e425499a81751f23ce35371c955",
+    "runtime-support/test_recover_video_tail.py": "59bb2a56d01f6145d6fad0b33c57d55d070e7e8b44762238e3891ce43889a03f"
   },
   "repository_url": "https://github.com/integrate-your-mind/jev-nethack",
   "recording_disclosure": "Completed game event logs and segment manifests are tracked; MP4 binaries and full recording bundles are GitHub Release assets with checksums."
