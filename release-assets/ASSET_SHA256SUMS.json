@@ -1,0 +1,15 @@
+{
+  "release_tag": "v0.1.0-recordings",
+  "assets": [
+    {
+      "name": "jev-nethack-hour-20260918T050819Z.tar.gz",
+      "bytes": 4136398,
+      "sha256": "64d1db330df47dccd67c18d97b5df906ebfe70928a7989aa5482895426f9e94d"
+    },
+    {
+      "name": "jev-nethack-smoke-v2.tar.gz",
+      "bytes": 94112,
+      "sha256": "8ae53cb540b7c4fd969ff733f9270a40ead4388b68ca1c5eb805fd4e4d0b5d6b"
+    }
+  ]
+}
