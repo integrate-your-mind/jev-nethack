@@ -28,9 +28,9 @@ The sample removes wall-clock fields, local paths, stream identifiers, hosted UR
 
 ## Viewer and evidence
 
-The viewer displays Jev’s returned probabilities for candidate choices and labels the selected action. These probabilities and model confidence are not empirical action accuracy or a calibrated chance of winning. Current-episode score, depth, health, and game turns have separate charts. Completed-episode final scores and the ascension rate use reported outcomes and an explicit denominator; interrupted games are kept separate.
+The viewer displays Jev’s returned probabilities for candidate choices and labels the selected action. These probabilities and model confidence are not empirical action accuracy or a calibrated chance of winning. A recent-movement panel measures distinct squares, immediate returns, game turns, score change, and depth change from the last recorded action window. It makes repeated movement visible without calling it success. Current-episode score, depth, health, and game turns have separate charts. Completed-episode final scores and the ascension rate use reported outcomes and an explicit denominator; interrupted games are kept separate.
 
-Site v4 source commit: `6d6af33eefaeac8a0ff8fe9132705c86f6fdc3df`. Deployed and anonymously verified on September 18, 2026. Site tests cover old-frame freshness, archive integrity, multi-frame NPZ/JSONL training upload validation, probabilities, and episode counters.
+Site v5 source commit: `aad169de55925b04c6917f876c9c4dc0c40ddee7`. Deployed and verified through anonymous HTTP and a live browser on September 18, 2026. Site tests cover old-frame freshness, archive integrity, multi-frame NPZ/JSONL training upload validation, probabilities, and episode counters.
 
 Completed footage is available in [GitHub Releases](https://github.com/integrate-your-mind/jev-nethack/releases) and the public viewer archive. Release checksums verify copied bytes; they do not guarantee indefinite availability from a hosting provider.
 

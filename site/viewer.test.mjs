@@ -33,7 +33,7 @@ function viewerHelpers() {
   const script = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/)?.[1];
   const start = script.indexOf("const first =");
   const end = script.indexOf("const status =");
-  return vm.runInNewContext(`(function(){${script.slice(start, end)}; return {asProbability, probabilityEntries, actionLabel, telemetrySample, outcomeSummary};})()`);
+  return vm.runInNewContext(`(function(){${script.slice(start, end)}; return {asProbability, probabilityEntries, actionLabel, telemetrySample, outcomeSummary, movementSummary};})()`);
 }
 
 test("pure viewer helpers validate probabilities, criteria labels, and episode identity", () => {
@@ -82,4 +82,37 @@ test("episode result summaries use strict terminal ascension evidence and a boun
   assert.equal(value.interrupted,2); assert.equal(value.total,202);
   assert.equal(outcomeSummary({completedEpisodes:1,ascensions:2}),null);
   assert.equal(outcomeSummary({completedEpisodes:1.5,ascensions:0}),null);
+});
+
+const position = (x, turn, extra = {}) => ({dungeon: 0, level: 1, x, y: 4, turn, score: 102, depth: 1, ...extra});
+const movementFrame = actions => ({frame: {capturedAt: "2026-09-18T14:50:00Z", state: {recent_actions: actions}}});
+
+test("movement counts actual contiguous action history and does not confuse turns with progress", () => {
+  const {movementSummary} = viewerHelpers();
+  const actions = Array.from({length: 8}, (_, i) => ({before: position(37 + i % 2, 100 + i), after: position(37 + (i + 1) % 2, 101 + i)}));
+  const payload = movementFrame(actions);
+  const summary = movementSummary(payload);
+  assert.equal(summary.actions, 8); assert.equal(summary.positions, 2);
+  assert.equal(summary.positionChanges, 8); assert.equal(summary.returns, 7); assert.equal(summary.pairs, 7);
+  assert.equal(summary.turnDelta, 8); assert.equal(summary.scoreDelta, 0); assert.equal(summary.depthDelta, 0);
+  assert.deepEqual(movementSummary(payload), summary, "repeated polling does not accumulate actions");
+});
+
+test("waits, missing data and non-contiguous windows never create apparent backtracking", () => {
+  const {movementSummary} = viewerHelpers();
+  assert.equal(movementSummary({}), null);
+  const waits = movementSummary(movementFrame([{before: position(37, 1), after: position(37, 2)}, {before: position(37, 2), after: position(37, 3)}]));
+  assert.equal(waits.returns, 0); assert.equal(waits.positionChanges, 0); assert.equal(waits.positions, 1);
+  for (const bad of [null, {before: position(99, 3), after: position(37, 4)}, {before: {x: 38, y: 4}, after: {x: 37, y: 4}}]) {
+    const summary = movementSummary(movementFrame([{before: position(37, 1), after: position(38, 2)}, bad]));
+    assert.equal(summary.returns, null); assert.equal(summary.positions, null); assert.equal(summary.turnDelta, null);
+  }
+});
+
+test("locations include dungeon level and the reported window is bounded", () => {
+  const {movementSummary} = viewerHelpers();
+  const levelChange = movementSummary(movementFrame([{before: position(37, 1), after: position(37, 2, {level: 2, depth: 2})}]));
+  assert.equal(levelChange.positions, 2); assert.equal(levelChange.positionChanges, 1); assert.equal(levelChange.depthDelta, 1); assert.equal(levelChange.pairs, 0);
+  const many = Array.from({length: 120}, (_, i) => ({before: position(i, i), after: position(i + 1, i + 1)}));
+  assert.equal(movementSummary(movementFrame(many)).actions, 100);
 });
