@@ -8,11 +8,12 @@ The repository contains the local runner, authenticated live-site worker, recurr
 
 ## Research status
 
-The included pilots are development experiments. They are negative or inconclusive: no ascension or state-of-the-art result is claimed. The benchmark plan describes the controls and evaluation contract required before making a stronger claim. The initial training sample is a small schema-preserving example, not the complete corpus. The deployed training archive API accepts verified complete observation/action transition packs; continuous runtime and publishing integration are still being validated.
+The included pilots are development experiments. They are negative or inconclusive: no ascension or state-of-the-art result is claimed. The benchmark plan describes the controls and evaluation contract required before making a stronger claim. The initial training sample is a small schema-preserving example, not the complete corpus. The deployed training archive API accepts verified complete observation/action transition packs; one actual 13-transition shard has been uploaded and readback-verified. Automatic archive publishing remains under validation.
 
 ## Layout
 
-- `runner/`: local game runner and broadcast client
+- `until-win/`: persistent direct Jev policy with verified same-game recovery and raw transition capture
+- `runner/`: bounded experiment runner and broadcast client
 - `site/`: public read-only viewer and authenticated ingest Worker
 - `research/`: bounded recurrent BC/PPO pilot
 - `data/training/`: sanitized sample and schema/provenance
@@ -32,3 +33,9 @@ The viewer displays Jev’s returned probabilities for candidate choices and lab
 Site v4 source commit: `6d6af33eefaeac8a0ff8fe9132705c86f6fdc3df`. Deployed and anonymously verified on September 18, 2026. Site tests cover old-frame freshness, archive integrity, multi-frame NPZ/JSONL training upload validation, probabilities, and episode counters.
 
 Completed footage is available in [GitHub Releases](https://github.com/integrate-your-mind/jev-nethack/releases) and the public viewer archive. Release checksums verify copied bytes; they do not guarantee indefinite availability from a hosting provider.
+
+## Continuous run verification
+
+The persistent direct Jev runtime resumed episode 0, seed 103, from move 1,980. A controlled process crash at move 2,055 caused the installed background service to restart automatically, verify 2,056 saved actions (including the pending action) with zero provider calls during replay, and continue the same game past move 2,080. This validates that crash path, not arbitrary hardware failures. A Mac restart runs the service after login; local play requires the host to remain powered on. Native ascension is still unachieved.
+
+See `until-win/README.md` for the save/replay contract, STOP controls, training format, and compatibility checks; `docs/typesafe-skill.md` describes the TypeSafe workflow.

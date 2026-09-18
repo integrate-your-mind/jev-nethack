@@ -1,0 +1,9 @@
+# Verified direct-play runtime environment; BC/PPO requirements remain in runner/requirements.txt.
+cloudpickle==3.1.2
+Farama-Notifications==0.0.6
+gymnasium==1.2.0
+nle==1.3.0
+numpy==2.5.3
+pillow==12.3.0
+pybind11==3.1.0
+typing_extensions==4.16.0

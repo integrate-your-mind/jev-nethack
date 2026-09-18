@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>ai.typesafe.jev-nethack-until-win</string>
+  <key>ProgramArguments</key>
+  <array>
+      <string>__PYTHON_ABSOLUTE_PATH__</string>
+      <string>__UNTIL_WIN_SCRIPT_ABSOLUTE_PATH__</string>
+    <string>run</string>
+    <string>--data-root</string>
+    <string>__DATA_ROOT_ABSOLUTE_PATH__</string>
+    <string>--global-lock</string>
+    <string>__GLOBAL_GAMEPLAY_LOCK_ABSOLUTE_PATH__</string>
+    <string>--jev-token-file</string>
+    <string>__JEV_TOKEN_FILE_ABSOLUTE_PATH__</string>
+    <string>--ingest-token-file</string>
+    <string>__INGEST_TOKEN_FILE_ABSOLUTE_PATH__</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+  </dict>
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>__STDOUT_LOG_ABSOLUTE_PATH__</string>
+  <key>StandardErrorPath</key>
+  <string>__STDERR_LOG_ABSOLUTE_PATH__</string>
+</dict>
+</plist>
