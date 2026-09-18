@@ -89,6 +89,10 @@ class PreservationError(UntilWinError):
     """Gameplay must halt because a transition cannot be preserved."""
 
 
+class PostCommitPreservationError(PreservationError):
+    """The transition is durable, but subsequent recording/finalization failed."""
+
+
 class RecoveryBlockedError(PreservationError):
     """Exact deterministic reconstruction could not be proved."""
 
@@ -638,6 +642,7 @@ class UntilWinSupervisor:
             "jev_client.py",
             "menu_labels.py",
             "broadcast.py",
+            "video_budget.py",
             "metrics.py",
         )
         return {
@@ -665,6 +670,30 @@ class UntilWinSupervisor:
                 metrics=self._public_metrics(),
                 runtime_status={"phase": phase},
             )
+
+    def _resolve_replayed_incomplete(self, records: list[dict[str, Any]]) -> None:
+        """Resolve only a diagnostic bound to a proven replayed commit.
+
+        An uncommitted pending intent beyond this prefix remains unresolved.
+        Keep the original diagnostic as audit evidence rather than erasing it.
+        """
+        incomplete = self.state.get("lastIncompleteTransition")
+        if not isinstance(incomplete, Mapping):
+            return
+        keys = ("eventId", "episodeId", "seed", "actionIndex", "keycode")
+        if not all(key in incomplete for key in keys):
+            return
+        for record in records:
+            if all(key in record and record[key] == incomplete[key] for key in keys):
+                self.state["lastResolvedIncompleteTransition"] = {
+                    "original": dict(incomplete),
+                    "resolution": "verified_committed_action_replayed",
+                    "committedStep": record["step"],
+                    "actionsReplayed": len(records),
+                    "resolvedAt": utc_now(),
+                }
+                self.state.pop("lastIncompleteTransition")
+                return
 
     def _report_recorder_status(
         self,
@@ -1200,6 +1229,7 @@ class UntilWinSupervisor:
                             "origin": origin,
                         }
                         self.state["fatalLatch"] = None
+                        self._resolve_replayed_incomplete(records[:step])
                         self._persist_state()
                     status = "verified_ascension" if verified_ascension else "engine_truncation" if truncated or final_end_status == "ABORTED" else "game_end"
                     break
@@ -1215,10 +1245,17 @@ class UntilWinSupervisor:
                         "origin": origin,
                     }
                     self.state["fatalLatch"] = None
+                    self._resolve_replayed_incomplete(records)
                     self._persist_state()
                     self._set_recorder_telemetry("running")
 
             while not (terminated or truncated) and step < self.engine_episode_limit and not self.should_stop():
+                # Wait before spending a decision or executing a new game action.
+                # The archive publisher can drain verified recording copies while
+                # the exact in-memory game position remains unchanged.
+                if self.recorder is not None and not self.recorder.wait_for_capacity(should_stop=self.should_stop):
+                    status = "stop_requested"
+                    break
                 raw_before = copy_observation(obs)
                 before_digest = observation_digest(raw_before)
                 before_stats = game.stats(obs)
@@ -1323,6 +1360,7 @@ class UntilWinSupervisor:
                         criteria=criteria,
                     )
 
+                transition_committed = False
                 try:
                     next_obs, reward, terminated, truncated, info = env.step(action_index)
                     raw_after = copy_observation(next_obs)
@@ -1382,6 +1420,7 @@ class UntilWinSupervisor:
                         "rawTransition": pack_receipt,
                     }
                     self._append(committed)
+                    transition_committed = True
                     step += 1
                     self.state["totalActions"] = int(self.state.get("totalActions", 0)) + 1
                     self.state["activeEpisode"]["stepsCommitted"] = step
@@ -1408,6 +1447,12 @@ class UntilWinSupervisor:
                 except RecoveryBlockedError:
                     raise
                 except Exception as exc:
+                    if transition_committed:
+                        # A failed recorder cannot turn a proven committed action
+                        # into an ambiguous intent for the following step.
+                        raise PostCommitPreservationError(
+                            "recording or finalization failed after the durable transition commit"
+                        ) from exc
                     incomplete = {
                         "schema": RUNTIME_SCHEMA,
                         "eventId": event_id,
@@ -1566,7 +1611,7 @@ class UntilWinSupervisor:
                     self.state["activeEpisode"] = None
                     self.state["status"] = "preservation_halted"
                     self.state["fatalLatch"] = {
-                        "reason": "training_data_commit_failed",
+                        "reason": "post_commit_recording_failure" if isinstance(exc, PostCommitPreservationError) else "training_data_commit_failed",
                         "errorType": type(exc).__name__,
                         "detail": str(exc),
                         "at": utc_now(),
@@ -1702,6 +1747,8 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--no-ingest", action="store_true")
     run_parser.add_argument("--segment-seconds", type=float, default=60.0)
     run_parser.add_argument("--segment-actions", type=int, default=100)
+    run_parser.add_argument("--recording-tombstone-root", type=Path, default=None,
+                            help="publisher retention tombstones for locally evicted recordings")
     run_parser.add_argument("--ingest-timeout", type=float, default=10.0)
     run_parser.add_argument("--ingest-retries", type=int, default=2)
     run_parser.add_argument("--backoff-seconds", type=float, default=DEFAULT_BACKOFF_SECONDS)
@@ -1874,6 +1921,7 @@ def main(argv: list[str] | None = None) -> int:
                 ingest=ingest,
                 segment_seconds=args.segment_seconds,
                 segment_actions=args.segment_actions,
+                tombstone_root=args.recording_tombstone_root,
             )
             supervisor = UntilWinSupervisor(
                 data_root=data_root,

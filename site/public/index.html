@@ -552,9 +552,13 @@
         const heartbeatRecent = Number.isFinite(heartbeatAgeMs) && heartbeatAgeMs >= -30000 && heartbeatAgeMs <= 360000;
         const retryBounded = Number.isFinite(retryAt) && now <= retryAt + 60000;
         const providerBackoff = phase === "provider_backoff" || phase === "provider-backoff";
+        const videoBacklog = phase === "paused_video_backlog" || phase === "paused-video-backlog";
         const credits = providerBackoff && /(?:^|[^0-9])402(?:[^0-9]|$)|(?:no|insufficient|exhausted)\s+credits?/i.test(error);
         const waiting = providerBackoff && heartbeatRecent && retryBounded;
-        return {phase, error, retryAt, heartbeatAgeMs, heartbeatRecent, retryBounded, providerBackoff, credits, waiting, kind: waiting ? credits ? "credits" : "provider" : "offline"};
+        const videoHeartbeatRecent = Number.isFinite(heartbeatAgeMs) && heartbeatAgeMs >= -30000 && heartbeatAgeMs <= 45000;
+        const videoRetryBounded = Number.isFinite(retryAt) && now <= retryAt + 30000;
+        const videoWaiting = videoBacklog && videoHeartbeatRecent && videoRetryBounded;
+        return {phase, error, retryAt, heartbeatAgeMs, heartbeatRecent, retryBounded, providerBackoff, videoBacklog, credits, waiting: waiting || videoWaiting, videoWaiting, kind: videoWaiting ? "video" : waiting ? credits ? "credits" : "provider" : "offline"};
       };
       const commentItems = (payload) => payload && Array.isArray(payload.comments) ? payload.comments.filter((item) => item && typeof item === "object") : [];
       const commentPage = (payload) => ({comments: commentItems(payload), cursor: payload && typeof payload.cursor === "string" && payload.cursor ? payload.cursor : null});
@@ -610,6 +614,7 @@
         else if (!hasFrame) status("waiting", "Offline · waiting for frame");
         else if (frame.ended === true) status("offline", "Offline · ended");
         else if (pause.phase === "endpoint_error" || pause.phase === "endpoint-error") status("offline", "Offline · endpoint error");
+        else if (pause.kind === "video") status("waiting", "Paused · archiving recordings");
         else if (pause.kind === "credits") status("waiting", "Paused · credits needed");
         else if (pause.kind === "provider") status("waiting", "Paused · provider retry");
         else if (fresh) status("live", "Live");
@@ -638,6 +643,9 @@
           setNotice("Run ended.", "The runner reported an ended run. Complete recordings remain available in the archive.");
         } else if (pause.phase === "endpoint_error" || pause.phase === "endpoint-error") {
           setNotice("Offline.", "The runner reported a live endpoint error. The page will retry without advancing the game.", true);
+        } else if (pause.kind === "video") {
+          const retry = Number.isFinite(pause.retryAt) ? ` Capacity will be checked again at ${formatTime(pause.retryAt)} local time; play resumes when space is available.` : " Capacity is checked automatically; play resumes when space is available.";
+          setNotice("Paused · archiving recordings.", `The local recording limit is reached. The runner is waiting for verified archives to free local copies; the same game is preserved and no new moves are being made.${retry}`);
         } else if (pause.kind === "credits") {
           const retry = Number.isFinite(pause.retryAt) ? ` Automatic retry is scheduled for ${formatTime(pause.retryAt)} local time.` : " Automatic retries will continue.";
           setNotice("Paused · credits needed.", `TypeSafe credits are exhausted. The game is preserved; no new moves are being made.${retry}`);
@@ -646,6 +654,8 @@
           setNotice("Paused · provider retry.", `The last runner heartbeat is recent, but the provider is backing off. The game is preserved and no new moves are being made.${retry}`);
         } else if (pause.providerBackoff && pause.credits) {
           setNotice("Offline.", "The last reported reason was TypeSafe credits exhausted. The runner heartbeat is stale; the page will not claim it is connected.", true);
+        } else if (pause.videoBacklog) {
+          setNotice("Offline.", "The last reported reason was a local recording storage backlog. The runner heartbeat is stale; verified archives must free local copies before the preserved game can resume.", true);
         } else if (!pause.waiting && pause.providerBackoff && pause.error) {
           setNotice("Offline.", "The last reported reason was provider backoff. The runner heartbeat is stale; the page will not claim it is connected.", true);
         }
@@ -757,7 +767,7 @@
           empty.textContent = "Server returned no terminal observation.";
           terminalElement.append(empty);
         } else terminalElement.textContent = String(terminal);
-        $("source-state").textContent = !hasFrame ? "Waiting for server frame" : fresh ? "Current server observation" : pause.waiting ? "Last captured game observation · paused" : "Last received observation (offline)";
+        $("source-state").textContent = !hasFrame ? "Waiting for server frame" : fresh ? "Current server observation" : pause.waiting || pause.videoWaiting ? "Last captured game observation · paused" : "Last received observation (offline)";
         $("recorder").textContent = !hasFrame ? "Waiting for a frame" : fresh ? "Publishing frames" : "No current frame confirmed";
         $("source").textContent = !hasFrame ? "No frame timestamp" : receivedAt == null ? "No receipt timestamp" : String(receivedAt);
         renderDistribution(payload);
@@ -791,7 +801,7 @@
         renderRuntimeNotice(latestPayload, elapsed);
         if (!liveTransportFailed) {
           const pause = runtimePauseState(latestPayload, Date.now(), elapsed);
-          $("source-state").textContent = fresh ? "Current server observation" : pause.waiting ? "Last captured game observation · paused" : "Last received observation (offline)";
+          $("source-state").textContent = fresh ? "Current server observation" : pause.waiting || pause.videoWaiting ? "Last captured game observation · paused" : "Last received observation (offline)";
           $("recorder").textContent = fresh ? "Publishing frames" : "No current frame confirmed";
         }
       }

@@ -1,0 +1,40 @@
+{
+  "schema": "jev-nethack-recording-retention-validation/v1",
+  "date": "2026-09-18",
+  "tests": {
+    "runnerPassed": 113,
+    "runnerOptionalSkipped": 1,
+    "publisherPassed": 75,
+    "sitePassed": 36
+  },
+  "site": {
+    "version": 9,
+    "sourceCommit": "c87ee3afee7c5f2192bd5728e9d0361812cee4df",
+    "url": "https://jev-nethack-live.poppybyte.chatgpt.site",
+    "deployment": "succeeded",
+    "visualAcceptance": false
+  },
+  "trainingArtifactHashesVerified": 222,
+  "policyChanged": false,
+  "deterministicEnvironmentChanged": false,
+  "jevDecisionReceipts": [
+    "21cbbe55-ff80-4795-8336-b6e654a9657b",
+    "e2e9a654-c5f6-417a-88de-4a6bf75bf16b",
+    "d288ba50-cbe8-47ea-8583-7caa3fc6ca2c",
+    "ce47784a-2d52-4f5f-86d8-03c648700491"
+  ],
+  "sourceSha256": {
+    "until-win/until_win.py": "121a97e0664cad07aaa048298f62f2cea91794ace10fa8f7b213289005197abe",
+    "until-win/broadcast.py": "aa4a017fae75788eef55d364b784ce259164607292941a9c976e8bf308d8ce2c",
+    "until-win/video_budget.py": "ecbdc4c8319a8ed6b37fd24fd330f4bdca199f6647c81888c9d1ac83a3f58438",
+    "until-win/test_until_win.py": "597b22f85801c6c5bcf46aa9ee6dbbf678e6e0a43c375c9c5477d00eed639732",
+    "until-win/test_broadcast.py": "a93c063c082a214f39cc515baa0602fdc18450278e36786782646f013fcbb1fa",
+    "runtime-support/publish_archives.py": "d53fea85c25fa4ef5de0c6661a7575f7789067be1f1e469aeb7d928fc6de2e45",
+    "runtime-support/video_retention.py": "9d901ebf1722c10ecbbf8139ef866478534a1cd81ed4a21fd0b7f8bc966ee195",
+    "runtime-support/test_publish_archives.py": "c2aadeff7f976c9d18f33f3af3bd3e1dcf6715c22fbb5da2efeba1cff9d4db45",
+    "runtime-support/test_video_retention.py": "ddd2eb9aa259868c2618607abb11180ae8be2266be71990589f0379b6c8dac0c",
+    "site/public/index.html": "0ce80a34d031756933ac46f20906e25453e8f1364d4c9c4669fa0585ace7d345",
+    "site/viewer.test.mjs": "9e1c50a473cb8bb1606860067261416af6cbb25ebd2e0bb15e3be6243ab86d45"
+  },
+  "runtimeVerification": "pending final deployment and same-game replay"
+}

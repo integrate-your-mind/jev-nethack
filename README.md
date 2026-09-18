@@ -43,6 +43,8 @@ The archive loads nine recordings per page, with an explicit Load more control a
 
 Completed footage is available in [GitHub Releases](https://github.com/integrate-your-mind/jev-nethack/releases) and the public viewer archive. Release checksums verify copied bytes; they do not guarantee indefinite availability from a hosting provider.
 
+Local recordings now have a [bounded storage policy](docs/recording-storage.md): a 64 MiB closed recording cache and 128 MiB recorder backlog with reserved encoding space. Only verified remote duplicates are eligible for local removal. A full backlog pauses new actions while archiving catches up; training and same-game recovery data remain intact. Site v9 adds the matching pause explanation and passed 36 tests.
+
 ## Continuous run verification
 
 The persistent direct Jev runtime resumed episode 0, seed 103, from move 1,980. A controlled process crash at move 2,055 caused the installed background service to restart automatically, verify 2,056 saved actions (including the pending action) with zero provider calls during replay, and continue the same game past move 2,080. This validates that crash path, not arbitrary hardware failures. A Mac restart runs the service after login; local play requires the host to remain powered on. That recovered game subsequently ended in death after 5,227 actions, and the same process automatically began episode 1, seed 104. Native ascension is still unachieved.

@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, deque
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 import math
@@ -29,6 +29,11 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from typing import Any, Callable, Mapping
+
+from video_budget import (BACKLOG_CAP_BYTES, ENCODER_RESERVATION_BYTES, MINIMUM_FREE_BYTES,
+                          NEXT_FRAME_HEADROOM_BYTES,
+                          RELEASE_OUTBOX_CAP_BYTES, measure_release_outbox_bytes,
+                          capacity as measure_capacity)
 
 
 DEFAULT_INGEST_URL = "https://jev-nethack-live.poppybyte.chatgpt.site"
@@ -119,6 +124,58 @@ def probe_video(path: Path) -> dict[str, Any]:
     except (TypeError, ValueError) as exc:
         raise BroadcastError("encoded segment duration is invalid") from exc
     return {"stream": stream, "format": payload.get("format", {})}
+
+
+def tombstone_covers(path: Path, size: int, digest: str, tombstone_root: Path) -> bool:
+    """Accept an evicted artifact only with the publisher's exact tombstone proof."""
+    if path.exists() or path.is_symlink() or not tombstone_root.is_dir():
+        return False
+    absolute = str(path.absolute())
+    sha256 = re.compile(r"^[0-9a-f]{64}$")
+    for marker in tombstone_root.glob("recording-*.json"):
+        try:
+            if marker.is_symlink() or not marker.is_file() or marker.stat().st_size > 4 * 1024 * 1024:
+                continue
+        except OSError:
+            continue
+        try:
+            raw = json.loads(marker.read_text())
+        except (OSError, ValueError):
+            continue
+        if not isinstance(raw, dict) or raw.get("schema") != "jev-nethack-recording-tombstone/v1" or raw.get("state") not in {"prepared", "pruned"}:
+            continue
+        source_path, source_sha = raw.get("sourcePath"), raw.get("sourceSha256")
+        if (raw.get("kind") != "recording" or not isinstance(raw.get("itemId"), str)
+                or not isinstance(raw.get("sourceId"), str)
+                or not isinstance(source_path, str) or not Path(source_path).is_absolute()
+                or not isinstance(source_sha, str) or not sha256.fullmatch(source_sha)):
+            continue
+        closure, remote = raw.get("closureReceipt"), raw.get("remote")
+        site = remote.get("site") if isinstance(remote, dict) else None
+        github = remote.get("github") if isinstance(remote, dict) else None
+        if (not isinstance(closure, dict) or not isinstance(closure.get("path"), str)
+                or not Path(closure["path"]).is_absolute()
+                or not isinstance(closure.get("sha256"), str) or not sha256.fullmatch(closure["sha256"])
+                or not isinstance(closure.get("endedAt"), str)
+                or closure.get("segmentId") != raw["itemId"]
+                or not isinstance(remote, dict) or not isinstance(remote.get("checkedAt"), str)
+                or not isinstance(site, dict) or not isinstance(site.get("receipt"), str)
+                or not isinstance(site.get("manifestSha256"), str) or not sha256.fullmatch(site["manifestSha256"])
+                or not isinstance(github, dict)
+                or not isinstance(github.get("archiveSha256"), str) or not sha256.fullmatch(github["archiveSha256"])
+                or not all(isinstance(github.get(field), str) and github[field]
+                           for field in ("tag", "asset", "itemReceipt", "batchReceipt"))):
+            continue
+        artifacts = raw.get("artifacts")
+        if not isinstance(artifacts, list):
+            continue
+        for artifact in artifacts:
+            if (isinstance(artifact, dict) and isinstance(artifact.get("path"), str)
+                    and Path(artifact["path"]).is_absolute()
+                    and artifact.get("path") == absolute and artifact.get("bytes") == size
+                    and artifact.get("sha256") == digest and sha256.fullmatch(str(digest))):
+                return True
+    return False
 
 
 def read_secret(*, env_name: str, token_file: str | None) -> str:
@@ -342,7 +399,8 @@ def render_segment_ffmpeg(frames: list[tuple[Path, float]], output: Path) -> Non
     lines.append(f"file '{escaped}'")
     concat.write_text("\n".join(lines) + "\n")
     command = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
-               "-i", str(concat), "-vf", "fps=10,format=yuv420p", "-movflags", "+faststart", str(output)]
+               "-i", str(concat), "-vf", "fps=10,format=yuv420p", "-movflags", "+faststart",
+               "-fs", str(32 * 1024 * 1024), str(output)]
     try:
         subprocess.run(command, check=True, timeout=120)
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
@@ -514,7 +572,15 @@ def _sanitize_episode_result(row: Mapping[str, Any]) -> dict[str, Any]:
 class BroadcastRecorder:
     def __init__(self, output: Path, *, stream_id: str, ingest: IngestClient | None,
                  segment_seconds: float = DEFAULT_SEGMENT_SECONDS,
-                 segment_actions: int = DEFAULT_SEGMENT_ACTIONS) -> None:
+                 segment_actions: int = DEFAULT_SEGMENT_ACTIONS,
+                 backlog_root: Path | None = None,
+                 backlog_measure: Callable[[Path], int] | None = None,
+                 free_measure: Callable[[Path], int] | None = None,
+                 backlog_cap_bytes: int = BACKLOG_CAP_BYTES,
+                 minimum_free_bytes: int = MINIMUM_FREE_BYTES,
+                 tombstone_root: Path | None = None,
+                 release_measure: Callable[[Path], int] | None = None,
+                 release_outbox_cap_bytes: int = RELEASE_OUTBOX_CAP_BYTES) -> None:
         if segment_seconds <= 0 or segment_actions <= 0:
             raise BroadcastError("segment bounds must be positive")
         output.mkdir(parents=True, exist_ok=False)
@@ -550,6 +616,20 @@ class BroadcastRecorder:
         self.action_count = 0
         self._jobs: list[threading.Thread] = []
         self._jobs_lock = threading.Lock()
+        self.backlog_root = Path(backlog_root) if backlog_root is not None else output.parent
+        self.backlog_measure = backlog_measure
+        self.free_measure = free_measure
+        self.backlog_cap_bytes = backlog_cap_bytes
+        self.minimum_free_bytes = minimum_free_bytes
+        self.tombstone_root = Path(tombstone_root) if tombstone_root is not None else output.parent.parent / "recording-tombstones"
+        self.release_outbox_root = (Path(tombstone_root).parent / "release-outbox"
+                                    if tombstone_root is not None else None)
+        self.release_measure = release_measure
+        self.release_outbox_cap_bytes = release_outbox_cap_bytes
+        self._backlog_paused = False
+        self._last_backlog_heartbeat = 0.0
+        self._backlog_sealed = False
+        self._detached_segment_indices: set[int] = set()
 
     def close(self) -> None:
         if not self.events.closed:
@@ -648,6 +728,61 @@ class BroadcastRecorder:
                 self.ingest_failures.append("live publisher unavailable")
         return event
 
+    def wait_for_capacity(self, *, should_stop: Callable[[], bool] | None = None,
+                          sleep: Callable[[float], None] = time.sleep) -> bool:
+        """Pause before a new provider/action operation while local video is full."""
+        while True:
+            if should_stop is not None and should_stop():
+                return False
+            with self._jobs_lock:
+                inflight = sum(job.is_alive() for job in self._jobs)
+            kwargs: dict[str, Any] = {"inflight_jobs": inflight,
+                                      "backlog_cap": self.backlog_cap_bytes,
+                                      "minimum_free": self.minimum_free_bytes}
+            if self.backlog_measure is not None:
+                kwargs["measure"] = self.backlog_measure
+            if self.free_measure is not None:
+                kwargs["free_measure"] = self.free_measure
+            status = measure_capacity(self.backlog_root, **kwargs)
+            release_bytes = 0
+            release_blocked = False
+            if self.release_outbox_root is not None:
+                release_measure = self.release_measure or measure_release_outbox_bytes
+                release_bytes = int(release_measure(self.release_outbox_root))
+                release_blocked = release_bytes + ENCODER_RESERVATION_BYTES + NEXT_FRAME_HEADROOM_BYTES > self.release_outbox_cap_bytes
+            if not status.blocked and not release_blocked:
+                if self._backlog_paused and self.segment_frames:
+                    # Close frames captured before the pause before allowing a
+                    # fresh observation. Recheck capacity with the new job in
+                    # the reservation set before returning.
+                    if status.free_bytes >= self.minimum_free_bytes + (inflight + 1) * ENCODER_RESERVATION_BYTES:
+                        self.finalize_segment()
+                        self._backlog_sealed = True
+                        continue
+                self._backlog_paused = False
+                self._backlog_sealed = False
+                return True
+            if (self.segment_frames and not self._backlog_sealed and not release_blocked
+                    and status.backlog_bytes < self.backlog_cap_bytes
+                    and status.free_bytes >= self.minimum_free_bytes + (inflight + 1) * ENCODER_RESERVATION_BYTES):
+                self.finalize_segment()
+                self._backlog_sealed = True
+            self._backlog_paused = True
+            now = time.monotonic()
+            if self.live and self.last_public_frame is not None and now - self._last_backlog_heartbeat >= 15:
+                heartbeat = dict(self.last_public_frame)
+                heartbeat.update({"sequence": self.frame_sequence,
+                                  "phase": "paused_video_backlog",
+                                  "errorType": "LocalVideoBacklog",
+                                  "retryAt": (datetime.now(timezone.utc) + timedelta(seconds=15)).isoformat()})
+                heartbeat["runtime"] = {"status": "paused_video_backlog",
+                                         "backlogKind": "release_outbox" if release_blocked else "video"}
+                self.live.submit(heartbeat)
+                self.frame_sequence += 1
+                self.last_public_frame = heartbeat
+                self._last_backlog_heartbeat = now
+            sleep(15.0)
+
     def decision(self, *, episode: int, step: int, decision: Mapping[str, Any],
                  criteria: Mapping[str, str] | None = None) -> None:
         # Provider usage and request digests are useful locally, but are excluded
@@ -693,6 +828,7 @@ class BroadcastRecorder:
         self.segment_events.close()
         self.segment_events_path = self.output / f"segment-{index + 1:04d}.jsonl"
         self.segment_events = self.segment_events_path.open("x", encoding="utf-8")
+        self._detached_segment_indices.add(index)
         job = threading.Thread(target=self._finish_segment, args=(index, frames, action_count, segment_path, segment_started_at), daemon=True)
         with self._jobs_lock:
             self._jobs.append(job)
@@ -709,6 +845,14 @@ class BroadcastRecorder:
                                    "completed": False, "artifacts": []}
         rendered = False
         artifacts: list[dict[str, Any]] = []
+        def partial_artifacts() -> list[dict[str, Any]]:
+            try:
+                return [{"filename": segment_events_path.name,
+                         "sha256": sha256_file(segment_events_path),
+                         "bytes": segment_events_path.stat().st_size,
+                         "contentType": "application/x-ndjson"}]
+            except OSError:
+                return []
         try:
             render_segment_ffmpeg(frames, output)
             media_ffprobe = probe_video(output)
@@ -720,7 +864,12 @@ class BroadcastRecorder:
                           "contentType": "video/mp4"},
                          {"filename": segment_events_path.name, "sha256": sha256_file(segment_events_path),
                           "bytes": segment_events_path.stat().st_size, "contentType": "application/x-ndjson"}]
-            if output.stat().st_size > 32 * 1024 * 1024:
+            expected_duration = max(0.1, frames[-1][1] - frames[0][1] + 0.1)
+            actual_duration = float((media_ffprobe.get("format") or {}).get("duration")
+                                    or (media_ffprobe.get("stream") or {}).get("duration") or 0)
+            if actual_duration + 0.15 < expected_duration:
+                raise BroadcastError("encoded segment duration is truncated")
+            if output.stat().st_size >= 32 * 1024 * 1024:
                 raise BroadcastError("segment MP4 exceeds Worker 32 MiB upload cap")
             segment_manifest = {"schemaVersion": 1, "sessionId": segment_id, "broadcastId": self.stream_id,
                                 "completed": True, "startedAt": started_at, "endedAt": artifact["endedAt"],
@@ -771,16 +920,41 @@ class BroadcastRecorder:
                 self.segments.append({"index": index, "path": output.name if output.exists() else None,
                                       "jsonl_path": segment_events_path.name, "frames": len(frames),
                                       "actions": action_count, "render_error": str(exc),
-                                      "artifacts": [{"filename": segment_events_path.name,
-                                                     "sha256": sha256_file(segment_events_path),
-                                                     "bytes": segment_events_path.stat().st_size,
-                                                     "contentType": "application/x-ndjson"}]})
+                                      "artifacts": partial_artifacts()})
+        except OSError as exc:
+            receipt["error"] = str(exc)
+            with self._jobs_lock:
+                self.ingest_failures.append(str(exc))
+                self.segments.append({"index": index, "path": output.name if output.exists() else None,
+                                      "jsonl_path": segment_events_path.name, "frames": len(frames),
+                                      "actions": action_count, "render_error": str(exc),
+                                      "artifacts": partial_artifacts()})
+        except Exception as exc:
+            receipt["error"] = str(exc)
+            with self._jobs_lock:
+                self.ingest_failures.append(str(exc))
+                self.segments.append({"index": index, "path": output.name if output.exists() else None,
+                                      "jsonl_path": segment_events_path.name, "frames": len(frames),
+                                      "actions": action_count, "render_error": str(exc),
+                                      "artifacts": partial_artifacts()})
         finally:
             receipt["endedAt"] = utc_now()
-            write_json_atomic(receipt_path, receipt)
-            if rendered:
+            receipt_written = True
+            try:
+                write_json_atomic(receipt_path, receipt)
+            except OSError as exc:
+                receipt_written = False
+                with self._jobs_lock:
+                    self.ingest_failures.append(str(exc))
+                    for segment in self.segments:
+                        if segment.get("index") == index:
+                            segment["render_error"] = f"receipt write failed: {exc}"
+            if rendered and receipt_written:
                 for frame_path, _ in frames:
-                    frame_path.unlink(missing_ok=True)
+                    try:
+                        frame_path.unlink(missing_ok=True)
+                    except OSError:
+                        pass
 
     def _wait_jobs(self) -> None:
         with self._jobs_lock:
@@ -793,7 +967,7 @@ class BroadcastRecorder:
             job.join()
 
     def finalize(self, *, reason: str) -> dict[str, Any]:
-        if self.last_state is not None:
+        if self.last_state is not None and not self._backlog_paused:
             self.observed_frame(state=self.last_state, phase="ended", episode=self.last_episode,
                                 step=self.last_step, broadcast_ended=True)
         self.finalize_segment()
@@ -804,11 +978,20 @@ class BroadcastRecorder:
         self.segment_events.close()
         self.segment_events_path.unlink(missing_ok=True)
         self.close()
-        partial_segments = sorted(
-            int(segment["index"])
-            for segment in self.segments
-            if segment.get("render_error") or not (self.output / f"segment-{int(segment['index']):04d}.mp4").exists()
-        )
+        partial_segments = []
+        for segment in self.segments:
+            index = int(segment["index"])
+            output = self.output / f"segment-{index:04d}.mp4"
+            complete = output.exists()
+            if not complete and not segment.get("render_error"):
+                for artifact in segment.get("artifacts", []):
+                    if artifact.get("filename") == output.name and tombstone_covers(
+                            output, int(artifact.get("bytes", 0)), str(artifact.get("sha256", "")), self.tombstone_root):
+                        complete = True
+                        break
+            if segment.get("render_error") or not complete:
+                partial_segments.append(index)
+        partial_segments.sort()
         archive_verified: bool | None
         if self.ingest is None:
             archive_verified = None

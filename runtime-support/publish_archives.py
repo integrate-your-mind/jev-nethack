@@ -26,6 +26,16 @@ from urllib.parse import quote, urlsplit
 import urllib.error
 import urllib.request
 
+from video_retention import (
+    DEFAULT_RECORDING_CACHE_BYTES,
+    DEFAULT_RELEASE_CACHE_BYTES,
+    RetentionError,
+    prune_recording_cache,
+    prune_release_cache,
+    recover_tombstones,
+    tombstone_covers,
+)
+
 
 PACK_SCHEMA = "jev-nethack-transition-pack/v1"
 SHARD_SCHEMA = "jev-nethack-transition-shard/v1"
@@ -676,6 +686,10 @@ class SiteClient:
         status, readback = self._request("GET", path)
         return status == 200 and len(readback) == len(body) and sha256_bytes(readback) == sha256_bytes(body)
 
+    def verify_digest(self, path: str, size: int, digest: str) -> bool:
+        status, readback = self._request("GET", path)
+        return status == 200 and len(readback) == size and sha256_bytes(readback) == digest
+
     def head_size_matches(self, path: str, size: int) -> bool:
         request = urllib.request.Request(
             self.origin + path,
@@ -788,8 +802,13 @@ def publish_site_item(
             for artifact in item.artifacts:
                 artifact_path = _site_path(item, artifact.filename)
                 if full_due:
-                    body = read_exact(artifact.path, artifact.size, artifact.sha256, limit=MAX_UPLOAD)
-                    artifacts_ok = artifacts_ok and client.verify(artifact_path, body)
+                    if artifact.path.exists():
+                        body = read_exact(artifact.path, artifact.size, artifact.sha256, limit=MAX_UPLOAD)
+                        artifacts_ok = artifacts_ok and client.verify(artifact_path, body)
+                    else:
+                        artifacts_ok = artifacts_ok and client.verify_digest(
+                            artifact_path, artifact.size, artifact.sha256
+                        )
                 else:
                     artifacts_ok = artifacts_ok and client.head_size_matches(artifact_path, artifact.size)
             if artifacts_ok and client.verify(manifest_path, item.site_manifest):
@@ -1277,16 +1296,28 @@ def _serialize_item(item: ClosedItem) -> dict[str, Any]:
     }
 
 
-def _catalog_path_allowed(path: Path, allowed_roots: Sequence[Path]) -> Path:
-    resolved = path.resolve()
+def _catalog_path_allowed(
+    path: Path, allowed_roots: Sequence[Path], *,
+    tombstone_root: Path | None = None, size: int | None = None, digest: str | None = None,
+) -> Path:
+    absolute = Path(os.path.abspath(path))
+    resolved = absolute.parent.resolve() / absolute.name
     if not any(resolved.is_relative_to(root.resolve()) for root in allowed_roots):
         raise PublishError("catalog path escapes its allowed roots")
-    if resolved.is_symlink() or not resolved.is_file():
+    if resolved.is_symlink():
         raise PublishError("catalog path is not a regular file")
+    if not resolved.is_file():
+        if (
+            tombstone_root is None or size is None or digest is None
+            or not tombstone_covers(resolved, size, digest, tombstone_root)
+        ):
+            raise PublishError("catalog path is not a regular file")
     return resolved
 
 
-def _deserialize_item(raw: Any, allowed_roots: Sequence[Path]) -> ClosedItem:
+def _deserialize_item(
+    raw: Any, allowed_roots: Sequence[Path], tombstone_root: Path | None = None,
+) -> ClosedItem:
     if not isinstance(raw, dict) or raw.get("kind") not in ("training", "recording"):
         raise PublishError("source catalog item is invalid")
     kind, item_id, source_id = raw["kind"], raw.get("itemId"), raw.get("sourceId")
@@ -1325,7 +1356,10 @@ def _deserialize_item(raw: Any, allowed_roots: Sequence[Path]) -> ClosedItem:
             or not isinstance(digest, str) or not SHA_RE.fullmatch(digest)
         ):
             raise PublishError("source catalog artifact metadata is invalid")
-        artifact_path = _catalog_path_allowed(Path(str(value.get("path"))), allowed_roots)
+        artifact_path = _catalog_path_allowed(
+            Path(str(value.get("path"))), allowed_roots,
+            tombstone_root=tombstone_root, size=size, digest=digest,
+        )
         artifacts.append(Artifact(filename, artifact_path, content_type, size, digest))
     release_files: list[ArchiveFile] = []
     raw_release = raw.get("releaseFiles")
@@ -1341,7 +1375,10 @@ def _deserialize_item(raw: Any, allowed_roots: Sequence[Path]) -> ClosedItem:
             or not isinstance(digest, str) or not SHA_RE.fullmatch(digest)
         ):
             raise PublishError("source catalog release metadata is invalid")
-        release_path = _catalog_path_allowed(Path(str(value.get("path"))), allowed_roots)
+        release_path = _catalog_path_allowed(
+            Path(str(value.get("path"))), allowed_roots,
+            tombstone_root=tombstone_root, size=size, digest=digest,
+        )
         release_files.append(ArchiveFile(name, release_path, size, digest))
     source_path = _catalog_path_allowed(Path(str(raw.get("sourcePath"))), allowed_roots)
     return ClosedItem(
@@ -1353,6 +1390,7 @@ def _deserialize_item(raw: Any, allowed_roots: Sequence[Path]) -> ClosedItem:
 def _catalog_items(
     *, source: Path, kind: str, catalog_root: Path, allowed_roots: Sequence[Path],
     parse: Callable[[], list[ClosedItem]], now_epoch: float, scrub_seconds: float,
+    tombstone_root: Path | None = None,
 ) -> list[ClosedItem]:
     if scrub_seconds < 0:
         raise PublishError("local scrub interval must not be negative")
@@ -1363,19 +1401,40 @@ def _catalog_items(
             cached = read_json(cache_path, limit=4 * 1024 * 1024)
             last_scrub = float(cached.get("lastFullValidatedEpoch", -1))
             dependencies = cached.get("dependencies")
+            raw_items = cached.get("items")
+            cached_items = (
+                [_deserialize_item(item, allowed_roots, tombstone_root) for item in raw_items]
+                if isinstance(raw_items, list) and raw_items else []
+            )
+            has_pruned = any(
+                not value.path.exists()
+                for item in cached_items for value in (*item.artifacts, *item.release_files)
+            )
+            dependencies_current = (
+                isinstance(dependencies, list) and dependencies
+                and all(
+                    (
+                        _file_fingerprint(Path(str(item.get("path")))) == item
+                        if Path(str(item.get("path"))).exists() else
+                        any(
+                            Path(str(item.get("path"))) == value.path
+                            and tombstone_root is not None
+                            and tombstone_covers(value.path, value.size, value.sha256, tombstone_root)
+                            for closed in cached_items
+                            for value in (*closed.artifacts, *closed.release_files)
+                        )
+                    )
+                    for item in dependencies if isinstance(item, dict)
+                )
+                and len([item for item in dependencies if isinstance(item, dict)]) == len(dependencies)
+            )
             if (
                 cached.get("schema") == "jev-nethack-source-catalog/v1"
                 and cached.get("sourcePath") == str(source.resolve())
-                and 0 <= now_epoch - last_scrub < scrub_seconds
-                and isinstance(dependencies, list)
-                and dependencies
-                and all(_file_fingerprint(Path(str(item.get("path")))) == item for item in dependencies if isinstance(item, dict))
-                and len([item for item in dependencies if isinstance(item, dict)]) == len(dependencies)
+                and (0 <= now_epoch - last_scrub < scrub_seconds or has_pruned)
+                and dependencies_current
             ):
-                raw_items = cached.get("items")
-                if not isinstance(raw_items, list) or not raw_items:
-                    raise PublishError("source catalog has no items")
-                return [_deserialize_item(item, allowed_roots) for item in raw_items]
+                return cached_items
         except (PublishError, OSError, TypeError, ValueError):
             pass
     items = parse()
@@ -1397,7 +1456,7 @@ def _catalog_items(
 def collect_items(
     data_root: Path, recordings_root: Path | None, derived_root: Path,
     *, catalog_root: Path | None = None, now_epoch: float | None = None,
-    scrub_seconds: float = FULL_LOCAL_SCRUB_SECONDS,
+    scrub_seconds: float = FULL_LOCAL_SCRUB_SECONDS, tombstone_root: Path | None = None,
 ) -> tuple[list[ClosedItem], list[dict[str, str]]]:
     items: list[ClosedItem] = []
     errors: list[dict[str, str]] = []
@@ -1414,6 +1473,7 @@ def collect_items(
                     allowed_roots=allowed_roots,
                     parse=lambda marker=marker: parse_training_marker(marker, data_root, derived_root),
                     now_epoch=now_epoch, scrub_seconds=scrub_seconds,
+                    tombstone_root=tombstone_root,
                 )
             )
         except PublishError as exc:
@@ -1427,6 +1487,7 @@ def collect_items(
                         allowed_roots=allowed_roots,
                         parse=lambda manifest=manifest: [parse_recording_manifest(manifest, recordings_root)],
                         now_epoch=now_epoch, scrub_seconds=scrub_seconds,
+                        tombstone_root=tombstone_root,
                     )
                 )
             except PublishError as exc:
@@ -1688,6 +1749,18 @@ def run_once(
     if _paths_overlap(recovered_recordings_root, recovered_training_root):
         raise PublishError("recovered training and recording roots must be separate")
     receipts, outbox = runtime_root / "publish-receipts", runtime_root / "publish-receipts" / "outbox"
+    tombstone_root = runtime_root / "recording-tombstones"
+    recording_roots = tuple(
+        root for root in (recordings_root, recovered_recordings_root)
+        if root is not None
+    )
+    retention_recovered: list[str] = []
+    retention_recovery_error: str | None = None
+    if recordings_root is not None:
+        try:
+            retention_recovered = recover_tombstones(tombstone_root, recording_roots)
+        except RetentionError as exc:
+            retention_recovery_error = str(exc)
     outbox.mkdir(parents=True, exist_ok=True)
     recovered, recovery_errors = recover_inactive_training_tails(data_root, recovered_training_root)
     recovered_video: list[dict[str, Any]] = []
@@ -1700,6 +1773,7 @@ def run_once(
         data_root, recordings_root, runtime_root / "repackaged",
         catalog_root=runtime_root / "source-catalog",
         scrub_seconds=float(getattr(args, "local_scrub_seconds", FULL_LOCAL_SCRUB_SECONDS)),
+        tombstone_root=tombstone_root,
     )
     recovered_items: list[ClosedItem] = []
     if recovered_training_root.is_dir():
@@ -1707,6 +1781,7 @@ def run_once(
             recovered_training_root, None, runtime_root / "repackaged",
             catalog_root=runtime_root / "source-catalog",
             scrub_seconds=float(getattr(args, "local_scrub_seconds", FULL_LOCAL_SCRUB_SECONDS)),
+            tombstone_root=tombstone_root,
         )
         source_errors.extend(recovered_errors)
     recovered_recording_items: list[ClosedItem] = []
@@ -1715,6 +1790,7 @@ def run_once(
             recovered_recordings_root, recovered_recordings_root, runtime_root / "repackaged",
             catalog_root=runtime_root / "source-catalog",
             scrub_seconds=float(getattr(args, "local_scrub_seconds", FULL_LOCAL_SCRUB_SECONDS)),
+            tombstone_root=tombstone_root,
         )
         source_errors.extend(recovered_recording_errors)
     items = _merge_closed_items((primary_items, recovered_items, recovered_recording_items))
@@ -1722,9 +1798,22 @@ def run_once(
     cycle_time = datetime.fromtimestamp(cycle_epoch, timezone.utc)
     report: dict[str, Any] = {
         "sources": len(items), "trainingRecovery": recovered, "videoRecovery": recovered_video,
-        "site": [], "github": [],
+        "site": [], "github": [], "recordingRetention": {
+            "budgetBytes": int(getattr(args, "recording_cache_bytes", DEFAULT_RECORDING_CACHE_BYTES)),
+            "recovered": retention_recovered, "state": "pending" if recordings_root else "not_configured",
+        },
+        "releaseCache": {
+            "budgetBytes": int(getattr(args, "release_cache_bytes", DEFAULT_RELEASE_CACHE_BYTES)),
+            "state": "pending",
+        },
         "errors": [*recovery_errors, *video_recovery_errors, *source_errors],
     }
+    if retention_recovery_error is not None:
+        report["errors"].append(
+            {"path": str(tombstone_root), "error": f"recording retention recovery: {retention_recovery_error}"}
+        )
+    site: SiteClient | None = None
+    github: GitHubClient | None = None
     if args.site_url:
         site = SiteClient(args.site_url, read_token(Path(args.token_file)))
         remote_budget = int(getattr(args, "remote_recheck_budget", REMOTE_RECHECK_BUDGET))
@@ -1803,6 +1892,18 @@ def run_once(
                     receipts, item, github, now_epoch=cycle_epoch,
                     remote_recheck_seconds=remote_interval,
                 ):
+                    missing_pruned = [
+                        source for source in item.release_files
+                        if not source.path.exists()
+                        and tombstone_covers(
+                            source.path, source.size, source.sha256, tombstone_root
+                        )
+                    ]
+                    if missing_pruned:
+                        raise PublishError(
+                            "GitHub asset is unavailable and its local recording source "
+                            "was intentionally pruned; archive rebuild is impossible"
+                        )
                     pending.append(item)
             except PublishError as exc:
                 report["errors"].append({"path": str(item.source_path), "error": str(exc)})
@@ -1827,6 +1928,72 @@ def run_once(
                 )
             except PublishError as exc:
                 report["errors"].append({"path": bucket.isoformat(), "error": str(exc)})
+    if recordings_root is not None:
+        budget = int(getattr(args, "recording_cache_bytes", DEFAULT_RECORDING_CACHE_BYTES))
+        try:
+            retention = prune_recording_cache(
+                items, recording_roots, budget_bytes=budget,
+                tombstone_root=tombstone_root, catalog_root=runtime_root / "source-catalog",
+                receipts=receipts,
+                site_verify=(
+                    site.verify_digest if site is not None
+                    else lambda _path, _size, _digest: False
+                ),
+                github_verify=(
+                    github.asset_verified if github is not None
+                    else lambda _tag, _asset, _digest: False
+                ),
+                site_path=_site_path,
+            )
+            retention["recovered"] = [
+                *retention_recovered, *retention.get("recovered", []),
+            ]
+            report["recordingRetention"] = retention
+            if not retention["withinBudget"] and not retention["disabled"]:
+                report["errors"].append(
+                    {
+                        "path": str(recordings_root),
+                        "error": (
+                            f"recording cache remains above {budget} bytes "
+                            f"({retention['afterBytes']} bytes retained)"
+                        ),
+                    }
+                )
+        except RetentionError as exc:
+            report["recordingRetention"] = {
+                "budgetBytes": budget, "state": "failed", "error": str(exc),
+                "recovered": retention_recovered,
+            }
+            report["errors"].append(
+                {"path": str(recordings_root), "error": f"recording retention: {exc}"}
+            )
+    release_budget = int(getattr(args, "release_cache_bytes", DEFAULT_RELEASE_CACHE_BYTES))
+    try:
+        release_cache = prune_release_cache(
+            runtime_root / "release-outbox", receipts, budget_bytes=release_budget,
+            github_verify=(
+                github.asset_verified if github is not None
+                else lambda _tag, _asset, _digest: False
+            ),
+        )
+        report["releaseCache"] = release_cache
+        if not release_cache["withinBudget"] and not release_cache["disabled"]:
+            report["errors"].append(
+                {
+                    "path": str(runtime_root / "release-outbox"),
+                    "error": (
+                        f"verified release cache remains above {release_budget} bytes "
+                        f"({release_cache['afterBytes']} bytes retained)"
+                    ),
+                }
+            )
+    except RetentionError as exc:
+        report["releaseCache"] = {
+            "budgetBytes": release_budget, "state": "failed", "error": str(exc),
+        }
+        report["errors"].append(
+            {"path": str(runtime_root / "release-outbox"), "error": f"release cache: {exc}"}
+        )
     return report
 
 
@@ -1846,6 +2013,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--local-scrub-seconds", type=float, default=FULL_LOCAL_SCRUB_SECONDS)
     parser.add_argument("--remote-recheck-seconds", type=float, default=REMOTE_EXISTENCE_RECHECK_SECONDS)
     parser.add_argument("--remote-recheck-budget", type=int, default=REMOTE_RECHECK_BUDGET)
+    parser.add_argument(
+        "--recording-cache-bytes", type=int, default=DEFAULT_RECORDING_CACHE_BYTES,
+        help="local closed MP4/segment JSONL budget; zero disables pruning",
+    )
+    parser.add_argument(
+        "--release-cache-bytes", type=int, default=DEFAULT_RELEASE_CACHE_BYTES,
+        help="local verified release archive budget; zero disables cleanup",
+    )
     parser.add_argument("--once", action="store_true")
     return parser
 
@@ -1858,9 +2033,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     if (
         args.interval <= 0 or args.batch_seconds <= 0 or args.local_scrub_seconds < 0
         or args.remote_recheck_seconds < 0 or not math.isfinite(args.remote_recheck_seconds)
-        or args.remote_recheck_budget <= 0
+        or args.remote_recheck_budget <= 0 or args.recording_cache_bytes < 0
+        or args.release_cache_bytes < 0
     ):
-        parser.error("intervals, batch size, and remote budget must be positive; scrub/check intervals must be non-negative")
+        parser.error("intervals, batch size, and remote budget must be positive; scrub/check/cache values must be non-negative")
     runtime_root = Path(args.runtime_root).resolve()
     with PublisherLock(runtime_root / "publisher.lock"):
         while True:

@@ -29,6 +29,10 @@
     <string>OWNER/REPOSITORY</string>
     <string>--gh</string>
     <string>/ABSOLUTE/PATH/TO/gh</string>
+    <string>--recording-cache-bytes</string>
+    <string>67108864</string>
+    <string>--release-cache-bytes</string>
+    <string>67108864</string>
     <string>--interval</string>
     <string>60</string>
   </array>

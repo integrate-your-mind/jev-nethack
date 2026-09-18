@@ -41,6 +41,14 @@ class MemorySite:
         self.verify_calls += 1
         return self.objects.get(path) == body
 
+    def verify_digest(self, path: str, size: int, digest: str) -> bool:
+        self.verify_calls += 1
+        body = self.objects.get(path)
+        return (
+            body is not None and len(body) == size
+            and hashlib.sha256(body).hexdigest() == digest
+        )
+
     def head_size_matches(self, path: str, size: int) -> bool:
         self.head_calls += 1
         return path in self.objects and len(self.objects[path]) == size
@@ -137,6 +145,26 @@ class PublisherTests(unittest.TestCase):
         }
         path = directory / "segment-0001.manifest.json"
         path.write_text(json.dumps(manifest, separators=(",", ":")), encoding="utf-8")
+        (directory / "segment-0001.receipt.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1, "segmentId": session, "completed": True,
+                    "endedAt": "2026-09-18T14:00:02+00:00",
+                    "artifacts": [
+                        {
+                            "filename": artifact["filename"], "bytes": artifact["bytes"],
+                            "sha256": artifact["sha256"],
+                        }
+                        for artifact in manifest["artifacts"]
+                    ] + [{
+                        "filename": "manifest.json", "bytes": path.stat().st_size,
+                        "sha256": publisher.sha256_file(path),
+                    }],
+                },
+                separators=(",", ":"),
+            ),
+            encoding="utf-8",
+        )
         return root, path
 
     def make_crashed_broadcast_stub(self) -> tuple[Path, Path]:
@@ -625,6 +653,46 @@ class PublisherTests(unittest.TestCase):
             self.assertEqual(len(github.uploads), first_upload_count)
             self.assertEqual(github.checks, 0, "current GitHub receipts must not hit the network")
             self.assertTrue(missing_item_receipt.exists(), "batch receipt must repair a crash during item receipts")
+
+    def test_run_once_prunes_only_after_dual_publish_and_rediscovery_does_not_rebuild(self) -> None:
+        data = self.root / "retention-data"
+        data.mkdir()
+        recordings, manifest = self.make_recording()
+        runtime = self.root / "retention-runtime"
+        token = self.root / "retention-token"
+        token.write_text("secret")
+        token.chmod(0o600)
+        site, github = MemorySite(), FakeGH()
+        arguments = SimpleNamespace(
+            data_root=str(data), recordings_root=str(recordings), runtime_root=str(runtime),
+            site_url="https://example.invalid", token_file=str(token),
+            github_repo="owner/repo", gh="gh", batch_seconds=600,
+            recording_cache_bytes=1, release_cache_bytes=1, remote_recheck_seconds=0,
+        )
+        with mock.patch.object(publisher, "SiteClient", return_value=site), mock.patch.object(
+            publisher, "GitHubClient", return_value=github
+        ), mock.patch("video_retention._default_open_writer", return_value=False):
+            first = publisher.run_once(arguments, delays=(), sleep=lambda _: None)
+            second = publisher.run_once(arguments, delays=(), sleep=lambda _: None)
+            github.assets.clear()
+            third = publisher.run_once(arguments, delays=(), sleep=lambda _: None)
+
+        self.assertEqual(first["errors"], [])
+        self.assertTrue(first["recordingRetention"]["withinBudget"])
+        self.assertEqual(first["recordingRetention"]["afterBytes"], 0)
+        self.assertFalse((manifest.parent / "segment-0001.mp4").exists())
+        self.assertFalse((manifest.parent / "segment-0001.jsonl").exists())
+        self.assertTrue(manifest.exists())
+        self.assertTrue((manifest.parent / "segment-0001.receipt.json").exists())
+        self.assertEqual(list((runtime / "release-outbox").glob("*.tar.gz")), [])
+        self.assertTrue(first["releaseCache"]["withinBudget"])
+        self.assertTrue(first["releaseCache"]["removed"])
+        self.assertEqual(second["errors"], [])
+        self.assertEqual(second["sources"], first["sources"])
+        self.assertEqual(len(github.uploads), 1)
+        self.assertGreaterEqual(github.checks, 2)
+        self.assertTrue(any("archive rebuild is impossible" in row["error"] for row in third["errors"]))
+        self.assertEqual(len(github.uploads), 1)
 
     def test_run_once_recovers_dead_unmarked_training_tail_without_mutating_source(self) -> None:
         data, fragment, _ = self.make_training(records=3)

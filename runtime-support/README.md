@@ -12,6 +12,14 @@ Interrupted video recovery copies the original final JSONL and renders retained
 PNG frames into a separate publisher-owned directory, leaving the producer's
 fragment unchanged.
 
+The [recording storage policy](../docs/recording-storage.md) bounds the local
+closed MP4/segment JSONL cache at 64 MiB by default. Eviction requires fresh
+remote verification and durable deletion receipts. Configure the continuous
+runner's `--recording-tombstone-root` to `<runtime-root>/recording-tombstones`.
+`--recording-cache-bytes 0` disables recording eviction. Derived upload tar
+copies have their own 64 MiB default cache (`--release-cache-bytes`); pending
+or unverified copies are preserved. The recorder checks both backlogs.
+
 ## Requirements
 
 - macOS with Python and the dependencies from `until-win/requirements.txt`
@@ -45,10 +53,11 @@ PYTHONDONTWRITEBYTECODE=1 \
   ../.venv/bin/python -m unittest -v \
   test_publish_archives.py \
   test_recover_training_tail.py \
-  test_recover_video_tail.py
+  test_recover_video_tail.py \
+  test_video_retention.py
 ```
 
-The accepted release passed 64 publisher and recovery tests. The corresponding
+The recording-retention update passed 72 publisher, recovery and retention tests. The earlier archive release passed 64 publisher and recovery tests. The corresponding
 writer and recorder passed 25 producer tests, and the Site training API passed
 its contract suite. Tests use temporary directories and do not publish, start a
 game, install a service, or write to a configured Site or GitHub repository.
@@ -56,8 +65,8 @@ The staged copy was also rerun against the public `until-win/` tree at commit
 `dfeab45915b072c9b426ac1d5f56d5c85e69f96f`; the temporary test link was
 removed afterward.
 
-The six Python files are byte-identical to the independently reviewed runtime
-snapshot:
+The following table records the earlier archive release snapshot; the updated
+recording-retention source is covered by `PUBLIC_MANIFEST.json`:
 
 | File | SHA-256 |
 | --- | --- |
@@ -103,7 +112,8 @@ The default derived roots are `recovered-training/` and
 `recovered-recordings/` under the private runtime root. They must be real
 directories, not symlinks. Closed source files, derived artifacts, receipts,
 outbox records, and prepared release archives must be retained for reliable
-restart and audit.
+restart and audit, except MP4/segment JSONL copies explicitly evicted under
+the verified recording policy. Keep their tombstones and manifests.
 
 ## Publication and retry behavior
 

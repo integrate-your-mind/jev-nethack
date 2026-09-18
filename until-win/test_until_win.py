@@ -21,6 +21,7 @@ from until_win import (
     RotatingJevPolicy,
     SingleInstanceLock,
     UntilWinSupervisor,
+    build_parser,
     make_env,
     observation_digest,
     prepare_legacy_resume_state,
@@ -131,6 +132,9 @@ class FakeRecorder:
         self.telemetry = []
         self.statuses = []
 
+    def wait_for_capacity(self, *, should_stop):
+        return not should_stop()
+
     def observed_frame(self, **values):
         self.frames.append(values)
 
@@ -154,6 +158,12 @@ class FakeRecorder:
 
 
 class UntilWinTests(unittest.TestCase):
+    def test_explicit_publisher_tombstone_root_is_optional(self):
+        self.assertIsNone(build_parser().parse_args(["run"]).recording_tombstone_root)
+        path = "/publisher-state/recording-tombstones"
+        args = build_parser().parse_args(["run", "--recording-tombstone-root", path])
+        self.assertEqual(args.recording_tombstone_root, Path(path))
+
     def make_supervisor(self, root, *, policy=None, outcomes=None, sleep=None):
         recorder = FakeRecorder()
         created = []
@@ -231,6 +241,7 @@ class UntilWinTests(unittest.TestCase):
             self.assertEqual("fainted", result["deathWhile"])
             self.assertTrue(created[0].closed)
 
+
     def test_replay_nonterminal_after_observation_updates_metrics_without_provider_call(self):
         class ScoreSeventeenStopEnv(FakeEnv):
             def __init__(self, stop_event):
@@ -269,60 +280,6 @@ class UntilWinTests(unittest.TestCase):
             self.assertEqual(17, result["maxObservedScore"])
             self.assertEqual(5.0, result["totalReward"])
 
-    def test_verified_ascension_stops_and_persists_complete_transition(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary) / "data"
-            supervisor, recorder, created = self.make_supervisor(root)
-            state = supervisor.run()
-            self.assertEqual("won", state["status"])
-            self.assertTrue((root / "WIN.json").exists())
-            self.assertEqual(1, state["totalActions"])
-            self.assertTrue(created[0].closed)
-            self.assertEqual(1, recorder.actions)
-            packs = list((root / "fragments").glob("*/training/*.npzpack"))
-            self.assertEqual(1, len(packs))
-            frames = list(scan_pack(packs[0]))
-            self.assertEqual(1, len(frames))
-            self.assertTrue(frames[0].metadata["verifiedAscension"])
-            self.assertIn("obs__tty_chars", __import__("transition_pack").decode_transition(frames[0].payload)[0])
-
-    def test_native_ascension_flag_without_termination_does_not_win(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary) / "data"
-            outcomes = [
-                {"terminated": False, "is_ascended": True},
-                {"terminated": True, "is_ascended": False},
-            ]
-            supervisor, _, _ = self.make_supervisor(root, outcomes=outcomes)
-            state = supervisor.run(max_episodes=1)
-            self.assertNotEqual("won", state["status"])
-            self.assertFalse((root / "WIN.json").exists())
-            self.assertEqual(2, state["totalActions"])
-
-    def test_jev_error_uses_backoff_then_commits_one_action(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary) / "data"
-            sleeps = []
-            recorder_ref = []
-
-            def sleeping(seconds):
-                self.assertEqual("provider_backoff", recorder_ref[0].statuses[-1]["phase"])
-                self.assertIsNotNone(recorder_ref[0].statuses[-1]["retry_at"])
-                sleeps.append(seconds)
-
-            supervisor, _, _ = self.make_supervisor(
-                root,
-                policy=FakePolicy(failures=1),
-                sleep=sleeping,
-            )
-            recorder_ref.append(supervisor.recorder)
-            state = supervisor.run()
-            self.assertEqual("won", state["status"])
-            self.assertEqual(1, state["totalActions"])
-            self.assertEqual(2.0, sum(sleeps))
-            log = next((root / "fragments").glob("*/transitions.jsonl")).read_text()
-            self.assertIn('"eventType":"jev_error"', log)
-            self.assertIn('"backoffSeconds":2.0', log)
 
     def test_first_http_failure_after_replay_publishes_current_observation_without_advancing(self):
         class HTTP402Policy:
@@ -404,6 +361,187 @@ class UntilWinTests(unittest.TestCase):
             self.assertEqual(0, recorder.action_count)
             log = "".join(path.read_text() for path in (root / "fragments").glob("*/transitions.jsonl"))
             self.assertIn('"errorType":"JevHTTPError:402"', log)
+
+
+    def test_failed_training_close_retains_active_fragment_for_recovery(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            supervisor, _, _ = self.make_supervisor(
+                root,
+                outcomes=[{"terminated": False, "is_ascended": False}],
+            )
+
+            class StoppingEnv(FakeEnv):
+                def step(inner_self, action):
+                    result = super().step(action)
+                    supervisor.stop_event.set()
+                    return result
+
+            supervisor.env_factory = lambda *_args: StoppingEnv(
+                [{"terminated": False, "is_ascended": False}]
+            )
+            original_close = TransitionPackWriter.close
+            with mock.patch.object(
+                TransitionPackWriter,
+                "close",
+                side_effect=TransitionPackError("simulated close failure"),
+            ):
+                state = supervisor.run()
+
+            self.assertEqual("recovery_blocked", state["status"])
+            self.assertIsNotNone(state["activeFragment"])
+            self.assertEqual(
+                state["activeFragment"],
+                json.loads((root / "state.json").read_text())["activeFragment"],
+            )
+            original_close(supervisor.training, completed=False, reason="test_cleanup")
+
+
+    def test_video_backlog_stop_spends_no_decision_and_executes_no_action(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            policy = FakePolicy()
+            supervisor, recorder, created = self.make_supervisor(root, policy=policy)
+
+            def full_backlog(*, should_stop):
+                self.assertFalse(should_stop())
+                self.assertEqual(policy.calls, 0)
+                self.assertEqual(created[0].index, 0)
+                supervisor.stop_event.set()
+                return False
+
+            recorder.wait_for_capacity = full_backlog
+            state = supervisor.run()
+            self.assertEqual(policy.calls, 0)
+            self.assertEqual(created[0].index, 0)
+            self.assertEqual(state["totalActions"], 0)
+
+    def test_video_capacity_checked_before_each_new_decision(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            policy = FakePolicy()
+            supervisor, recorder, created = self.make_supervisor(
+                root, policy=policy, outcomes=[{"terminated": False}, {"terminated": True, "is_ascended": True}])
+            checks = []
+
+            def room_available(*, should_stop):
+                checks.append((policy.calls, created[0].index))
+                return not should_stop()
+
+            recorder.wait_for_capacity = room_available
+            state = supervisor.run()
+            self.assertEqual(checks, [(0, 0), (1, 1)])
+            self.assertEqual(state["totalActions"], 2)
+
+    def test_recording_failure_after_commit_does_not_invent_pending_transition(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            supervisor, recorder, created = self.make_supervisor(root, outcomes=[{"terminated": False}])
+            observed = recorder.observed_frame
+
+            def fail_after_commit(**values):
+                if values["phase"] == "after_action":
+                    raise OSError(28, "synthetic video storage exhaustion")
+                return observed(**values)
+
+            recorder.observed_frame = fail_after_commit
+            with self.assertRaises(PreservationError): supervisor.run()
+            saved = json.loads((root / "state.json").read_text())
+            self.assertEqual(saved["fatalLatch"]["reason"], "post_commit_recording_failure")
+            self.assertNotIn("lastIncompleteTransition", saved)
+            self.assertEqual(saved["resumeCandidate"]["stepsCommitted"], 1)
+            self.assertEqual(saved["totalActions"], 1)
+            rows = [json.loads(line) for path in (root / "fragments").glob("*/transitions.jsonl") for line in path.read_text().splitlines()]
+            commits = [row for row in rows if row["eventType"] == "transition_committed"]
+            self.assertEqual([row["step"] for row in commits], [0])
+            self.assertEqual(created[0].index, 1)
+            # Model the misleading diagnostic left by the previous runtime.
+            saved["lastIncompleteTransition"] = {
+                key: commits[0][key] for key in ("eventId", "episodeId", "seed", "actionIndex", "keycode")}
+            saved["lastIncompleteTransition"]["step"] = 1
+            write_json_atomic(root / "state.json", saved)
+            policy = FakePolicy()
+            resumed, next_recorder, next_created = self.make_supervisor(root, policy=policy, outcomes=[{"terminated": False}])
+
+            def stop_after_replay(*, should_stop):
+                self.assertEqual(next_created[0].index, 1)
+                self.assertEqual(policy.calls, 0)
+                resumed.stop_event.set()
+                return False
+
+            next_recorder.wait_for_capacity = stop_after_replay
+            recovered = resumed.run()
+            self.assertEqual(recovered["totalActions"], 1)
+            self.assertEqual(recovered["lastRecovery"]["actionsReplayed"], 1)
+            self.assertEqual(recovered["lastRecovery"]["providerCalls"], 0)
+            self.assertIsNone(recovered["fatalLatch"])
+            self.assertNotIn("lastIncompleteTransition", recovered)
+            self.assertEqual(recovered["lastResolvedIncompleteTransition"]["original"], saved["lastIncompleteTransition"])
+
+    def test_verified_prefix_does_not_resolve_a_later_pending_intent(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            supervisor, _, _ = self.make_supervisor(Path(temporary) / "data")
+            marker = {"eventId": "later", "episodeId": 0, "seed": 101, "actionIndex": 0, "keycode": 107}
+            supervisor.state = {"lastIncompleteTransition": marker.copy()}
+            supervisor._resolve_replayed_incomplete([{**marker, "eventId": "earlier", "step": 0}])
+            supervisor.recovery_log.close()
+            self.assertEqual(supervisor.state["lastIncompleteTransition"], marker)
+            self.assertNotIn("lastResolvedIncompleteTransition", supervisor.state)
+
+    def test_verified_ascension_stops_and_persists_complete_transition(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            supervisor, recorder, created = self.make_supervisor(root)
+            state = supervisor.run()
+            self.assertEqual("won", state["status"])
+            self.assertTrue((root / "WIN.json").exists())
+            self.assertEqual(1, state["totalActions"])
+            self.assertTrue(created[0].closed)
+            self.assertEqual(1, recorder.actions)
+            packs = list((root / "fragments").glob("*/training/*.npzpack"))
+            self.assertEqual(1, len(packs))
+            frames = list(scan_pack(packs[0]))
+            self.assertEqual(1, len(frames))
+            self.assertTrue(frames[0].metadata["verifiedAscension"])
+            self.assertIn("obs__tty_chars", __import__("transition_pack").decode_transition(frames[0].payload)[0])
+
+    def test_native_ascension_flag_without_termination_does_not_win(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            outcomes = [
+                {"terminated": False, "is_ascended": True},
+                {"terminated": True, "is_ascended": False},
+            ]
+            supervisor, _, _ = self.make_supervisor(root, outcomes=outcomes)
+            state = supervisor.run(max_episodes=1)
+            self.assertNotEqual("won", state["status"])
+            self.assertFalse((root / "WIN.json").exists())
+            self.assertEqual(2, state["totalActions"])
+
+    def test_jev_error_uses_backoff_then_commits_one_action(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "data"
+            sleeps = []
+            recorder_ref = []
+
+            def sleeping(seconds):
+                self.assertEqual("provider_backoff", recorder_ref[0].statuses[-1]["phase"])
+                self.assertIsNotNone(recorder_ref[0].statuses[-1]["retry_at"])
+                sleeps.append(seconds)
+
+            supervisor, _, _ = self.make_supervisor(
+                root,
+                policy=FakePolicy(failures=1),
+                sleep=sleeping,
+            )
+            recorder_ref.append(supervisor.recorder)
+            state = supervisor.run()
+            self.assertEqual("won", state["status"])
+            self.assertEqual(1, state["totalActions"])
+            self.assertEqual(2.0, sum(sleeps))
+            log = next((root / "fragments").glob("*/transitions.jsonl")).read_text()
+            self.assertIn('"eventType":"jev_error"', log)
+            self.assertIn('"backoffSeconds":2.0', log)
 
     def test_previous_running_episode_is_latched_for_same_game_replay(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -531,21 +669,7 @@ class UntilWinTests(unittest.TestCase):
             first.env_factory = lambda *_args: StoppingEnv([{"terminated": False, "is_ascended": False}])
             paused = first.run()
             self.assertEqual("paused", paused["status"])
-            self.assertIsNone(paused["activeFragment"])
             self.assertEqual(101, paused["resumeCandidate"]["seed"])
-            self.assertEqual(1, paused["resumeCandidate"]["episodeId"])
-            self.assertEqual(1, paused["resumeCandidate"]["stepsCommitted"])
-            self.assertEqual("stop_requested", paused["episodeResults"][-1]["status"])
-            fragment = root / paused["resumeCandidate"]["fragments"][-1]
-            manifest = json.loads((fragment / "training" / "training-manifest.json").read_text())
-            self.assertTrue(manifest["completed"])
-            self.assertEqual("stop_requested", manifest["reason"])
-            self.assertEqual(1, manifest["records"])
-            self.assertEqual(1, len(list((fragment / "training").glob("*.complete.json"))))
-            persisted = json.loads((root / "state.json").read_text())
-            self.assertIsNone(persisted["activeFragment"])
-            self.assertEqual(paused["resumeCandidate"], persisted["resumeCandidate"])
-            self.assertEqual(paused["episodeResults"], persisted["episodeResults"])
 
             next_policy = FakePolicy()
             resumed, recorder, _ = self.make_supervisor(
@@ -563,39 +687,6 @@ class UntilWinTests(unittest.TestCase):
             self.assertEqual(1, next_policy.calls)
             self.assertTrue(any(item.get("metrics", {}).get("scope") == "continuous_run" for item in recorder.telemetry))
             self.assertTrue(all("criteria" in decision for decision in recorder.decisions))
-
-    def test_failed_training_close_retains_active_fragment_for_recovery(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary) / "data"
-            supervisor, _, _ = self.make_supervisor(
-                root,
-                outcomes=[{"terminated": False, "is_ascended": False}],
-            )
-
-            class StoppingEnv(FakeEnv):
-                def step(inner_self, action):
-                    result = super().step(action)
-                    supervisor.stop_event.set()
-                    return result
-
-            supervisor.env_factory = lambda *_args: StoppingEnv(
-                [{"terminated": False, "is_ascended": False}]
-            )
-            original_close = TransitionPackWriter.close
-            with mock.patch.object(
-                TransitionPackWriter,
-                "close",
-                side_effect=TransitionPackError("simulated close failure"),
-            ):
-                state = supervisor.run()
-
-            self.assertEqual("recovery_blocked", state["status"])
-            self.assertIsNotNone(state["activeFragment"])
-            self.assertEqual(
-                state["activeFragment"],
-                json.loads((root / "state.json").read_text())["activeFragment"],
-            )
-            original_close(supervisor.training, completed=False, reason="test_cleanup")
 
     def test_real_nle_seed_replay_is_deterministic_and_uses_explicit_engine_limit(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -49,6 +49,10 @@ ascension member. A nonterminal `is_ascended` value is also rejected.
   seconds by default) before asking Jev about the same observation again.
 - A raw-transition or durable-event write failure halts gameplay. Continuing
   after losing training data would violate the requested preservation contract.
+- Recording capacity is checked before every new Jev decision and game action.
+  A full backlog pauses and retries automatically; see the [storage policy](../docs/recording-storage.md).
+  Set `--recording-tombstone-root <publisher-runtime-root>/recording-tombstones`
+  to the publisher's proof directory when local recording eviction is enabled.
 
 For a clean stop, create `<data-root>/control/STOP` or send SIGINT/SIGTERM. The
 file remains in place so a LoginAgent cannot immediately restart the run. Remove

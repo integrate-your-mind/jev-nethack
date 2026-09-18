@@ -49,6 +49,21 @@ test("provider credit backoff is a bounded pause and clears when the runner resu
   assert.match(html, /else if \(fresh\) status\("live", "Live"\)/);
 });
 
+test("video backlog pause has a short heartbeat bound, recovery, and endpoint precedence", () => {
+  const {runtimePauseState} = viewerHelpers();
+  const now = Date.parse("2026-09-18T19:00:00Z");
+  const backlog = {runtime: {phase: "paused_video_backlog", errorType: "LocalVideoBacklog", receivedAgeMs: 14000, retryAt: "2026-09-18T19:00:15Z"}};
+  assert.equal(runtimePauseState(backlog, now).kind, "video");
+  assert.equal(runtimePauseState(backlog, now).waiting, true);
+  assert.equal(runtimePauseState({...backlog, runtime: {...backlog.runtime, receivedAgeMs: 46000}}, now).kind, "offline");
+  assert.equal(runtimePauseState({...backlog, runtime: {...backlog.runtime, retryAt: "2026-09-18T18:59:29Z"}}, now).kind, "offline");
+  assert.equal(runtimePauseState({runtime: {phase: "playing", receivedAgeMs: 100}}, now).kind, "offline");
+  assert.equal(runtimePauseState({runtime: {phase: "endpoint_error", errorType: "LocalVideoBacklog", receivedAgeMs: 100, retryAt: "2026-09-18T19:00:15Z"}}, now).kind, "offline");
+  assert.match(html, /Paused · archiving recordings/);
+  assert.match(html, /local recording limit is reached/);
+  assert.match(html, /pause\.phase === "endpoint_error"[\s\S]{0,260}pause\.kind === "video"/);
+});
+
 test("comments normalize pages and keep user content on the text-only path", () => {
   const {commentPage, commentRequest} = viewerHelpers();
   const page = commentPage({comments: [{id: "1", displayName: "<name>", body: "<script>alert(1)</script>"}, null, "ignored"], cursor: "next"});
