@@ -276,9 +276,9 @@
             <div class="chart-card"><h4>Depth</h4><p>Observed dungeon depth, with its own scale.</p><div id="depth-chart" class="chart-empty">Waiting for enough telemetry.</div></div>
             <div class="chart-card"><h4>HP</h4><p>Observed player HP, with its own scale.</p><div id="hp-chart" class="chart-empty">Waiting for enough telemetry.</div></div>
             <div class="chart-card"><h4>Game turn</h4><p>Observed game turn from server state, not polling step.</p><div id="turn-chart" class="chart-empty">Waiting for enough telemetry.</div></div>
-            <div class="chart-card"><h4>Final score by completed episode</h4><p>Up to 100 recent completed episodes, in order.</p><div id="final-score-chart" class="chart-empty">No completed episode scores reported.</div></div>
+            <div class="chart-card"><h4>Final score by completed episode</h4><p>Native recorded final scores from up to 100 recent results. Missing final scores are omitted.</p><div id="final-score-chart" class="chart-empty">No native final scores reported.</div><p id="last-result">No completed result reported.</p></div>
             <div class="chart-card"><h4>Verified episode outcome rate</h4><p>Ascensions among completed episodes when server episode results are supplied. This is not action accuracy.</p><div id="outcome-chart" class="chart-empty">Not reported by this run.</div></div>
-            <div class="chart-card"><h4>Episode outcomes</h4><p>Verified ascensions and other completed episodes, with the denominator shown.</p><dl id="outcome-stats" class="outcome-stats"><div><dt>Verified ascensions</dt><dd>—</dd></div><div><dt>Other completed</dt><dd>—</dd></div><div><dt>Interrupted</dt><dd>—</dd></div></dl></div>
+            <div class="chart-card"><h4>Episode outcomes</h4><p>Continuous-run totals and explicitly reported deaths in the recent result window.</p><dl id="outcome-stats" class="outcome-stats"><div><dt>Verified ascensions</dt><dd>—</dd></div><div><dt>Completed episodes</dt><dd>—</dd></div><div><dt>Reported deaths (recent)</dt><dd>—</dd></div><div><dt>Interrupted</dt><dd>—</dd></div></dl></div>
           </div>
           <div class="analytics-foot"><span id="recovery-state">Recovery/backoff: not reported</span><span id="history-count">0 / 180 samples</span></div>
         </article>
@@ -468,15 +468,17 @@
         const count = (value) => Number.isSafeInteger(value) && value >= 0 ? value : null;
         const results = Array.isArray(metrics.episodeResults) ? metrics.episodeResults.filter(item => item && typeof item === "object").slice(-100) : null;
         const completedResults = (results || []).filter(item => item.terminated === true);
-        const scores = completedResults.filter(item => Number.isFinite(finiteNumber(item.score))).map((item, index) => ({episode: first(item, ["episodeId", "episode_id", "episode"]) ?? index + 1, score: finiteNumber(item.score)}));
+        const scores = completedResults.filter(item => Number.isSafeInteger(item.officialFinalScore) && item.officialFinalScore >= 0).map((item, index) => ({episode: first(item, ["episodeId", "episode_id", "episode"]) ?? index + 1, score: item.officialFinalScore}));
+        const reportedOutcomes = completedResults.filter(item => typeof item.endStatus === "string" && item.endStatus.length > 0);
+        const recent = {recentCompleted: completedResults.length, recentOutcomesReported: reportedOutcomes.length, recentDeaths: reportedOutcomes.length ? reportedOutcomes.filter(item => item.endStatus === "DEATH" && item.isAscended !== true).length : null, latestCompleted: completedResults.at(-1) || null};
         const completed = count(metrics.completedEpisodes), ascension = count(metrics.ascensions), interrupted = count(metrics.interruptedEpisodes);
         if (completed !== null && ascension !== null && ascension <= completed) {
-          return {source: "counters", windowLabel: "Continuous run totals; score chart shows up to 100 recent completed episodes", total: interrupted === null ? null : completed + interrupted, completed, ascension, interrupted, otherCompleted: completed - ascension, death: null, unknown: null, scores};
+          return {source: "counters", windowLabel: "Continuous run totals; score chart shows up to 100 recent completed episodes", total: interrupted === null ? null : completed + interrupted, completed, ascension, interrupted, otherCompleted: completed - ascension, death: null, unknown: null, scores, ...recent};
         }
         if (!results) return null;
         const ascendedResults = completedResults.filter(item => item.isAscended === true);
-        const interruptedResults = results.filter(item => item.terminated !== true && (item.truncated === true || item.status === "interrupted"));
-        return {source: "episodeResults", windowLabel: `Last ${results.length} reported episode results only`, total: results.length, completed: completedResults.length, ascension: ascendedResults.length, interrupted: interruptedResults.length, otherCompleted: completedResults.length - ascendedResults.length, death: null, unknown: Math.max(0, results.length - completedResults.length - interruptedResults.length), scores};
+        const interruptedResults = results.filter(item => item.terminated !== true && (item.truncated === true || ["interrupted", "stop_requested"].includes(item.status)));
+        return {source: "episodeResults", windowLabel: `Last ${results.length} reported episode results only`, total: results.length, completed: completedResults.length, ascension: ascendedResults.length, interrupted: interruptedResults.length, otherCompleted: completedResults.length - ascendedResults.length, death: null, unknown: Math.max(0, results.length - completedResults.length - interruptedResults.length), scores, ...recent};
       };
       const actionText = (payload) => {
         const value = metric(payload, ["selected_action", "selectedAction", "action_label", "action", "decision.choice", "choice", "key"]);
@@ -589,7 +591,26 @@
       };
       const renderHistory = () => {
         const values = telemetryHistory; lineChart("score-chart", values.map((sample) => sample.score), "#8ce0a1", "score"); lineChart("depth-chart", values.map((sample) => sample.depth), "#f0c675", "depth"); lineChart("hp-chart", values.map((sample) => sample.hp), "#ee8c8c", "HP"); lineChart("turn-chart", values.map((sample) => sample.turn), "#8cb9ee", "game turn");
-        const stats = serverOutcomeStats; const denominator = stats ? stats.completed : null; const ascension = stats ? stats.ascension : null; const interrupted = stats ? stats.interrupted : null; const otherCompleted = stats ? stats.otherCompleted : null; $("outcome-stats").innerHTML = stats ? `<div><dt>Verified ascensions</dt><dd>${ascension == null ? "—" : `${ascension} / ${denominator == null ? "—" : denominator}`}</dd></div><div><dt>Other completed</dt><dd>${otherCompleted == null ? "—" : `${otherCompleted} / ${denominator}`}</dd></div><div><dt>Interrupted</dt><dd>${interrupted == null ? "—" : `${interrupted} / ${stats.total == null ? "—" : stats.total}`}</dd></div>` : `<div><dt>Verified ascensions</dt><dd>—</dd></div><div><dt>Other completed</dt><dd>—</dd></div><div><dt>Interrupted</dt><dd>—</dd></div>`; renderOutcomeChart(stats); lineChart("final-score-chart", (stats?.scores || []).map(item => item.score), "#8ce0a1", "final score by completed episode"); text("history-count", `${values.length} / ${HISTORY_LIMIT} samples`); $("history-source").textContent = values.length ? `Bounded browser view for session ${sessionIdentity || "unknown"}; ${stats ? stats.windowLabel : "outcomes are not reported"}.` : "No server metrics history loaded.";
+        const stats = serverOutcomeStats;
+        const entries = stats ? [
+          ["Verified ascensions", `${stats.ascension} / ${stats.completed} completed`],
+          ["Completed episodes", stats.completed],
+          ["Reported deaths (recent)", stats.recentDeaths === null ? "Not reported" : `${stats.recentDeaths} / ${stats.recentOutcomesReported} reported outcomes`],
+          ["Interrupted", stats.interrupted == null ? "Not reported" : stats.interrupted],
+        ] : [["Verified ascensions", "—"], ["Completed episodes", "—"], ["Reported deaths (recent)", "—"], ["Interrupted", "—"]];
+        const outcomeStats = $("outcome-stats"); outcomeStats.replaceChildren();
+        for (const [label, value] of entries) { const row = document.createElement("div"); const dt = document.createElement("dt"); const dd = document.createElement("dd"); dt.textContent = label; dd.textContent = String(value); row.append(dt, dd); outcomeStats.append(row); }
+        renderOutcomeChart(stats);
+        lineChart("final-score-chart", (stats?.scores || []).map(item => item.score), "#8ce0a1", "native final score by completed episode");
+        const result = stats?.latestCompleted;
+        if (result) {
+          const official = Number.isSafeInteger(result.officialFinalScore) && result.officialFinalScore >= 0 ? result.officialFinalScore : "not reported";
+          const observed = Number.isFinite(result.lastObservedScore) ? result.lastObservedScore : "not reported";
+          const reward = Number.isFinite(result.totalReward) ? result.totalReward : "not reported";
+          text("last-result", `Episode ${result.episodeId ?? "—"}: ${result.deathCause || result.endStatus || "outcome not reported"}. Native final score: ${official}. Last observed score: ${observed}. Accumulated reward: ${reward}.`);
+        } else text("last-result", "No completed result reported.");
+        text("history-count", `${values.length} / ${HISTORY_LIMIT} samples`);
+        $("history-source").textContent = values.length ? `Bounded browser view for session ${sessionIdentity || "unknown"}; ${stats ? stats.windowLabel : "outcomes are not reported"}.` : "No server metrics history loaded.";
       };
       const recordTelemetry = (payload) => {
         const identity = sessionValue(payload); if (identity && sessionIdentity && String(identity) !== String(sessionIdentity)) { telemetryHistory = []; observedOutcomes = []; lastTelemetryKey = null; lastOutcomeKey = null; serverOutcomeStats = null; } if (identity) sessionIdentity = String(identity); const sample = telemetrySample(payload); if (sample.key !== lastTelemetryKey) { lastTelemetryKey = sample.key; telemetryHistory.push(sample); if (telemetryHistory.length > HISTORY_LIMIT) telemetryHistory.shift(); } const metrics = metricsObject(payload); serverOutcomeStats = outcomeSummary(metrics); const recovery = recoveryValue(payload); $("recovery-state").textContent = recovery == null ? "Recovery/backoff: not reported" : `Recovery/backoff: ${typeof recovery === "object" ? String(first(recovery, ["phase", "state", "status"]) || "reported") : String(recovery)}`; renderHistory();

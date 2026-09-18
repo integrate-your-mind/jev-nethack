@@ -24,7 +24,7 @@ test("viewer exposes bounded, session-scoped history and honest accuracy semanti
   assert.match(html, /This is not action accuracy/);
   assert.match(html, /Model reported confidence/);
   assert.match(html, /Decision model/);
-  assert.match(html, /Other completed/);
+  assert.match(html, /Reported deaths \(recent\)/);
   assert.match(html, /Ascensions/);
   assert.match(html, /Recovery\/backoff/);
 });
@@ -52,7 +52,7 @@ test("outcome summary keeps authoritative counters and never invents deaths", ()
   assert.deepEqual(JSON.parse(JSON.stringify(outcomeSummary({completedEpisodes: 8, ascensions: 2, interruptedEpisodes: 3}))), {
     source: "counters", windowLabel: "Continuous run totals; score chart shows up to 100 recent completed episodes", total: 11,
     completed: 8, ascension: 2, interrupted: 3, otherCompleted: 6,
-    death: null, unknown: null, scores: [],
+    death: null, unknown: null, scores: [], recentCompleted: 0, recentOutcomesReported: 0, recentDeaths: null, latestCompleted: null,
   });
   assert.equal(outcomeSummary({completedEpisodes: 8, ascensions: 2}).death, null);
   assert.equal(outcomeSummary({}), null);
@@ -60,7 +60,7 @@ test("outcome summary keeps authoritative counters and never invents deaths", ()
 
 test("episode result summaries use strict terminal ascension evidence and a bounded score window", () => {
   const {outcomeSummary} = viewerHelpers();
-  const results = Array.from({length: 101}, (_, index) => ({episodeId: index + 1, score: index, terminated: true, isAscended: index === 100}));
+  const results = Array.from({length: 101}, (_, index) => ({episodeId: index + 1, officialFinalScore: index, terminated: true, isAscended: index === 100}));
   results[0] = {episodeId: 1, score: 999, status: "dead"};
   results.push({episodeId: 102, score: 12, truncated: true});
   const summary = outcomeSummary({episodeResults: results});
@@ -77,7 +77,7 @@ test("episode result summaries use strict terminal ascension evidence and a boun
 
  test("continuous counters take precedence over the bounded result window", () => {
   const {outcomeSummary} = viewerHelpers();
-  const value = outcomeSummary({completedEpisodes:200,ascensions:1,interruptedEpisodes:2,episodeResults:[{episodeId:200,score:120,terminated:true,isAscended:false}]});
+  const value = outcomeSummary({completedEpisodes:200,ascensions:1,interruptedEpisodes:2,episodeResults:[{episodeId:200,officialFinalScore:120,terminated:true,isAscended:false}]});
   assert.equal(value.completed,200); assert.equal(value.ascension,1); assert.equal(value.scores.length,1);
   assert.equal(value.interrupted,2); assert.equal(value.total,202);
   assert.equal(outcomeSummary({completedEpisodes:1,ascensions:2}),null);
@@ -132,4 +132,25 @@ test("archive pagination reaches beyond the old cap, deduplicates refreshes and 
   assert.match(html, /if \(!key \|\| archiveCards\.has\(key\)\) continue/);
   assert.match(html, /player\.preload = "none"/);
   assert.doesNotMatch(html, /setInterval\(loadArchive/);
+});
+
+ test("native final scores, observed score, reward and reported deaths stay distinct", () => {
+  const {outcomeSummary} = viewerHelpers();
+  const rows = [
+    {episodeId: 0, score: 0, terminated: true},
+    {episodeId: 1, officialFinalScore: null, score: 777, lastObservedScore: 90, totalReward: 92, terminated: true, endStatus: "DEATH"},
+    {episodeId: 2, officialFinalScore: 138, lastObservedScore: 138, totalReward: 138, terminated: true, endStatus: "DEATH", deathCause: "died of starvation"},
+    {episodeId: 3, officialFinalScore: 0, terminated: true, endStatus: "DEATH"},
+    {episodeId: 4, officialFinalScore: "999", terminated: true, endStatus: "DEATH"},
+    {episodeId: 5, officialFinalScore: 999, terminated: false, status: "stop_requested", endStatus: "DEATH"},
+  ];
+  const value = outcomeSummary({completedEpisodes: 500, ascensions: 0, interruptedEpisodes: 1, episodeResults: rows});
+  assert.deepEqual(JSON.parse(JSON.stringify(value.scores)), [{episode: 2, score: 138}, {episode: 3, score: 0}]);
+  assert.equal(value.completed, 500);
+  assert.equal(value.recentDeaths, 4);
+  assert.equal(value.recentOutcomesReported, 4);
+  assert.equal(value.recentCompleted, 5);
+  assert.equal(value.latestCompleted.episodeId, 4);
+  assert.equal(outcomeSummary({episodeResults: [{terminated: true, isAscended: false}]}).recentDeaths, null);
+  assert.equal(outcomeSummary({episodeResults: [{terminated: false, status: "stop_requested"}]}).interrupted, 1);
 });
