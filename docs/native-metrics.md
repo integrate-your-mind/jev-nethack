@@ -1,6 +1,6 @@
 # Native terminal metrics and historical correction
 
-> **Rollout status:** deployed September 18, 2026. Historical correction and native-score display were verified, and an exact 5,280-action same-game replay completed. New gameplay is unavailable while the provider returns HTTP 402; actual disk write failures have also interrupted recovery. The viewer labels stale observations offline. See [production verification](../research/runtime-metrics-v1/production-verification.json) for the bounded result.
+> **Rollout status:** deployed September 18, 2026. Historical correction and native-score display were verified, and an exact 5,280-action same-game replay completed. The public API and browser show the restored observation and provider backoff; no new action is invented. New gameplay is unavailable while the provider returns HTTP 402; actual disk write failures have also interrupted recovery. The viewer labels stale observations offline. See [production verification](../research/runtime-metrics-v1/production-verification.json) for the bounded result.
 
 JevNetHack records several score-like values because they answer different questions. Keeping them separate prevents a last observation, an episode maximum, or accumulated environment reward from being presented as NetHack's official terminal score.
 

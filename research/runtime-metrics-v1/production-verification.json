@@ -1,6 +1,6 @@
 {
   "schema": "jev-nethack-metrics-production-verification/v1",
-  "checkedAt": "2026-09-18T17:13:23.998038+00:00",
+  "checkedAt": "2026-09-18T17:16:54.306562+00:00",
   "runtimeSourceSha256": {
     "until_win.py": "86100b0b16a6514acca18bdd66c61dafcc87656290e813bcc4310fa53871f539",
     "metrics.py": "7430fb511f07c2a3f0750acdf05401ac7fb051f663a7121594e86faea41b4e08",
@@ -28,7 +28,7 @@
     "origin": "native_full_observation",
     "providerCalls": 0,
     "seed": 104,
-    "verifiedAt": "2026-09-18T17:13:04.909953+00:00"
+    "verifiedAt": "2026-09-18T17:15:19.847357+00:00"
   },
   "gameplayAfterReplay": {
     "newActions": 0,
@@ -41,10 +41,15 @@
     "reportedDeaths": "1 / 1 reported outcomes",
     "live": false,
     "runtime": {
-      "phase": "recovery_blocked",
-      "errorType": "OSError"
+      "phase": "provider_backoff",
+      "errorType": "JevHTTPError:402",
+      "retryAt": "2026-09-18T17:18:11.716228+00:00"
     },
-    "lastCapturedAt": "2026-09-18T17:07:18.179513+00:00"
+    "lastCapturedAt": "2026-09-18T17:15:20.208057+00:00",
+    "phase": "awaiting_decision",
+    "decision": null,
+    "action": null,
+    "firstObservationAndProviderBackoffVerified": true
   },
   "validation": {
     "publicSourceSuitePassed": 95,
@@ -57,6 +62,13 @@
     "No ascension or SOTA result.",
     "Provider requests return HTTP402; no new moves are currently available.",
     "Repeated actual disk write failures interrupted runtime recovery; local preservation and automatic retries remain necessary.",
-    "The final telemetry fix is deployed and tested; current public observation is stale and is not presented as live gameplay."
-  ]
+    "Final telemetry behavior was verified through the public API and browser; stale observations remain offline. A recovered game waiting for provider credit is not active gameplay."
+  ],
+  "currentRuntime": {
+    "episodeId": 1,
+    "seed": 104,
+    "stepsCommitted": 5280,
+    "fatalLatch": null,
+    "waitingForProvider": true
+  }
 }
