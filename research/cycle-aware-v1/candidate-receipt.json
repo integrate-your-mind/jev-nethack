@@ -1,0 +1,109 @@
+{
+  "artifacts": [
+    {
+      "bytes": 6869,
+      "path": "candidate.py",
+      "sha256": "c127ed5b94b4761cf808de210d6f230e26b6dcbb78c8eac5eacfba17cdc1b7fe"
+    },
+    {
+      "bytes": 4454,
+      "path": "test_candidate.py",
+      "sha256": "6cb5960bc3075f055dbcd552beef9a2042e0ac69a73a14d43303f6a727f9a436"
+    },
+    {
+      "bytes": 2252,
+      "path": "test_evidence.py",
+      "sha256": "8e1837651acb1501b1a3b38fbe4e80337af8ec49f1e955b45d8afe086b8dc7ff"
+    },
+    {
+      "bytes": 247769,
+      "path": "fixtures.jsonl",
+      "sha256": "d68e20fa9ffa9fbcc7a1be39f3e7a266578f554f4c7a89dab3449b8dfa88b4d2"
+    },
+    {
+      "bytes": 1115,
+      "path": "fixture-receipt.json",
+      "sha256": "6fa9bc78cb3dce82fce7a36395dc67dcdf6bb4d4cdff001f180827bb35dce70d"
+    },
+    {
+      "bytes": 99669,
+      "path": "evaluation-results.jsonl",
+      "sha256": "f65a56c625e8e4b99122dd6abf1a7d258d181d104c3a271d7678f07cc548a850"
+    },
+    {
+      "bytes": 4179,
+      "path": "evaluation-summary.json",
+      "sha256": "a1cfc863bb4f5f5686ab941a05f00a19aa38c8674a5a292666b3920f6095f0d1"
+    },
+    {
+      "bytes": 560,
+      "path": "evaluation-receipt.json",
+      "sha256": "c40de10aea825718ac19fd2496eaadfbdfdf8183c3a8aca32aa4620965fd62bf"
+    },
+    {
+      "bytes": 9325,
+      "path": "observed-selection-effects.json",
+      "sha256": "32e0f56e69783ac8ad302207d3fa3364b051cb3334700c5eb33f957a47a8fe35"
+    },
+    {
+      "bytes": 228,
+      "path": "observed-selection-effects.receipt.json",
+      "sha256": "946e7a1b81fe9296da3a8afab852cf9730be93453f27ae4106e45ffe7d458d68"
+    },
+    {
+      "bytes": 1031,
+      "path": "api-call-ledger.json",
+      "sha256": "25b6663b6aba5cc086928c9fb156931a4fcef8347b5af75ad7b30dc33989264e"
+    },
+    {
+      "bytes": 1516,
+      "path": "branch-experiment-plan.json",
+      "sha256": "52e78f898c4eac338003207bf3f54ad79855241228dd5b3ab2e7facfafa4dc18"
+    },
+    {
+      "bytes": 4339,
+      "path": "README.md",
+      "sha256": "5e047674842c1da0218906315598d2c61ca12118ba940b090d69a618fa772391"
+    },
+    {
+      "bytes": 99544,
+      "path": "evidence/iteration1/evaluation-results.jsonl",
+      "sha256": "d19fe4b4596f4ba401fdc66d36bff6c4c26ff3908f5dc7b6033a69e8cd3e5ecd"
+    },
+    {
+      "bytes": 4148,
+      "path": "evidence/iteration1/evaluation-summary.json",
+      "sha256": "0fb616727a2ea17a41c37f8db7cf6157ebe6fc2cd2c07bb2b2d31ebc26adec73"
+    },
+    {
+      "bytes": 560,
+      "path": "evidence/iteration1/evaluation-receipt.json",
+      "sha256": "ec85f26c75e46a9a4b2c5842a0ccea063f44b7aabdd1b043aa9aba145a693ac9"
+    }
+  ],
+  "candidate": "cycle-aware-v1",
+  "completed": true,
+  "conclusion": "Candidate shows a bounded selection effect and preserved controls, with counterevidence; actual gameplay benefit remains unproven pending the isolated paired branch plan.",
+  "createdAt": "2026-09-18T14:56:52.837456+00:00",
+  "executionBoundary": {
+    "liveRuntimeMutated": false,
+    "nethackActionsExecuted": 0,
+    "policyMigrated": false,
+    "servicesChanged": false
+  },
+  "isolatedDirectory": "<PRIVATE_JEV_ROOT>/policy-candidates/cycle-aware-v1",
+  "providerEvaluation": {
+    "attemptedApiCalls": 64,
+    "credentialsPersisted": false,
+    "criteriaCount": 121,
+    "fullProbabilityMapsRetained": true,
+    "providerBodiesPersisted": false,
+    "withinAuthorizedApproximateCap": true
+  },
+  "schema": "jev-nethack-cycle-aware-candidate-receipt/v1",
+  "verification": {
+    "command": "python -W error::ResourceWarning -m unittest -v test_candidate test_evidence",
+    "testsFailed": 0,
+    "testsPassed": 13
+  }
+}

@@ -1,9 +1,9 @@
 {
   "repository_proposal": "integrate-your-mind/jev-nethack",
   "prepared_at": "2026-09-18",
-  "status": "Public Site v6 and validated persistent recovery runtime. Direct gameplay active at last verification; automatic archive publisher integration remains in progress.",
+  "status": "Public Site v6, verified persistent crash recovery, and automatic archive publishing active. Direct policy experiments remain negative or unproven; no ascension.",
   "research_disclosure": "Included pilots are negative or inconclusive. No ascension, SOTA, or general learned-skill claim is made.",
-  "data_disclosure": "training/sample.jsonl is a 12-row sanitized sample derived from the local smoke-v2 recording; it is not the complete corpus.",
+  "data_disclosure": "The initial 12-row sample is illustrative. Full completed recording and raw-transition artifacts are published through the public Site and daily GitHub release archives; the isolated cycle-aware-v1 bundle preserves both selected-state iterations and full paired branch observations.",
   "source_provenance": {
     "runner": "JevNetHack application-support runner source",
     "site": "Exact deployed Site v6 commit de213022b4b2efa47a0dc2596fbfa21dfb0280d8, portable hosting example replaces private project binding.",
@@ -11,7 +11,8 @@
     "notes": "selected research notes from the i-want-x20 outputs tree",
     "until-win": "Frozen runtime after production-copy two-restart test and actual process-crash recovery on September18,2026; portable deployment template and minimal verified direct-play dependency lock.",
     "typesafe-skill": "Official typesafe-ai/skills project install for Codex using npx skills add; installed skill and upstream source lock copied without modification.",
-    "source-ledger": "Preserved September17 literature ledger with bounded September18 primary-source Puffer refresh; no protocol-backed Puffer win receipt located."
+    "source-ledger": "Preserved September17 literature ledger with bounded September18 primary-source Puffer refresh; no protocol-backed Puffer win receipt located.",
+    "cycle-aware-v1": "Frozen negative paired64+64 actual-game experiment; portable text path/editorial changes documented in source-public-hashes.tsv; raw arrays/probabilities preserved unchanged in release bundle."
   },
   "excluded": [
     "API and ingest credentials",
@@ -23,7 +24,7 @@
   "sha256": {
     ".agents/skills/typesafe-ai/SKILL.md": "71ea90d7906c6554c4f4c460ef7361b2d26f59116ccdae986dc6d997b9389f52",
     ".gitignore": "325b3fedb4c1753a8a3c7f3d6821af924ed32e96212669b5129c04d1aca43a6c",
-    "README.md": "29e64fe8fecf433444f09207ba265827737aaa662cd5cdc99a844bdf60bc128f",
+    "README.md": "e6392dce4c8921472227ab289777c0137fc809a7f1a22828168a265665dbaa18",
     "RELEASE_NOTES.md": "4d40a2ba06db90ccc69e547823ee888e504f33cbe2ee995a0334245bf138254e",
     "data/training/README.md": "74361749d1ad7e501cf46267e8e689adace65abedf3cfb5f8bc340067a8c77fd",
     "data/training/sample.jsonl": "a3e9009f3c58a6b10be46e0d4067eb796c9a035dd3926f2bf90e1785dcb7cc8f",
@@ -174,7 +175,35 @@
     "until-win/test_until_win.py": "e767560776b6b3d6f352c5b86fe5277db88b915b33dcefb0052ad1025729b96f",
     "until-win/transition_pack.py": "1b6734c54da73bfc0e23efaed993368dddcf082f12b126407de487e44f0b8340",
     "until-win/until_win.py": "917157b89035d8f5641f47920178bc7dbf339d13ac64ef908a0634983733d4d1",
-    "until-win/verify_training.py": "9c5c5407592f5c41ca40eb8e789c245530a0f269e9d7d2998c9b13ac8309c1d9"
+    "until-win/verify_training.py": "9c5c5407592f5c41ca40eb8e789c245530a0f269e9d7d2998c9b13ac8309c1d9",
+    "research/cycle-aware-v1/analyze_results.py": "b310f0a4dd30f8cfd7387f429a430c16cd645b164f20ea4f50e0d9b2b9ea3192",
+    "research/cycle-aware-v1/branch-experiment-plan.json": "52e78f898c4eac338003207bf3f54ad79855241228dd5b3ab2e7facfafa4dc18",
+    "research/cycle-aware-v1/archive-validation.json": "01b0dfc3c16a25c75b9d616bcfaa8e9927cfc591998a537c70ee97871911726c",
+    "research/cycle-aware-v1/source-public-hashes.tsv": "8ae4b1cc944451afa03f60ff3e5bc09d9b3efc883cb308d7d3c999d7ae35fe2a",
+    "research/cycle-aware-v1/branch_experiment.py": "04c284ad574ea44a5b28349062d88d91c518b51c32e185edfd1335d2908bfe88",
+    "research/cycle-aware-v1/PORTABLE-TESTING.md": "943e863e6758f4097ae9d4c607ca30ff9261c504e3f1a40b2b3ab65331b59953",
+    "research/cycle-aware-v1/evaluation-receipt.json": "c40de10aea825718ac19fd2496eaadfbdfdf8183c3a8aca32aa4620965fd62bf",
+    "research/cycle-aware-v1/v1-freeze-receipt.json": "6a4eb573ef547644aeb5ddbdd2d98cd37edd68c1b2951f2884d8b1a3136bc82f",
+    "research/cycle-aware-v1/provenance-sanitization-manifest.json": "2ba2466fa72283654ab5052312d41732ec325424095f274c77e2342cf16256c1",
+    "research/cycle-aware-v1/test_candidate.py": "6cb5960bc3075f055dbcd552beef9a2042e0ac69a73a14d43303f6a727f9a436",
+    "research/cycle-aware-v1/README.md": "913f3bbea45aba6c7c996a4899824d415560a607fbb1d2586b3a780f949f764e",
+    "research/cycle-aware-v1/test_branch_experiment.py": "781d61e4e2415d59085fde604ebad549e4aa45648c3a92206523dc2e48064f72",
+    "research/cycle-aware-v1/observed-selection-effects.receipt.json": "946e7a1b81fe9296da3a8afab852cf9730be93453f27ae4106e45ffe7d458d68",
+    "research/cycle-aware-v1/test_evidence.py": "8e1837651acb1501b1a3b38fbe4e80337af8ec49f1e955b45d8afe086b8dc7ff",
+    "research/cycle-aware-v1/fixture-receipt.json": "e7fc591312739ea67337dc80e47af2bdfaf1eb1e489a9c6e130f482ed57ea387",
+    "research/cycle-aware-v1/evaluation-summary.json": "a1cfc863bb4f5f5686ab941a05f00a19aa38c8674a5a292666b3920f6095f0d1",
+    "research/cycle-aware-v1/evaluate.py": "e781154ee57f3ecd6480e5e892ffe25e062c02edd43cbb99e55be2a9ba02d85d",
+    "research/cycle-aware-v1/candidate.py": "c127ed5b94b4761cf808de210d6f230e26b6dcbb78c8eac5eacfba17cdc1b7fe",
+    "research/cycle-aware-v1/observed-selection-effects.json": "32e0f56e69783ac8ad302207d3fa3364b051cb3334700c5eb33f957a47a8fe35",
+    "research/cycle-aware-v1/extract_fixtures.py": "5c3531f14f95817a783695e7522700b1a48e5f7611bc461fc16ddf27048d59a3",
+    "research/cycle-aware-v1/evaluation-results.jsonl": "f65a56c625e8e4b99122dd6abf1a7d258d181d104c3a271d7678f07cc548a850",
+    "research/cycle-aware-v1/paired-branch-receipt.json": "2fb273733b74a4b5cec944ea282e1a08b9879a444008deddf4e6563dc73ae11e",
+    "research/cycle-aware-v1/fixtures.jsonl": "d68e20fa9ffa9fbcc7a1be39f3e7a266578f554f4c7a89dab3449b8dfa88b4d2",
+    "research/cycle-aware-v1/api-call-ledger.json": "25b6663b6aba5cc086928c9fb156931a4fcef8347b5af75ad7b30dc33989264e",
+    "research/cycle-aware-v1/candidate-receipt.json": "11fe1c2cc960b212fde69b3e5bae517acb912d28c022174f5854aa785833c8fa",
+    "research/cycle-aware-v1/evidence/iteration1/evaluation-receipt.json": "ec85f26c75e46a9a4b2c5842a0ccea063f44b7aabdd1b043aa9aba145a693ac9",
+    "research/cycle-aware-v1/evidence/iteration1/evaluation-summary.json": "0fb616727a2ea17a41c37f8db7cf6157ebe6fc2cd2c07bb2b2d31ebc26adec73",
+    "research/cycle-aware-v1/evidence/iteration1/evaluation-results.jsonl": "d19fe4b4596f4ba401fdc66d36bff6c4c26ff3908f5dc7b6033a69e8cd3e5ecd"
   },
   "repository_url": "https://github.com/integrate-your-mind/jev-nethack",
   "recording_disclosure": "Completed game event logs and segment manifests are tracked; MP4 binaries and full recording bundles are GitHub Release assets with checksums."

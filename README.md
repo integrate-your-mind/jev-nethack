@@ -8,14 +8,16 @@ The repository contains the local runner, authenticated live-site worker, recurr
 
 ## Research status
 
-The included pilots are development experiments. They are negative or inconclusive: no ascension or state-of-the-art result is claimed. The benchmark plan describes the controls and evaluation contract required before making a stronger claim. The initial training sample is a small schema-preserving example, not the complete corpus. The deployed training archive API accepts verified complete observation/action transition packs; one actual 13-transition shard has been uploaded and readback-verified. Automatic archive publishing remains under validation.
+The included pilots are development experiments. They are negative or inconclusive: no ascension or state-of-the-art result is claimed. The benchmark plan describes the controls and evaluation contract required before making a stronger claim. The initial training sample is a small schema-preserving example, not the complete corpus. The deployed archive publisher now uploads complete observation/action transition packs and video segments to the public site and daily GitHub Releases. Its first verified pass covered 38 training shards and 55 video segments; the background service then reused those receipts and published 11 newly completed items. Active, unfinished tails remain local until closed or recovered after a crash.
+
+The [cycle-aware-v1 experiment](research/cycle-aware-v1/README.md) reduced backtracking in a paired 64-action comparison but produced no new cells, score gain, or depth gain. It was rejected for the persistent live player. Both saved-state iterations and the complete raw paired branch data are preserved in the [negative-result release](https://github.com/integrate-your-mind/jev-nethack/releases/tag/v0.3.0-cycle-aware-v1-negative).
 
 ## Layout
 
 - `until-win/`: persistent direct Jev policy with verified same-game recovery and raw transition capture
 - `runner/`: bounded experiment runner and broadcast client
 - `site/`: public read-only viewer and authenticated ingest Worker
-- `research/`: bounded recurrent BC/PPO pilot
+- `research/`: bounded recurrent BC/PPO pilot and frozen direct-policy experiments
 - `data/training/`: sanitized sample and schema/provenance
 - `docs/`: research and operations notes
 - `release-bundles/`: completed recording MP4/NDJSON artifacts and per-segment manifests, with a SHA-256 manifest
@@ -38,6 +40,6 @@ Completed footage is available in [GitHub Releases](https://github.com/integrate
 
 ## Continuous run verification
 
-The persistent direct Jev runtime resumed episode 0, seed 103, from move 1,980. A controlled process crash at move 2,055 caused the installed background service to restart automatically, verify 2,056 saved actions (including the pending action) with zero provider calls during replay, and continue the same game past move 2,080. This validates that crash path, not arbitrary hardware failures. A Mac restart runs the service after login; local play requires the host to remain powered on. Native ascension is still unachieved.
+The persistent direct Jev runtime resumed episode 0, seed 103, from move 1,980. A controlled process crash at move 2,055 caused the installed background service to restart automatically, verify 2,056 saved actions (including the pending action) with zero provider calls during replay, and continue the same game past move 2,080. This validates that crash path, not arbitrary hardware failures. A Mac restart runs the service after login; local play requires the host to remain powered on. That recovered game subsequently ended in death after 5,227 actions, and the same process automatically began episode 1, seed 104. Native ascension is still unachieved.
 
 See `until-win/README.md` for the save/replay contract, STOP controls, training format, and compatibility checks; `docs/typesafe-skill.md` describes the TypeSafe workflow.

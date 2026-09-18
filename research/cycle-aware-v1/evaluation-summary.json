@@ -1,0 +1,126 @@
+{
+  "allCriteriaPreserved": true,
+  "artifacts": {
+    "evaluation-results.jsonl": {
+      "bytes": 99669,
+      "records": 16,
+      "sha256": "f65a56c625e8e4b99122dd6abf1a7d258d181d104c3a271d7678f07cc548a850"
+    },
+    "evaluation-summary.json": {
+      "bytes": 4012,
+      "sha256BeforeArtifactSelfEntry": "001aefc5e1de8ada5b25c0af74e927add97c86b045520f9a28f11e21adda22b5"
+    }
+  },
+  "attemptedApiCalls": 32,
+  "categories": {
+    "menu_control": {
+      "baselineChoices": {
+        "a107": 1,
+        "a35": 1,
+        "a40": 1
+      },
+      "baselineImmediateReversalSelections": 0,
+      "baselinePromptHandlerSelections": 3,
+      "candidateChoices": {
+        "a107": 1,
+        "a35": 1,
+        "a40": 1
+      },
+      "candidateImmediateReversalSelections": 0,
+      "candidatePromptHandlerSelections": 3,
+      "choiceChanges": 0,
+      "fixtures": 3,
+      "meanBaselineReversalProbabilityMass": 0.0033333333333333335,
+      "meanCandidateReversalProbabilityMass": 0.006666666666666667,
+      "meanProbabilityTotalVariation": 0.05666666666666669
+    },
+    "normal_play": {
+      "baselineChoices": {
+        "a2": 2,
+        "a3": 1,
+        "a5": 1
+      },
+      "baselineImmediateReversalSelections": 0,
+      "baselinePromptHandlerSelections": 0,
+      "candidateChoices": {
+        "a2": 2,
+        "a3": 1,
+        "a5": 1
+      },
+      "candidateImmediateReversalSelections": 0,
+      "candidatePromptHandlerSelections": 0,
+      "choiceChanges": 0,
+      "fixtures": 4,
+      "meanBaselineReversalProbabilityMass": 0.0775,
+      "meanCandidateReversalProbabilityMass": 0.060000000000000005,
+      "meanProbabilityTotalVariation": 0.15625
+    },
+    "stagnant_cycle": {
+      "baselineChoices": {
+        "a1": 3,
+        "a3": 3
+      },
+      "baselineImmediateReversalSelections": 5,
+      "baselinePromptHandlerSelections": 0,
+      "candidateChoices": {
+        "a1": 4,
+        "a2": 1,
+        "a75": 1
+      },
+      "candidateImmediateReversalSelections": 2,
+      "candidatePromptHandlerSelections": 0,
+      "choiceChanges": 4,
+      "fixtures": 6,
+      "meanBaselineReversalProbabilityMass": 0.3166666666666667,
+      "meanCandidateReversalProbabilityMass": 0.12833333333333333,
+      "meanProbabilityTotalVariation": 0.30916666666666665
+    },
+    "survival_control": {
+      "baselineChoices": {
+        "a2": 1,
+        "a6": 2
+      },
+      "baselineImmediateReversalSelections": 1,
+      "baselinePromptHandlerSelections": 0,
+      "candidateChoices": {
+        "a6": 2,
+        "a64": 1
+      },
+      "candidateImmediateReversalSelections": 0,
+      "candidatePromptHandlerSelections": 0,
+      "choiceChanges": 1,
+      "fixtures": 3,
+      "meanBaselineReversalProbabilityMass": 0.15666666666666665,
+      "meanCandidateReversalProbabilityMass": 0.12666666666666668,
+      "meanProbabilityTotalVariation": 0.23666666666666666
+    }
+  },
+  "completed": true,
+  "criteriaCountPerFixture": 121,
+  "docsConsulted": [
+    "https://docs.typesafe.ai/concepts/state.md",
+    "https://docs.typesafe.ai/concepts/how-to-build-with-system-one.md",
+    "https://docs.typesafe.ai/primitives/advanced.md",
+    "https://docs.typesafe.ai/primitives/choice.md",
+    "https://docs.typesafe.ai/confidence.md"
+  ],
+  "endedAt": "2026-09-18T14:54:14.718997+00:00",
+  "fixtureCount": 16,
+  "inputBytesReserved": 407572,
+  "limitations": [
+    "Saved-state paired choices measure immediate selection/distribution effects, not gameplay outcomes.",
+    "Confidence is distribution concentration and is not treated as accuracy.",
+    "One baseline and one candidate call per fixture do not estimate variance.",
+    "No candidate action was executed in NetHack."
+  ],
+  "maxApiCalls": 64,
+  "model": "jev-1.13.0",
+  "rawProbabilityMapsRetained": true,
+  "schema": "jev-nethack-cycle-aware-evaluation-summary/v1",
+  "sourceSha256": {
+    "candidate.py": "c127ed5b94b4761cf808de210d6f230e26b6dcbb78c8eac5eacfba17cdc1b7fe",
+    "fixtures.jsonl": "d68e20fa9ffa9fbcc7a1be39f3e7a266578f554f4c7a89dab3449b8dfa88b4d2",
+    "jev_client.py": "06fcdddc69b4d6f4fe8a87d8b615663b28f102b341ab2d3fd3f7733ac7c87ce0"
+  },
+  "startedAt": "2026-09-18T14:54:00.515219+00:00"
+}

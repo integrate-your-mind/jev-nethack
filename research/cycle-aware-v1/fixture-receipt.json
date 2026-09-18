@@ -1,0 +1,34 @@
+{
+  "categories": {
+    "menu_control": 3,
+    "normal_play": 4,
+    "stagnant_cycle": 6,
+    "survival_control": 3
+  },
+  "completed": true,
+  "createdAt": "2026-09-18T14:51:13.559227+00:00",
+  "dataRoot": "<PRIVATE_JEV_ROOT>/recordings/until-win",
+  "fixtureCount": 16,
+  "fixtureFile": "fixtures.jsonl",
+  "fixtureFileSha256": "d68e20fa9ffa9fbcc7a1be39f3e7a266578f554f4c7a89dab3449b8dfa88b4d2",
+  "fixtureIds": [
+    "stagnant_cycle-step-2911",
+    "stagnant_cycle-step-2930",
+    "stagnant_cycle-step-2948",
+    "stagnant_cycle-step-2960",
+    "stagnant_cycle-step-2980",
+    "stagnant_cycle-step-3029",
+    "normal_play-step-0",
+    "normal_play-step-550",
+    "normal_play-step-1650",
+    "normal_play-step-1700",
+    "menu_control-step-534",
+    "menu_control-step-1037",
+    "menu_control-step-2403",
+    "survival_control-step-240",
+    "survival_control-step-532",
+    "survival_control-step-533"
+  ],
+  "note": "Compact saved states and full 121-option criteria; no credentials or raw provider bodies.",
+  "schema": "jev-nethack-cycle-aware-fixture-receipt/v1"
+}

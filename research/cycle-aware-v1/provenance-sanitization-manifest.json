@@ -1,0 +1,47 @@
+{
+  "schema": "jev-nethack-cycle-aware-v1-public-staging/v1",
+  "sourceCandidate": "<PRIVATE_JEV_ROOT>/policy-candidates/cycle-aware-v1",
+  "publicPathMarker": "<PRIVATE_JEV_ROOT>",
+  "sanitization": {
+    "operation": "replace private absolute JevNetHack root references in copied text metadata only",
+    "sourceCandidateModified": false,
+    "liveRuntimeModified": false,
+    "credentialsIncluded": false,
+    "credentialHeadersIncluded": false,
+    "gameArraysChoicesProbabilitiesPreserved": true,
+    "binaryNpzPackPayloadsPreserved": true
+  },
+  "sourceLayout": {
+    "portableSource": "source/",
+    "fullResearchBundle": "bundle/cycle-aware-v1/",
+    "archive": "cycle-aware-v1-bundle.tar.gz"
+  },
+  "frozenReceipt": "source/v1-freeze-receipt.json",
+  "requiredEvidence": {
+    "savedStateIterations": [
+      "source/evidence/iteration1/",
+      "source/evaluation-results.jsonl"
+    ],
+    "pairedBranch128Calls": "bundle/cycle-aware-v1/branch-runs/paired-64x2-20260918T150538Z/",
+    "rawNpzPackArrays": [
+      "bundle/cycle-aware-v1/branch-runs/paired-64x2-20260918T150538Z/baseline/training/transitions-000001.npzpack",
+      "bundle/cycle-aware-v1/branch-runs/paired-64x2-20260918T150538Z/cycle-aware-v1/training/transitions-000001.npzpack"
+    ],
+    "probabilities": [
+      "source/evidence/iteration1/evaluation-results.jsonl",
+      "source/evaluation-results.jsonl",
+      "bundle/cycle-aware-v1/branch-runs/paired-64x2-20260918T150538Z/baseline/transitions.jsonl",
+      "bundle/cycle-aware-v1/branch-runs/paired-64x2-20260918T150538Z/cycle-aware-v1/transitions.jsonl"
+    ],
+    "requestResponseBodyMetadata": "bundle/cycle-aware-v1/branch-runs/paired-64x2-20260918T150538Z/",
+    "testScripts": [
+      "source/test_candidate.py",
+      "source/test_evidence.py",
+      "bundle/cycle-aware-v1/test_branch_experiment.py"
+    ]
+  },
+  "editorialCorrections": {
+    "README.md": "Correct an obsolete opening assertion: candidate controlled isolated branch actions but never the persistent live game; use portable test command. Frozen original unchanged.",
+    "PORTABLE-TESTING.md": "Use /path/to placeholders and python instead of private deployment layout."
+  }
+}

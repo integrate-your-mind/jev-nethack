@@ -1,0 +1,246 @@
+{
+  "categories": {
+    "menu_control": {
+      "baselineImmediateReversals": 0,
+      "candidateImmediateReversals": 0,
+      "candidateTargetClasses": {
+        "non_movement": 3
+      },
+      "choiceChanges": 0,
+      "fixtures": 3
+    },
+    "normal_play": {
+      "baselineImmediateReversals": 0,
+      "candidateImmediateReversals": 0,
+      "candidateTargetClasses": {
+        "blank_or_blocked": 1,
+        "plausibly_traversable": 2,
+        "uncertain_or_tactical": 1
+      },
+      "choiceChanges": 0,
+      "fixtures": 4
+    },
+    "stagnant_cycle": {
+      "baselineImmediateReversals": 5,
+      "candidateImmediateReversals": 2,
+      "candidateTargetClasses": {
+        "blank_or_blocked": 1,
+        "non_movement": 1,
+        "plausibly_traversable": 4
+      },
+      "choiceChanges": 4,
+      "fixtures": 6
+    },
+    "survival_control": {
+      "baselineImmediateReversals": 1,
+      "candidateImmediateReversals": 0,
+      "candidateTargetClasses": {
+        "non_movement": 1,
+        "plausibly_traversable": 1,
+        "uncertain_or_tactical": 1
+      },
+      "choiceChanges": 1,
+      "fixtures": 3
+    }
+  },
+  "completed": true,
+  "createdAt": "2026-09-18T14:56:37.957847+00:00",
+  "interpretation": {
+    "counterevidence": [
+      "One stagnant-state candidate choice targeted a blank adjacent cell.",
+      "Two stagnant-state candidate choices remained immediate reversals.",
+      "SEARCH and traversable-looking movement are plausible actions, not demonstrated progress without executing them."
+    ],
+    "notEstablished": [
+      "Higher gameplay score, depth, survival, exploration, or ascension probability.",
+      "Generalization beyond the 16 selected saved states.",
+      "Accuracy from confidence; confidence only describes distribution concentration."
+    ],
+    "supported": [
+      "All 121 choices and raw probability maps were retained.",
+      "The final candidate changed four of six stagnant-state selections and reduced selected immediate reversals from five to two.",
+      "Normal-state choices were unchanged in four of four fixtures; prompt handlers were unchanged in three of three menu fixtures.",
+      "At HP 1 after a jackal bite, the candidate changed one control choice from movement to QUAFF; this was not executed."
+    ]
+  },
+  "resultsSha256": "f65a56c625e8e4b99122dd6abf1a7d258d181d104c3a271d7678f07cc548a850",
+  "rows": [
+    {
+      "baselineChoice": "a3",
+      "baselineImmediateReversal": true,
+      "candidateChoice": "a1",
+      "candidateChoiceLabel": "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "plausibly_traversable",
+      "category": "stagnant_cycle",
+      "choiceChanged": true,
+      "fixtureId": "stagnant_cycle-step-2911"
+    },
+    {
+      "baselineChoice": "a1",
+      "baselineImmediateReversal": true,
+      "candidateChoice": "a1",
+      "candidateChoiceLabel": "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+      "candidateImmediateReversal": true,
+      "candidateTargetClass": "plausibly_traversable",
+      "category": "stagnant_cycle",
+      "choiceChanged": false,
+      "fixtureId": "stagnant_cycle-step-2930"
+    },
+    {
+      "baselineChoice": "a3",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a2",
+      "candidateChoiceLabel": "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "blank_or_blocked",
+      "category": "stagnant_cycle",
+      "choiceChanged": true,
+      "fixtureId": "stagnant_cycle-step-2948"
+    },
+    {
+      "baselineChoice": "a1",
+      "baselineImmediateReversal": true,
+      "candidateChoice": "a1",
+      "candidateChoiceLabel": "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+      "candidateImmediateReversal": true,
+      "candidateTargetClass": "plausibly_traversable",
+      "category": "stagnant_cycle",
+      "choiceChanged": false,
+      "fixtureId": "stagnant_cycle-step-2960"
+    },
+    {
+      "baselineChoice": "a1",
+      "baselineImmediateReversal": true,
+      "candidateChoice": "a75",
+      "candidateChoiceLabel": "Press 's': Command.SEARCH",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "non_movement",
+      "category": "stagnant_cycle",
+      "choiceChanged": true,
+      "fixtureId": "stagnant_cycle-step-2980"
+    },
+    {
+      "baselineChoice": "a3",
+      "baselineImmediateReversal": true,
+      "candidateChoice": "a1",
+      "candidateChoiceLabel": "Press 'l': CompassDirection.E; move/attack one step E (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "plausibly_traversable",
+      "category": "stagnant_cycle",
+      "choiceChanged": true,
+      "fixtureId": "stagnant_cycle-step-3029"
+    },
+    {
+      "baselineChoice": "a5",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a5",
+      "candidateChoiceLabel": "Press 'n': CompassDirection.SE; move/attack one step SE (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "uncertain_or_tactical",
+      "category": "normal_play",
+      "choiceChanged": false,
+      "fixtureId": "normal_play-step-0"
+    },
+    {
+      "baselineChoice": "a3",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a3",
+      "candidateChoiceLabel": "Press 'h': CompassDirection.W; move/attack one step W (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "plausibly_traversable",
+      "category": "normal_play",
+      "choiceChanged": false,
+      "fixtureId": "normal_play-step-550"
+    },
+    {
+      "baselineChoice": "a2",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a2",
+      "candidateChoiceLabel": "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "blank_or_blocked",
+      "category": "normal_play",
+      "choiceChanged": false,
+      "fixtureId": "normal_play-step-1650"
+    },
+    {
+      "baselineChoice": "a2",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a2",
+      "candidateChoiceLabel": "Press 'j': CompassDirection.S; move/attack one step S (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "plausibly_traversable",
+      "category": "normal_play",
+      "choiceChanged": false,
+      "fixtureId": "normal_play-step-1700"
+    },
+    {
+      "baselineChoice": "a35",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a35",
+      "candidateChoiceLabel": "Press e to select [3 uncursed potions of healing] for current inventory prompt",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "non_movement",
+      "category": "menu_control",
+      "choiceChanged": false,
+      "fixtureId": "menu_control-step-534"
+    },
+    {
+      "baselineChoice": "a40",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a40",
+      "candidateChoiceLabel": "Press f to select [3 uncursed food rations] for current inventory prompt",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "non_movement",
+      "category": "menu_control",
+      "choiceChanged": false,
+      "fixtureId": "menu_control-step-1037"
+    },
+    {
+      "baselineChoice": "a107",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a107",
+      "candidateChoiceLabel": "Press Space to continue past --More--",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "non_movement",
+      "category": "menu_control",
+      "choiceChanged": false,
+      "fixtureId": "menu_control-step-2403"
+    },
+    {
+      "baselineChoice": "a6",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a6",
+      "candidateChoiceLabel": "Press 'b': CompassDirection.SW; move/attack one step SW (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "uncertain_or_tactical",
+      "category": "survival_control",
+      "choiceChanged": false,
+      "fixtureId": "survival_control-step-240"
+    },
+    {
+      "baselineChoice": "a2",
+      "baselineImmediateReversal": true,
+      "candidateChoice": "a64",
+      "candidateChoiceLabel": "Press 'q': Command.QUAFF",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "non_movement",
+      "category": "survival_control",
+      "choiceChanged": true,
+      "fixtureId": "survival_control-step-532"
+    },
+    {
+      "baselineChoice": "a6",
+      "baselineImmediateReversal": false,
+      "candidateChoice": "a6",
+      "candidateChoiceLabel": "Press 'b': CompassDirection.SW; move/attack one step SW (or choose this letter in a menu)",
+      "candidateImmediateReversal": false,
+      "candidateTargetClass": "plausibly_traversable",
+      "category": "survival_control",
+      "choiceChanged": false,
+      "fixtureId": "survival_control-step-533"
+    }
+  ],
+  "schema": "jev-nethack-cycle-aware-observed-effects/v1"
+}

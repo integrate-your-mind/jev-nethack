@@ -1,0 +1,15 @@
+{
+  "artifacts": {
+    "README.md": "2a1f2cceea5b32e57a03560a8fae718d4bbfa0d97b52afcb7c7cbd88c5c301ad",
+    "branch-runs/paired-64x2-20260918T150538Z/comparison.json": "18f9f3db96bd56fc86012a314590468b8b87b690a91e161f31416fdf345befcc",
+    "branch-runs/paired-64x2-20260918T150538Z/validation-receipt.json": "d524b3e357a211e84b09f461196d91a9f9dec93bba3024ae1aeba593dadcc318",
+    "branch_experiment.py": "4d4f7882debce9c13776250106c0a5519827da517e68b0cb1b42a226948ca04a",
+    "candidate.py": "c127ed5b94b4761cf808de210d6f230e26b6dcbb78c8eac5eacfba17cdc1b7fe",
+    "paired-branch-receipt.json": "2fb273733b74a4b5cec944ea282e1a08b9879a444008deddf4e6563dc73ae11e"
+  },
+  "frozen": true,
+  "liveMigrationPerformed": false,
+  "reason": "behavior_changed_without_useful_progress",
+  "schema": "jev-nethack-cycle-aware-v1-freeze/v1",
+  "status": "rejected_for_live_migration"
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "jev-nethack-cycle-aware-branch-plan/v1",
+  "status": "recommended_not_run",
+  "objective": "Measure whether the candidate produces useful NetHack progress after the same immutable saved prefix, rather than merely changing a saved-state choice.",
+  "source": {
+    "episodeId": 0,
+    "seed": 103,
+    "prefixLastStep": 3029,
+    "requireExactReplay": true,
+    "isolateAllOutputs": true
+  },
+  "branches": [
+    {
+      "name": "baseline",
+      "question": "Existing state and instructions with the unchanged 121-action criteria.",
+      "futureActions": 64
+    },
+    {
+      "name": "cycle-aware-v1",
+      "question": "Candidate augmented state and instructions with the same unchanged 121-action criteria.",
+      "futureActions": 64
+    }
+  ],
+  "maximumAdditionalApiCalls": 128,
+  "measures": [
+    "two-step position reversals",
+    "unique positions and raw observations",
+    "blocked or exact no-op actions",
+    "NetHack turns, score, depth, XP, HP, hunger, termination and ascension",
+    "menu and survival response behavior",
+    "complete raw probability maps for every call"
+  ],
+  "interpretation": [
+    "Compare executed trajectories; do not treat confidence as accuracy.",
+    "A single paired branch is bounded evidence, not a general gameplay benchmark.",
+    "Do not migrate the live same-game policy automatically from this result."
+  ],
+  "executionBoundary": "This plan is review-only. It performs no replay, provider call, action, service change, or live-data mutation."
+}

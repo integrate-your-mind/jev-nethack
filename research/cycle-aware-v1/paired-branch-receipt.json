@@ -1,0 +1,41 @@
+{
+  "artifacts": {
+    "branch-runs/paired-64x2-20260918T150538Z/REPORT.md": "55510b94b16554918cded0ffec995c41d27486b24b724912657e39b0d22f608f",
+    "branch-runs/paired-64x2-20260918T150538Z/baseline/summary.json": "3865b430497ed7e481acabf8e2acb78d97a3923c717f8ae68c157032ec6c0f21",
+    "branch-runs/paired-64x2-20260918T150538Z/comparison.json": "18f9f3db96bd56fc86012a314590468b8b87b690a91e161f31416fdf345befcc",
+    "branch-runs/paired-64x2-20260918T150538Z/cycle-aware-v1/summary.json": "c504226e826c35a9543d2cc59c478213cbf76ee8085d85e5d4d4a2bb456795b7",
+    "branch-runs/paired-64x2-20260918T150538Z/question-freeze.json": "05cac67ee608dd8fcfaf5752b26ea4987ba45776f010c56bef8e67819563f06c",
+    "branch-runs/paired-64x2-20260918T150538Z/receipt.json": "76ff511f3703db6816eb38b0c7172bc1bbdc4c3d9fbebb0dd4ea2f73a15e9ef2",
+    "branch-runs/paired-64x2-20260918T150538Z/validation-receipt.json": "d524b3e357a211e84b09f461196d91a9f9dec93bba3024ae1aeba593dadcc318"
+  },
+  "completed": true,
+  "counterevidence": [
+    "candidate still produced 20 two-step reversals",
+    "candidate reached zero cells absent from the historical prefix",
+    "candidate score, depth, experience level, HP, and hunger did not improve",
+    "candidate settled into a movement plus real --More-- prompt cycle over visited cells"
+  ],
+  "developmentOnly": true,
+  "exactPrefixActions": 3030,
+  "futureActions": {
+    "baseline": 64,
+    "cycleAwareV1": 64
+  },
+  "liveMigrationPerformed": false,
+  "nextJevDecision": {
+    "options": [
+      "reject_live_migration_and_keep_current_policy",
+      "design_cycle_aware_v2_offline_with_longer_route_or_frontier_context",
+      "gather_new_multi_state_branch_evidence"
+    ],
+    "question": "Which next policy-development action is warranted by the single exact-prefix paired branch?",
+    "recommended": "reject_live_migration_and_keep_current_policy",
+    "secondary": "design_cycle_aware_v2_offline_with_longer_route_or_frontier_context"
+  },
+  "outcome": "behavior_changed_without_useful_progress",
+  "providerCalls": 128,
+  "providerCallsDuringReplay": 0,
+  "recommendation": "reject_live_migration_and_design_v2_offline",
+  "runDirectory": "branch-runs/paired-64x2-20260918T150538Z",
+  "schema": "jev-nethack-cycle-aware-paired-branch-receipt/v1"
+}

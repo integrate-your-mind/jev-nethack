@@ -1,0 +1,26 @@
+{
+  "additionalCallsAuthorizedOrRun": 0,
+  "authorizedApproximateCap": 64,
+  "completed": true,
+  "iterations": [
+    {
+      "attemptedApiCalls": 32,
+      "iteration": "iteration1",
+      "receipt": "evidence/iteration1/evaluation-receipt.json",
+      "receiptSha256": "ec85f26c75e46a9a4b2c5842a0ccea063f44b7aabdd1b043aa9aba145a693ac9",
+      "resultsSha256": "d19fe4b4596f4ba401fdc66d36bff6c4c26ff3908f5dc7b6033a69e8cd3e5ecd",
+      "summarySha256": "0fb616727a2ea17a41c37f8db7cf6157ebe6fc2cd2c07bb2b2d31ebc26adec73"
+    },
+    {
+      "attemptedApiCalls": 32,
+      "iteration": "final",
+      "receipt": "evaluation-receipt.json",
+      "receiptSha256": "c40de10aea825718ac19fd2496eaadfbdfdf8183c3a8aca32aa4620965fd62bf",
+      "resultsSha256": "f65a56c625e8e4b99122dd6abf1a7d258d181d104c3a271d7678f07cc548a850",
+      "summarySha256": "a1cfc863bb4f5f5686ab941a05f00a19aa38c8674a5a292666b3920f6095f0d1"
+    }
+  ],
+  "schema": "jev-nethack-cycle-aware-api-call-ledger/v1",
+  "totalAttemptedApiCalls": 64,
+  "withinCap": true
+}

@@ -1,0 +1,18 @@
+{
+  "attemptedApiCalls": 32,
+  "completed": true,
+  "createdAt": "2026-09-18T14:54:14.720080+00:00",
+  "credentialsPersisted": false,
+  "providerBodiesPersisted": false,
+  "results": {
+    "bytes": 99669,
+    "filename": "evaluation-results.jsonl",
+    "sha256": "f65a56c625e8e4b99122dd6abf1a7d258d181d104c3a271d7678f07cc548a850"
+  },
+  "schema": "jev-nethack-cycle-aware-evaluation-receipt/v1",
+  "summary": {
+    "bytes": 4179,
+    "filename": "evaluation-summary.json",
+    "sha256": "a1cfc863bb4f5f5686ab941a05f00a19aa38c8674a5a292666b3920f6095f0d1"
+  }
+}

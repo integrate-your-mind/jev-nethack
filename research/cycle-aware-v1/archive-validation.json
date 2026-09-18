@@ -1,0 +1,12 @@
+{
+  "schema": "jev-nethack-cycle-aware-v1-archive-validation/v2",
+  "archive": "cycle-aware-v1-bundle.tar.gz",
+  "archiveSha256": "63c49b60cb6c29cd837b915c277b2fd323df1360a3447095520fcc32070702d5",
+  "archiveBytes": 4136641,
+  "fileCount": 58,
+  "gzipCrcIntegrity": "passed",
+  "everyMemberReadbackSha256": "passed",
+  "sourceCandidateModified": false,
+  "editorialCorrectionsOnlyInPublicCopies": true,
+  "verifiedAt": "2026-09-18T15:24:10.188956+00:00"
+}
